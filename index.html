@@ -3,32 +3,140 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>내 비서</title>
+  <title>마니마니똘마니</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; text-align: center; }
-    button { padding: 15px 20px; margin: 10px; font-size: 16px; border-radius: 8px; border: none; background-color: #4CAF50; color: white; }
-    input { padding: 15px; font-size: 16px; width: 100px; margin-right: 10px; }
+    /* 전체 여백 초기화 및 기본 폰트 설정 */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", Roboto, "Helvetica Neue", sans-serif;
+      background-color: #f4f7f6; /* 부드러운 배경색 */
+      color: #333;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    /* 모바일 화면 너비 제한 */
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+
+    /* 상단 상태 표시줄 (카드 디자인) */
+    .status-card {
+      background: linear-gradient(135deg, #4A90E2 0%, #50E3C2 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 16px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+
+    /* 각 항목별 카드 */
+    .action-card {
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .action-card h3 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      color: #444;
+    }
+
+    /* 모바일 터치 최적화 버튼 */
+    button {
+      width: 100%;
+      padding: 16px;
+      font-size: 16px;
+      font-weight: bold;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      color: white;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+    button:active {
+      transform: scale(0.98); /* 누를 때 살짝 들어가는 효과 */
+    }
+
+    /* 버튼 색상 개별 지정 */
+    .btn-fuel { background-color: #FF9500; }
+    .btn-robot { background-color: #34C759; }
+    .btn-wash { background-color: #007AFF; }
+
+    /* 세차장 입력창 레이아웃 */
+    .input-group {
+      display: flex;
+      gap: 10px;
+    }
+    input[type="number"] {
+      flex: 1;
+      padding: 16px;
+      font-size: 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      outline: none;
+      background-color: #fafafa;
+    }
+    input[type="number"]:focus {
+      border-color: #007AFF;
+      background-color: #ffffff;
+    }
+    .input-group button {
+      flex: 1;
+    }
   </style>
 </head>
 <body>
 
-  <h2>🤖 내 비서</h2>
-  <p id="status">연결 중...</p>
+  <div class="app-container">
+    <h2>🤖 마니마니똘마니</h2>
+    
+    <div class="status-card" id="status">
+      데이터를 연결 중입니다...
+    </div>
 
-  <hr>
+    <div class="action-card">
+      <h3>⛽ 주유 카드 (월 3회)</h3>
+      <button class="btn-fuel" onclick="runAction('addFuel')">주유 기록하기</button>
+    </div>
 
-  <h3>주유 카드</h3>
-  <button onclick="runAction('addFuel')">주유 기록하기</button>
+    <div class="action-card">
+      <h3>🧹 로청이 (물통 교체)</h3>
+      <button class="btn-robot" onclick="runAction('addRobot')">로청이 돌리기</button>
+    </div>
 
-  <h3>로청이</h3>
-  <button onclick="runAction('addRobot')">로청이 돌리기</button>
-
-  <h3>세차장</h3>
-  <input type="number" id="washAmount" placeholder="차감액(원)">
-  <button onclick="runCarWash()">세차 잔액 차감</button>
+    <div class="action-card">
+      <h3>🚗 세차장 잔액</h3>
+      <div class="input-group">
+        <input type="number" id="washAmount" placeholder="차감액 입력(원)">
+        <button class="btn-wash" onclick="runCarWash()">잔액 차감</button>
+      </div>
+    </div>
+  </div>
 
   <script>
-    // ★ 주의: 새로 배포한 GAS 웹앱 URL을 반드시 아래에 넣어주세요!
+    // 기존에 설정하신 GAS URL 유지
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbwfQbj7RGq3h9wLsLM1FJVwVPiolWHbst1KFeZzXoyV8rv3RxKXdVe8VQOXamrtu39AGA/exec';
 
     // 화면 로딩 시 현재 상태 불러오기
@@ -38,19 +146,26 @@
         .then(res => {
           if(res.status === 'success') {
             document.getElementById('status').innerText = 
-              `주유: ${res.data.fuel}/3회 | 로청이: ${res.data.robot}회 | 세차잔액: ${res.data.carWash}원`;
+              `주유: ${res.data.fuel}/3회\n로청이: ${res.data.robot}회 누적\n세차잔액: ${res.data.carWash}원`;
           }
+        })
+        .catch(error => {
+          document.getElementById('status').innerText = "데이터를 불러오지 못했습니다.";
         });
     };
 
     // 주유 및 로청이 버튼 동작
     function runAction(action) {
-      document.getElementById('status').innerText = "처리 중...";
+      document.getElementById('status').innerText = "처리 중입니다...";
       fetch(`${GAS_URL}?action=${action}`)
         .then(response => response.json())
         .then(res => {
           alert(res.message);
-          window.location.reload(); // 성공 시 화면 새로고침하여 데이터 갱신
+          window.location.reload(); 
+        })
+        .catch(error => {
+          alert("오류가 발생했습니다.");
+          window.location.reload();
         });
     }
 
@@ -58,15 +173,19 @@
     function runCarWash() {
       const amount = document.getElementById('washAmount').value;
       if (!amount) {
-        alert('차감할 금액을 입력하세요.');
+        alert('차감할 금액을 숫자로 입력해 주세요.');
         return;
       }
-      document.getElementById('status').innerText = "처리 중...";
+      document.getElementById('status').innerText = "처리 중입니다...";
       fetch(`${GAS_URL}?action=useCarWash&amount=${amount}`)
         .then(response => response.json())
         .then(res => {
           alert(res.message);
           window.location.reload(); 
+        })
+        .catch(error => {
+          alert("오류가 발생했습니다.");
+          window.location.reload();
         });
     }
   </script>
