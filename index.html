@@ -9,23 +9,28 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      /* 터치 시 하이라이트 제거 */
+      -webkit-tap-highlight-color: transparent;
     }
     
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", Roboto, sans-serif;
       background-color: #000000;
       color: #ffffff;
-      /* 1. 아이폰 노치 대응: 상단 여백 설정 */
-      padding-top: calc(constant(safe-area-inset-top) + 10px);
-      padding-top: calc(env(safe-area-inset-top) + 10px);
-      padding-left: 16px;
-      padding-right: 16px;
+      
+      /* 1. 아이폰 12 미니 노치 및 Safe Area 대응 */
+      padding-top: env(safe-area-inset-top);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
       padding-bottom: env(safe-area-inset-bottom);
       
+      /* 2. 당겨서 새로고침(Pull-to-Refresh) 활성화 */
+      /* 기존의 overflow: hidden을 제거하여 브라우저 기본 바운스 효과를 허용합니다. */
+      overflow-y: auto;
       height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
     }
     
     .app-container {
@@ -34,15 +39,17 @@
       margin: 0 auto;
       display: flex;
       flex-direction: column;
+      /* 12 미니의 작은 화면에서도 한눈에 들어오도록 비율 조정 */
       height: 100%;
-      justify-content: space-around;
+      min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+      padding: 10px 16px;
     }
 
     h2 {
       text-align: center;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
-      margin-bottom: 10px;
+      margin: 15px 0;
       color: #ffffff;
     }
 
@@ -50,28 +57,29 @@
       background-color: #1c1c1e;
       padding: 16px;
       border-radius: 20px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
+      /* 12 미니 화면 높이에 맞춰 유연하게 조절 */
       flex: 1;
       justify-content: center;
+      min-height: 130px; 
     }
     
     .action-card h3 {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       margin-bottom: 4px;
       color: #a1a1a6;
     }
 
-    /* 데이터 값 스타일 */
     .data-value {
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 700;
       margin-bottom: 12px;
-      line-height: 1;
+      line-height: 1.1;
     }
 
     button {
@@ -97,6 +105,7 @@
       flex-direction: column;
       gap: 8px;
     }
+    
     input[type="number"] {
       width: 100%;
       padding: 12px;
@@ -140,29 +149,27 @@
   <script>
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbwfQbj7RGq3h9wLsLM1FJVwVPiolWHbst1KFeZzXoyV8rv3RxKXdVe8VQOXamrtu39AGA/exec';
 
-    // 화면 로딩 시 현재 상태 불러오기
-    window.onload = function() {
+    // 3. 당겨서 새로고침 기능 (모바일 브라우저 네이티브 기능 활용을 위해 새로고침 로직 단순화)
+    function loadData() {
       fetch(GAS_URL + '?action=getData')
         .then(response => response.json())
         .then(res => {
           if(res.status === 'success') {
             document.getElementById('fuel-data').innerText = `${res.data.fuel} / 3회`;
             document.getElementById('robot-data').innerText = `${res.data.robot}회`;
-            // 숫자에 콤마를 찍어 가독성 향상
             document.getElementById('wash-data').innerText = `${res.data.carWash.toLocaleString()}원`; 
           }
         })
-        .catch(err => {
-            document.getElementById('fuel-data').innerText = "오류";
-            document.getElementById('robot-data').innerText = "오류";
-            document.getElementById('wash-data').innerText = "오류";
+        .catch(() => {
+            alert("연결 상태를 확인해 주세요.");
         });
-    };
+    }
+
+    window.onload = loadData;
 
     function runAction(action) {
-      // 로딩 중 표시
-      if(action === 'addFuel') document.getElementById('fuel-data').innerText = "...";
-      if(action === 'addRobot') document.getElementById('robot-data').innerText = "...";
+      const targetId = action === 'addFuel' ? 'fuel-data' : 'robot-data';
+      document.getElementById(targetId).innerText = "...";
       
       fetch(`${GAS_URL}?action=${action}`)
         .then(response => response.json())
@@ -174,7 +181,7 @@
 
     function runCarWash() {
       const amount = document.getElementById('washAmount').value;
-      if (!amount) return alert('차감할 금액을 입력하세요.');
+      if (!amount) return alert('금액을 입력하세요.');
       
       document.getElementById('wash-data').innerText = "...";
       
