@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>내 비서</title>
+  <title>마니마니똘마니</title>
   <style>
     /* 전체 여백 초기화 및 기본 폰트 설정 */
     * {
@@ -15,9 +15,9 @@
     /* 전체 다크 모드 배경 및 폰트 */
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", Roboto, "Helvetica Neue", sans-serif;
-      background-color: #000000; /* 완전한 검은색 배경 */
-      color: #ffffff; /* 기본 텍스트 색상 흰색 */
-      padding: 20px;
+      background-color: #000000;
+      color: #ffffff;
+      padding: 16px; /* 모바일 좌우 여백 최적화 */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -32,85 +32,95 @@
     /* 상단 앱 제목 */
     h2 {
       text-align: center;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 700;
-      margin-top: 30px;
-      margin-bottom: 24px;
+      margin-top: 20px;
+      margin-bottom: 20px;
       color: #ffffff;
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 8px; /* 이모지와 텍스트 사이 간격 */
+      gap: 8px;
     }
 
     /* 각 항목별 다크 카드 디자인 */
     .action-card {
-      background-color: #1c1c1e; /* 어두운 회색 카드 배경 */
-      padding: 25px;
-      border-radius: 20px; /* 둥근 모서리 확대 */
-      margin-bottom: 20px;
+      background-color: #1c1c1e;
+      padding: 24px 20px; /* 모바일 비율에 맞게 상하좌우 여백 조정 */
+      border-radius: 24px; /* 모서리를 약간 더 둥글게 */
+      margin-bottom: 16px; /* 카드 간격 최적화 */
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-    .action-card h3 {
-      font-size: 16px;
-      font-weight: 600;
-      margin-bottom: 15px;
-      color: #e0e0e0;
+      text-align: center; /* 카드 내부 텍스트 전체 가운데 정렬 */
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 8px; /* 이모지와 텍스트 사이 간격 */
+    }
+    
+    /* 카드 소제목 */
+    .action-card h3 {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #a1a1a6; /* 소제목은 살짝 연한 톤으로 */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
     }
 
-    /* 카드 내부 데이터 값 스타일 (크고 굵게) */
+    /* 카드 내부 데이터 값 스타일 (핵심 정보이므로 가장 크게) */
     .data-value {
-      font-size: 32px;
+      font-size: 38px; /* 폰트 사이즈 대폭 확대 */
       font-weight: 700;
-      margin-top: 10px;
+      margin-top: 0;
       margin-bottom: 20px;
       color: #ffffff;
       line-height: 1.2;
+      letter-spacing: -0.5px; /* 자간을 살짝 좁혀 응집력 있게 */
     }
 
     /* 모바일 터치 최적화 버튼 */
     button {
       width: 100%;
-      padding: 18px; /* 버튼 높이 확대 */
-      font-size: 16px;
+      padding: 16px;
+      font-size: 17px;
       font-weight: 700;
-      border-radius: 12px;
+      border-radius: 14px;
       border: none;
       cursor: pointer;
       color: white;
       transition: background-color 0.2s, transform 0.1s;
     }
     button:active {
-      transform: scale(0.98); /* 누를 때 살짝 들어가는 효과 */
+      transform: scale(0.96); /* 터치 시 확실한 피드백 */
     }
 
-    /* 이미지와 동일한 버튼 색상 지정 */
-    .btn-fuel { background-color: #ff9500; } /* 주황색 */
-    .btn-robot { background-color: #34c759; } /* 초록색 */
-    .btn-wash { background-color: #007aff; } /* 파랑색 */
+    /* 버튼 색상 */
+    .btn-fuel { background-color: #ff9500; }
+    .btn-robot { background-color: #34c759; }
+    .btn-wash { background-color: #007aff; }
 
     /* 세차장 입력창 레이아웃 */
     .input-group {
+      width: 100%;
       display: flex;
-      flex-direction: column; /* 세로 배치 */
-      gap: 15px;
+      flex-direction: column;
+      gap: 12px; /* 입력창과 버튼 사이 간격 */
     }
     input[type="number"] {
       width: 100%;
       padding: 16px;
       font-size: 16px;
+      text-align: center; /* 입력 텍스트도 가운데 정렬 */
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       outline: none;
-      background-color: #2c2c2e; /* 입력창 어두운 배경 */
+      background-color: #2c2c2e;
       color: #ffffff;
       transition: background-color 0.2s;
     }
     input[type="number"]::placeholder {
-      color: #999; /* placeholder 색상 연하게 */
+      color: #8e8e93;
     }
     input[type="number"]:focus {
       background-color: #3a3a3c;
@@ -120,7 +130,7 @@
 <body>
 
   <div class="app-container">
-    <h2>✨ 내 비서</h2>
+    <h2>✨ 마니마니똘마니</h2>
     
     <div class="action-card">
       <h3>🚗 이달의 주유</h3>
@@ -136,7 +146,7 @@
 
     <div class="action-card">
       <h3>🫧 세차 잔액</h3>
-      <div class="data-value" id="wash-data">11,500원</div>
+      <div class="data-value" id="wash-data">21,000원</div>
       <div class="input-group">
         <input type="number" id="washAmount" placeholder="차감 금액 (예: 6000)">
         <button class="btn-wash" onclick="runCarWash()">입력 금액 차감</button>
@@ -145,31 +155,28 @@
   </div>
 
   <script>
-    // 기존에 설정하신 GAS URL 유지
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbwfQbj7RGq3h9wLsLM1FJVwVPiolWHbst1KFeZzXoyV8rv3RxKXdVe8VQOXamrtu39AGA/exec';
 
     // 화면 로딩 시 현재 상태 불러오기
     window.onload = function() {
-      // 이미지 스타일로 데이터를 표시하기 위해, 기존의 상단 그라데이션 카드를 제거하고
-      // 각 카드 내부의 data-value 요소를 업데이트하도록 변경했습니다.
       fetch(GAS_URL + '?action=getData')
         .then(response => response.json())
         .then(res => {
           if(res.status === 'success') {
             document.getElementById('fuel-data').innerText = `${res.data.fuel} / 3회`;
             document.getElementById('robot-data').innerText = `${res.data.robot}회`;
-            document.getElementById('wash-data').innerText = `${res.data.carWash.toLocaleString()}원`; // 천 단위 쉼표 추가
+            document.getElementById('wash-data').innerText = `${res.data.carWash.toLocaleString()}원`; 
           }
         })
         .catch(error => {
-          alert("데이터를 불러오지 못했습니다.");
+          console.error("데이터 로드 오류");
         });
     };
 
     // 주유 및 로청이 버튼 동작
     function runAction(action) {
-      document.getElementById('fuel-data').innerText = "처리 중...";
-      document.getElementById('robot-data').innerText = "처리 중...";
+      document.getElementById('fuel-data').innerText = "...";
+      document.getElementById('robot-data').innerText = "...";
       fetch(`${GAS_URL}?action=${action}`)
         .then(response => response.json())
         .then(res => {
@@ -189,7 +196,7 @@
         alert('차감할 금액을 숫자로 입력해 주세요.');
         return;
       }
-      document.getElementById('wash-data').innerText = "처리 중...";
+      document.getElementById('wash-data').innerText = "...";
       fetch(`${GAS_URL}?action=useCarWash&amount=${amount}`)
         .then(response => response.json())
         .then(res => {
