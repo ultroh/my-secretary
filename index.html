@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>내 비서 마니마니똘마니</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; text-align: center; }
+    button { padding: 15px 20px; margin: 10px; font-size: 16px; border-radius: 8px; border: none; background-color: #4CAF50; color: white; }
+    input { padding: 15px; font-size: 16px; width: 100px; margin-right: 10px; }
+  </style>
+</head>
+<body>
+
+  <h2>🤖 마니마니똘마니</h2>
+  <p id="status">연결 중...</p>
+
+  <hr>
+
+  <h3>주유 카드</h3>
+  <button onclick="runAction('addFuel')">주유 기록하기</button>
+
+  <h3>로청이</h3>
+  <button onclick="runAction('addRobot')">로청이 돌리기</button>
+
+  <h3>세차장</h3>
+  <input type="number" id="washAmount" placeholder="차감액(원)">
+  <button onclick="runCarWash()">세차 잔액 차감</button>
+
+  <script>
+    // ★ 주의: 새로 배포한 GAS 웹앱 URL을 반드시 아래에 넣어주세요!
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwfQbj7RGq3h9wLsLM1FJVwVPiolWHbst1KFeZzXoyV8rv3RxKXdVe8VQOXamrtu39AGA/exec';
+
+    // 화면 로딩 시 현재 상태 불러오기
+    window.onload = function() {
+      fetch(GAS_URL + '?action=getData')
+        .then(response => response.json())
+        .then(res => {
+          if(res.status === 'success') {
+            document.getElementById('status').innerText = 
+              `주유: ${res.data.fuel}/3회 | 로청이: ${res.data.robot}회 | 세차잔액: ${res.data.carWash}원`;
+          }
+        });
+    };
+
+    // 주유 및 로청이 버튼 동작
+    function runAction(action) {
+      document.getElementById('status').innerText = "처리 중...";
+      fetch(`${GAS_URL}?action=${action}`)
+        .then(response => response.json())
+        .then(res => {
+          alert(res.message);
+          window.location.reload(); // 성공 시 화면 새로고침하여 데이터 갱신
+        });
+    }
+
+    // 세차 차감 버튼 동작
+    function runCarWash() {
+      const amount = document.getElementById('washAmount').value;
+      if (!amount) {
+        alert('차감할 금액을 입력하세요.');
+        return;
+      }
+      document.getElementById('status').innerText = "처리 중...";
+      fetch(`${GAS_URL}?action=useCarWash&amount=${amount}`)
+        .then(response => response.json())
+        .then(res => {
+          alert(res.message);
+          window.location.reload(); 
+        });
+    }
+  </script>
+
+</body>
+</html>
