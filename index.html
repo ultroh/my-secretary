@@ -1,121 +1,198 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-  <base target="_top">
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>내 비서</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      /* 터치 시 하이라이트 제거 */
+      -webkit-tap-highlight-color: transparent;
+    }
+    
     body {
-      font-family: 'Malgun Gothic', sans-serif;
-      padding: 20px;
-      background-color: #f4f4f9;
-      color: #333;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", Roboto, sans-serif;
+      background-color: #000000;
+      color: #ffffff;
+      
+      /* 1. 아이폰 12 미니 노치 및 Safe Area 대응 */
+      padding-top: env(safe-area-inset-top);
+      padding-left: env(safe-area-inset-left);
+      padding-right: env(safe-area-inset-right);
+      padding-bottom: env(safe-area-inset-bottom);
+      
+      /* 2. 당겨서 새로고침(Pull-to-Refresh) 활성화 */
+      /* 기존의 overflow: hidden을 제거하여 브라우저 기본 바운스 효과를 허용합니다. */
+      overflow-y: auto;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-overflow-scrolling: touch; /* iOS 부드러운 스크롤 */
     }
-    /* 화면 짤림 방지 핵심 CSS */
-    .container {
+    
+    .app-container {
       width: 100%;
-      max-width: 400px;
+      max-width: 480px;
       margin: 0 auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      box-sizing: border-box; /* 패딩 포함 너비 계산 */
-      word-break: break-all;  /* 긴 텍스트 강제 줄바꿈 */
-      overflow-wrap: break-word;
+      display: flex;
+      flex-direction: column;
+      /* 12 미니의 작은 화면에서도 한눈에 들어오도록 비율 조정 */
+      height: 100%;
+      min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+      padding: 10px 16px;
     }
-    .section {
-      margin-bottom: 20px;
-      padding-bottom: 15px;
-      border-bottom: 1px solid #eee;
+
+    h2 {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 15px 0;
+      color: #ffffff;
     }
+
+    .action-card {
+      background-color: #1c1c1e;
+      padding: 16px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      /* 12 미니 화면 높이에 맞춰 유연하게 조절 */
+      flex: 1;
+      justify-content: center;
+      min-height: 130px; 
+    }
+    
+    .action-card h3 {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #a1a1a6;
+    }
+
+    .data-value {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.1;
+    }
+
     button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
       width: 100%;
-      margin-top: 10px;
-    }
-    button:active {
-      background-color: #45a049;
-    }
-    input[type="number"] {
-      width: calc(100% - 22px);
-      padding: 10px;
-      margin-top: 10px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      padding: 14px;
       font-size: 16px;
+      font-weight: 700;
+      border-radius: 12px;
+      border: none;
+      color: white;
+      cursor: pointer;
     }
-    .status {
-      font-weight: bold;
-      color: #007BFF;
-      margin-top: 10px;
-      display: block;
+    
+    button:active { transform: scale(0.97); }
+
+    .btn-fuel { background-color: #ff9500; }
+    .btn-robot { background-color: #34c759; }
+    .btn-wash { background-color: #007aff; }
+
+    .input-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    input[type="number"] {
+      width: 100%;
+      padding: 12px;
+      font-size: 15px;
+      text-align: center;
+      border: none;
+      border-radius: 12px;
+      background-color: #2c2c2e;
+      color: #ffffff;
+      outline: none;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h2>내 비서</h2>
+  <div class="app-container">
+    <h2>✨ 내 비서</h2>
+    
+    <div class="action-card">
+      <h3>🚗 이달의 주유</h3>
+      <div class="data-value" id="fuel-data">...</div>
+      <button class="btn-fuel" onclick="runAction('addFuel')">주유 기록</button>
+    </div>
 
-  <div class="section">
-    <h3>⛽ 주유 관리</h3>
-    <span class="status" id="fuel-status">상태 확인 중...</span>
-    <button onclick="requestAction('addFuel')">주유 1회 추가</button>
+    <div class="action-card">
+      <h3>🤖 로청이 현황</h3>
+      <div class="data-value" id="robot-data">...</div>
+      <button class="btn-robot" onclick="runAction('addRobot')">청소 시작</button>
+    </div>
+
+    <div class="action-card">
+      <h3>🫧 세차 잔액</h3>
+      <div class="data-value" id="wash-data">...</div>
+      <div class="input-group">
+        <input type="number" id="washAmount" placeholder="차감 금액 (예: 6000)">
+        <button class="btn-wash" onclick="runCarWash()">잔액 차감</button>
+      </div>
+    </div>
   </div>
 
-  <div class="section">
-    <h3>🤖 로청이 관리</h3>
-    <span class="status" id="robot-status">상태 확인 중...</span>
-    <button onclick="requestAction('addRobot')">로청이 돌림 기록</button>
-  </div>
+  <script>
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbwfQbj7RGq3h9wLsLM1FJVwVPiolWHbst1KFeZzXoyV8rv3RxKXdVe8VQOXamrtu39AGA/exec';
 
-  <div class="section">
-    <h3>🚗 세차 잔액 관리</h3>
-    <span class="status" id="carwash-status">상태 확인 중...</span>
-    <input type="number" id="wash-amount" placeholder="차감할 금액 입력 (예: 5000)">
-    <button onclick="useCarWash()">세차 잔액 차감</button>
-  </div>
-</div>
-
-<script>
-  // 웹앱 URL을 여기에 입력하세요
-  const WEB_APP_URL = "여기에_배포된_웹앱_URL을_넣으세요";
-
-  function requestAction(action, amount = 0) {
-    let url = WEB_APP_URL + "?action=" + action;
-    if (amount > 0) {
-      url += "&amount=" + amount;
+    // 3. 당겨서 새로고침 기능 (모바일 브라우저 네이티브 기능 활용을 위해 새로고침 로직 단순화)
+    function loadData() {
+      fetch(GAS_URL + '?action=getData')
+        .then(response => response.json())
+        .then(res => {
+          if(res.status === 'success') {
+            document.getElementById('fuel-data').innerText = `${res.data.fuel} / 3회`;
+            document.getElementById('robot-data').innerText = `${res.data.robot}회`;
+            document.getElementById('wash-data').innerText = `${res.data.carWash.toLocaleString()}원`; 
+          }
+        })
+        .catch(() => {
+            alert("연결 상태를 확인해 주세요.");
+        });
     }
 
-    fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        if (data.status === 'success') {
-          alert(data.message);
-          // 액션 완료 후 최신 상태를 다시 불러오고 싶다면 여기서 getData를 호출
-        } else {
-          alert("오류 발생: " + data.message);
-        }
-      })
-      .catch(error => alert("네트워크 오류: " + error));
-  }
+    window.onload = loadData;
 
-  function useCarWash() {
-    const amountInput = document.getElementById("wash-amount").value;
-    if (!amountInput || amountInput <= 0) {
-      alert("올바른 금액을 입력하세요.");
-      return;
+    function runAction(action) {
+      const targetId = action === 'addFuel' ? 'fuel-data' : 'robot-data';
+      document.getElementById(targetId).innerText = "...";
+      
+      fetch(`${GAS_URL}?action=${action}`)
+        .then(response => response.json())
+        .then(res => {
+          alert(res.message);
+          window.location.reload(); 
+        });
     }
-    requestAction('useCarWash', amountInput);
-  }
-</script>
+
+    function runCarWash() {
+      const amount = document.getElementById('washAmount').value;
+      if (!amount) return alert('금액을 입력하세요.');
+      
+      document.getElementById('wash-data').innerText = "...";
+      
+      fetch(`${GAS_URL}?action=useCarWash&amount=${amount}`)
+        .then(response => response.json())
+        .then(res => {
+          alert(res.message);
+          window.location.reload(); 
+        });
+    }
+  </script>
 
 </body>
 </html>
