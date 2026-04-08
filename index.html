@@ -148,22 +148,21 @@
     </div>
   </div>
 
-  <script>
+<script>
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbwfQbj7RGq3h9wLsLM1FJVwVPiolWHbst1KFeZzXoyV8rv3RxKXdVe8VQOXamrtu39AGA/exec';
 
-    // 3. 당겨서 새로고침 기능 (모바일 브라우저 네이티브 기능 활용을 위해 새로고침 로직 단순화)
     function loadData() {
       fetch(GAS_URL + '?action=getData')
         .then(response => response.json())
         .then(res => {
           if(res.status === 'success') {
             document.getElementById('fuel-data').innerText = `${res.data.fuel} / 3회`;
-            // 로청이 표시 형식을 주유와 동일하게 X / 2회로 수정
             document.getElementById('robot-data').innerText = `${res.data.robot} / 2회`;
             document.getElementById('wash-data').innerText = `${res.data.carWash.toLocaleString()}원`; 
           }
         })
         .catch(() => {
+            // 네트워크 오류 시에만 최소한의 안내 팝업 유지
             alert("연결 상태를 확인해 주세요.");
         });
     }
@@ -177,8 +176,8 @@
       fetch(`${GAS_URL}?action=${action}`)
         .then(response => response.json())
         .then(res => {
-          alert(res.message);
-          window.location.reload(); 
+          // 팝업(alert) 호출 삭제 -> 바로 데이터 리프레시 실행
+          loadData(); 
         });
     }
 
@@ -191,8 +190,13 @@
       fetch(`${GAS_URL}?action=useCarWash&amount=${amount}`)
         .then(response => response.json())
         .then(res => {
-          alert(res.message);
-          window.location.reload(); 
+          // 세차 잔액 부족 등의 중요 알림이 필요할 수 있으나, 
+          // 요청하신 대로 기본 팝업을 제거하고 즉시 데이터 갱신
+          if (res.message.includes('부족합니다')) {
+            alert(res.message); // 잔액 부족 에러만 예외적으로 팝업 유지
+          }
+          document.getElementById('washAmount').value = ''; // 입력창 비우기
+          loadData(); 
         });
     }
   </script>
