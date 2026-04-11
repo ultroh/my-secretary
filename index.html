@@ -1,270 +1,279 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>내 비서</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", Roboto, sans-serif;
-      background-color: #000000;
-      color: #ffffff;
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>내 비서</title>
+    <style>
+      :root {
+        --bg-color: #121212;
+        --card-bg: #1e1e1e;
+        --primary: #4A90E2;
+        --fuel-color: #FF9800;
+        --robot-color: #4CAF50;
+        --hair-color: #af52de;
+        --text-main: #ffffff;
+        --text-muted: #aaaaaa;
+      }
       
-      padding-top: env(safe-area-inset-top);
-      padding-left: env(safe-area-inset-left);
-      padding-right: env(safe-area-inset-right);
-      padding-bottom: env(safe-area-inset-bottom);
+      * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
       
-      overflow-y: auto;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      -webkit-overflow-scrolling: touch;
-    }
-    
-    .app-container {
-      width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      min-height: calc(100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-      padding: 10px 16px;
-    }
+      body, html {
+        width: 100%; height: 100%;
+        background-color: var(--bg-color);
+        font-family: 'Pretendard', '-apple-system', sans-serif;
+      }
+      
+      .app-container {
+        width: 100%; 
+        max-width: 480px;
+        margin: 0 auto;
+        height: 100dvh; 
+        padding: 10px 16px 15px 16px; 
+        display: flex; flex-direction: column;
+        overflow-y: auto; 
+      }
+      
+      h2 {
+        color: var(--text-main);
+        margin: 5px 0 10px 0; 
+        font-size: 22px; 
+        font-weight: 800; text-align: center;
+      }
+      
+      /* 2x2 그리드 배열 */
+      #dashboard {
+        flex: 1; 
+        display: grid; 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 12px; 
+      }
+      
+      .card {
+        background: var(--card-bg);
+        border-radius: 16px; 
+        padding: 15px; 
+        box-shadow: 0 4px 10px rgba(0,0,0,0.5); 
+        display: flex; flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        text-align: center;
+      }
+      
+      .card-title {
+        font-size: 14px; 
+        font-weight: 700; color: var(--text-muted);
+        margin-bottom: 5px;
+      }
+      
+      .status-value {
+        font-size: 22px; 
+        font-weight: 900; color: var(--text-main);
+        margin: 8px 0;
+        line-height: 1.2;
+        word-break: break-all;
+      }
 
-    h2 {
-      text-align: center;
-      font-size: 20px;
-      font-weight: 700;
-      margin: 15px 0;
-      color: #ffffff;
-    }
+      .sub-text {
+        font-size: 13px;
+        font-weight: normal;
+        color: #d1d1d6;
+      }
 
-    .grid-container {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      flex: 1;
-    }
+      input[type="number"], input[type="date"] {
+        width: 100%;
+        padding: 10px; 
+        margin-bottom: 8px; 
+        border: 2px solid #333333;
+        border-radius: 10px;
+        font-size: 14px; 
+        font-weight: 700;
+        text-align: center;
+        color: var(--text-main);
+        background-color: #2a2a2a;
+        outline: none;
+      }
+      
+      input[type="number"]::placeholder {
+        color: #777777;
+        font-size: 13px;
+      }
 
-    .action-card {
-      background-color: #1c1c1e;
-      padding: 16px;
-      border-radius: 20px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 150px; 
-    }
-    
-    .action-card h3 {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 6px;
-      color: #a1a1a6;
-    }
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+      }
+      
+      button {
+        border: none; border-radius: 12px;
+        padding: 12px 0; width: 100%; 
+        font-size: 15px; 
+        font-weight: 800; color: white;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        touch-action: manipulation; transition: transform 0.1s;
+        cursor: pointer;
+      }
+      
+      button:active { transform: scale(0.95); }
+      
+      .btn-fuel { background-color: var(--fuel-color); }
+      .btn-robot { background-color: var(--robot-color); }
+      .btn-carwash { background-color: var(--primary); }
+      .btn-hair { background-color: var(--hair-color); }
 
-    .data-value {
-      font-size: 24px; 
-      font-weight: 700;
-      margin-bottom: 12px;
-      line-height: 1.3;
-      word-break: break-all;
-      overflow-wrap: break-word;
-    }
+      #loading {
+        flex: 1; display: flex; justify-content: center; align-items: center;
+        font-size: 18px; font-weight: bold; color: var(--primary);
+      }
+      
+      .hidden { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <div class="app-container">
+      <h2>✨ 내 비서</h2>
+      
+      <div id="loading">데이터 불러오는 중...</div>
 
-    .sub-text {
-      font-size: 14px;
-      font-weight: normal;
-      color: #d1d1d6;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 15px;
-      font-weight: 700;
-      border-radius: 12px;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
-    
-    button:active { transform: scale(0.97); }
-
-    .btn-fuel { background-color: #ff9500; }
-    .btn-robot { background-color: #34c759; }
-    .btn-wash { background-color: #007aff; }
-    .btn-hair { background-color: #af52de; }
-
-    .input-group {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    
-    input[type="number"], input[type="date"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 14px;
-      text-align: center;
-      border: none;
-      border-radius: 12px;
-      background-color: #2c2c2e;
-      color: #ffffff;
-      outline: none;
-    }
-    
-    input[type="date"]::-webkit-calendar-picker-indicator {
-      filter: invert(1);
-    }
-  </style>
-</head>
-<body>
-
-  <div class="app-container">
-    <h2>✨ 내 비서</h2>
-    
-    <div class="grid-container">
-      <div class="action-card">
-        <h3>🚗 이달의 주유</h3>
-        <div class="data-value" id="fuel-data">...</div>
-        <button class="btn-fuel" onclick="runAction('addFuel')">주유 기록</button>
-      </div>
-
-      <div class="action-card">
-        <h3>🤖 로청이 현황</h3>
-        <div class="data-value" id="robot-data">...</div>
-        <button class="btn-robot" onclick="runAction('addRobot')">청소 기록</button>
-      </div>
-
-      <div class="action-card">
-        <h3>🫧 세차 잔액</h3>
-        <div class="data-value" id="wash-data">...</div>
-        <div class="input-group">
-          <input type="number" id="washAmount" placeholder="금액 입력">
-          <button class="btn-wash" onclick="runCarWash()">잔액 차감</button>
+      <div id="dashboard" class="hidden">
+        <div class="card">
+          <div class="card-title">🚗 이달의 주유</div>
+          <div class="status-value" id="fuel-status">- / 3회</div>
+          <button class="btn-fuel" onclick="recordAction('addFuel')">주유 기록</button>
         </div>
-      </div>
 
-      <div class="action-card">
-        <h3>✂️ Hair Cut Day</h3>
-        <div class="data-value" id="hair-data">...</div>
-        <div class="input-group">
+        <div class="card">
+          <div class="card-title">🤖 로청이 현황</div>
+          <div class="status-value" id="robot-status">- 회</div>
+          <button class="btn-robot" onclick="recordAction('addRobot')">청소 시작</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🫧 세차 잔액</div>
+          <div class="status-value" id="carwash-status">- 원</div>
+          <input type="number" id="wash-amount" placeholder="차감(예: 6000)" />
+          <button class="btn-carwash" onclick="recordCarWash()">금액 차감</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">✂️ Hair Cut</div>
+          <div class="status-value" id="hair-status">-</div>
           <input type="date" id="hairDateVal">
-          <button class="btn-hair" onclick="runHairCut()">날짜 저장</button>
+          <button class="btn-hair" onclick="recordHairCut()">날짜 저장</button>
         </div>
       </div>
     </div>
-  </div>
 
-<script>
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgANRpoJ72EKc3lGFp80f7W8Xs5qRx91bdd8NAbtgP3sb5KxjBU3PNseaa5TGtYusiWA/exec';
+    <script>
+      // 사용자님의 구글 웹앱 URL (배포 후 주소가 바뀌면 이 부분을 업데이트 하세요)
+      const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgANRpoJ72EKc3lGFp80f7W8Xs5qRx91bdd8NAbtgP3sb5KxjBU3PNseaa5TGtYusiWA/exec';
 
-    function loadData() {
-      const noCacheUrl = GAS_URL + '?action=getData&t=' + new Date().getTime();
-      
-      fetch(noCacheUrl)
-        .then(response => response.json())
-        .then(res => {
-          if(res.status === 'success') {
-            document.getElementById('fuel-data').innerText = `${res.data.fuel} / 3회`;
-            document.getElementById('robot-data').innerText = `${res.data.robot} / 2회`;
-            document.getElementById('wash-data').innerText = `${res.data.carWash.toLocaleString()}원`; 
-            
-            // 헤어컷 D-day 및 주차 계산 로직
-            if (res.data.hairCutDate) {
-              const pastDate = new Date(res.data.hairCutDate);
-              const today = new Date();
+      function updateDisplay() {
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('dashboard').classList.add('hidden');
+        
+        const noCacheUrl = GAS_URL + '?action=getData&t=' + new Date().getTime();
+        
+        fetch(noCacheUrl)
+          .then(response => response.json())
+          .then(res => {
+            if(res.status === 'success') {
+              const data = res.data;
+              document.getElementById('fuel-status').innerText = `${data.fuel} / 3회`;
+              document.getElementById('robot-status').innerText = `${data.robot}회`;
+              document.getElementById('carwash-status').innerText = `${data.carWash.toLocaleString()}원`;
               
-              // 시간 차이 방지를 위해 자정으로 초기화
-              pastDate.setHours(0,0,0,0);
-              today.setHours(0,0,0,0);
-              
-              const diffTime = today.getTime() - pastDate.getTime();
-              const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-              const diffWeeks = Math.floor(diffDays / 7) + 1;
-              
-              if (diffDays >= 0) {
-                document.getElementById('hair-data').innerHTML = `${diffWeeks}주차<br><span class="sub-text">(D+${diffDays})</span>`;
+              // 헤어컷 계산
+              if (data.hairCutDate) {
+                const pastDate = new Date(data.hairCutDate);
+                const today = new Date();
+                pastDate.setHours(0,0,0,0);
+                today.setHours(0,0,0,0);
+                
+                const diffTime = today.getTime() - pastDate.getTime();
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const diffWeeks = Math.floor(diffDays / 7) + 1;
+                
+                if (diffDays >= 0) {
+                  document.getElementById('hair-status').innerHTML = `${diffWeeks}주차<br><span class="sub-text">(D+${diffDays})</span>`;
+                } else {
+                  document.getElementById('hair-status').innerText = "예약일";
+                }
+                
+                const yyyy = pastDate.getFullYear();
+                const mm = String(pastDate.getMonth() + 1).padStart(2, '0');
+                const dd = String(pastDate.getDate()).padStart(2, '0');
+                document.getElementById('hairDateVal').value = `${yyyy}-${mm}-${dd}`;
               } else {
-                document.getElementById('hair-data').innerText = "예약일";
+                document.getElementById('hair-status').innerText = "입력 필요";
               }
-              
-              // input type="date"에 값을 넣으려면 YYYY-MM-DD 형식이 필수입니다.
-              const yyyy = pastDate.getFullYear();
-              const mm = String(pastDate.getMonth() + 1).padStart(2, '0');
-              const dd = String(pastDate.getDate()).padStart(2, '0');
-              document.getElementById('hairDateVal').value = `${yyyy}-${mm}-${dd}`;
 
-            } else {
-              document.getElementById('hair-data').innerText = "입력 필요";
+              document.getElementById('loading').classList.add('hidden');
+              document.getElementById('dashboard').classList.remove('hidden');
             }
-          }
-        });
-    }
+          });
+      }
 
-    window.onload = loadData;
+      function recordAction(action) {
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('dashboard').classList.add('hidden');
+        
+        const noCacheUrl = `${GAS_URL}?action=${action}&t=${new Date().getTime()}`;
+        
+        fetch(noCacheUrl)
+          .then(response => response.json())
+          .then(res => {
+            if (res.message.includes('사용하셨습니다') || res.message.includes('알람을 보내드립니다')) {
+              alert(res.message);
+            }
+            updateDisplay(); 
+          });
+      }
 
-    function runAction(action) {
-      const targetId = action === 'addFuel' ? 'fuel-data' : 'robot-data';
-      document.getElementById(targetId).innerText = "...";
-      
-      const noCacheUrl = `${GAS_URL}?action=${action}&t=${new Date().getTime()}`;
-      
-      fetch(noCacheUrl)
-        .then(response => response.json())
-        .then(res => {
-          if (res.message.includes('사용하셨습니다') || res.message.includes('알람을 보내드립니다')) {
-            alert(res.message);
-          }
-          loadData(); 
-        });
-    }
+      function recordCarWash() {
+        const amountInput = document.getElementById('wash-amount').value;
+        if (!amountInput || parseInt(amountInput) <= 0) {
+          return alert("차감할 금액을 입력해 주세요.");
+        }
+        
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('dashboard').classList.add('hidden');
 
-    function runCarWash() {
-      const amount = document.getElementById('washAmount').value;
-      if (!amount) return alert('금액을 입력하세요.');
-      
-      document.getElementById('wash-data').innerText = "...";
-      const noCacheUrl = `${GAS_URL}?action=useCarWash&amount=${amount}&t=${new Date().getTime()}`;
-      
-      fetch(noCacheUrl)
-        .then(response => response.json())
-        .then(res => {
-          if (res.message.includes('부족합니다')) {
-            alert(res.message);
-          }
-          document.getElementById('washAmount').value = ''; 
-          loadData(); 
-        });
-    }
+        const noCacheUrl = `${GAS_URL}?action=useCarWash&amount=${amountInput}&t=${new Date().getTime()}`;
+        
+        fetch(noCacheUrl)
+          .then(response => response.json())
+          .then(res => {
+            if (res.message.includes('부족합니다')) {
+              alert(res.message);
+            } else {
+              alert(res.message);
+            }
+            document.getElementById('wash-amount').value = ''; 
+            updateDisplay(); 
+          });
+      }
 
-    function runHairCut() {
-      const dateVal = document.getElementById('hairDateVal').value;
-      if (!dateVal) return alert('날짜를 선택하세요.');
+      function recordHairCut() {
+        const dateVal = document.getElementById('hairDateVal').value;
+        if (!dateVal) return alert('날짜를 선택하세요.');
 
-      document.getElementById('hair-data').innerText = "...";
-      const noCacheUrl = `${GAS_URL}?action=setHairCut&dateVal=${dateVal}&t=${new Date().getTime()}`;
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('dashboard').classList.add('hidden');
 
-      fetch(noCacheUrl)
-        .then(response => response.json())
-        .then(res => {
-          loadData();
-        });
-    }
-  </script> 
+        const noCacheUrl = `${GAS_URL}?action=setHairCut&dateVal=${dateVal}&t=${new Date().getTime()}`;
 
-</body>
+        fetch(noCacheUrl)
+          .then(response => response.json())
+          .then(res => {
+            updateDisplay();
+          });
+      }
+
+      document.getElementById('wash-amount').addEventListener('blur', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+
+      window.onload = updateDisplay;
+    </script>
+  </body>
 </html>
