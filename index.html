@@ -83,7 +83,6 @@
       overflow-wrap: break-word;
     }
 
-    /* 서브 텍스트(D-day)용 스타일 */
     .sub-text {
       font-size: 14px;
       font-weight: normal;
@@ -188,6 +187,8 @@
             if (res.data.hairCutDate) {
               const pastDate = new Date(res.data.hairCutDate);
               const today = new Date();
+              
+              // 시간 차이 방지를 위해 자정으로 초기화
               pastDate.setHours(0,0,0,0);
               today.setHours(0,0,0,0);
               
@@ -196,12 +197,17 @@
               const diffWeeks = Math.floor(diffDays / 7) + 1;
               
               if (diffDays >= 0) {
-                // n주차를 위에, (D+n)을 아래에 작게 표시
                 document.getElementById('hair-data').innerHTML = `${diffWeeks}주차<br><span class="sub-text">(D+${diffDays})</span>`;
               } else {
                 document.getElementById('hair-data').innerText = "예약일";
               }
-              document.getElementById('hairDateVal').value = res.data.hairCutDate;
+              
+              // input type="date"에 값을 넣으려면 YYYY-MM-DD 형식이 필수입니다.
+              const yyyy = pastDate.getFullYear();
+              const mm = String(pastDate.getMonth() + 1).padStart(2, '0');
+              const dd = String(pastDate.getDate()).padStart(2, '0');
+              document.getElementById('hairDateVal').value = `${yyyy}-${mm}-${dd}`;
+
             } else {
               document.getElementById('hair-data').innerText = "입력 필요";
             }
