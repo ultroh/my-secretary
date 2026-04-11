@@ -143,8 +143,8 @@
 
         <div class="card">
           <div class="card-title">🤖 로청이 현황</div>
-          <div class="status-value" id="robot-status">- 회</div>
-          <button class="btn-robot" onclick="recordAction('addRobot')">청소 시작</button>
+          <div class="status-value" id="robot-status">- / 2회</div>
+          <button class="btn-robot" onclick="recordAction('addRobot')">청소 기록</button>
         </div>
 
         <div class="card">
@@ -165,7 +165,7 @@
 
     <script>
       // 사용자님의 구글 웹앱 URL (배포 후 주소가 바뀌면 이 부분을 업데이트 하세요)
-      const GAS_URL = 'https://script.google.com/macros/s/AKfycbxVeUVNBfvzaflqUBGL0dwSb8WUyvN3YAMVbUgYFzIhSIoooIW9XHDolA2U7YJ-fmjq_Q/exec';
+      const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgANRpoJ72EKc3lGFp80f7W8Xs5qRx91bdd8NAbtgP3sb5KxjBU3PNseaa5TGtYusiWA/exec';
 
       function updateDisplay() {
         document.getElementById('loading').classList.remove('hidden');
@@ -179,7 +179,7 @@
             if(res.status === 'success') {
               const data = res.data;
               document.getElementById('fuel-status').innerText = `${data.fuel} / 3회`;
-              document.getElementById('robot-status').innerText = `${data.robot}회`;
+              document.getElementById('robot-status').innerText = `${data.robot} / 2회`;
               document.getElementById('carwash-status').innerText = `${data.carWash.toLocaleString()}원`;
               
               // 헤어컷 계산
