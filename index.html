@@ -178,42 +178,73 @@ button {
 </div>
 </div>
 
-<script>
-const GAS_URL = 'YOUR_GAS_URL_HERE';
+  <script>
+const GAS_URL = 'YOUR_GAS_URL_HERE'; // 본인의 웹앱 URL로 변경 필수
+
+/* ---------- 데이터 초기 로드 ---------- */
+function loadAll() {
+  loadData();
+  loadTodos();
+}
+
+function loadData() {
+  fetch(`${GAS_URL}?action=getData`)
+  .then(res => res.json())
+  .then(res => {
+    if(res.status === 'success') {
+      const d = res.data;
+      document.getElementById('fuel-status').innerText = d.fuel + "회";
+      document.getElementById('robot-status').innerText = d.robot + "회";
+      document.getElementById('carwash-status').innerText = d.carWash.toLocaleString() + "원";
+      document.getElementById('hair-status').innerText = d.hairCutDate || "미설정";
+    }
+  });
+}
 
 /* ---------- 기존 기능 ---------- */
 function recordAction(action){
   fetch(`${GAS_URL}?action=${action}`)
-  .then(()=>location.reload());
+  .then(res => res.json())
+  .then(data => {
+    if(data.message) alert(data.message);
+    loadData(); // 새로고침 대신 데이터만 다시 불러오기
+  });
 }
 
 function recordCarWash(){
-  const v=document.getElementById('wash-amount').value;
+  const v = document.getElementById('wash-amount').value;
+  if (!v) return;
   fetch(`${GAS_URL}?action=useCarWash&amount=${v}`)
-  .then(()=>location.reload());
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message);
+    document.getElementById('wash-amount').value = '';
+    loadData();
+  });
 }
 
 function recordHairCut(){
-  const v=document.getElementById('hairDateVal').value;
+  const v = document.getElementById('hairDateVal').value;
   fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`)
-  .then(()=>location.reload());
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message);
+    loadData();
+  });
 }
 
 /* ---------- 🔥 리마인더 ---------- */
-
-// 목록 불러오기
 function loadTodos(){
   fetch(`${GAS_URL}?action=getTodos`)
-  .then(res=>res.json())
-  .then(data=>{
-    const list=document.getElementById('todo-list');
-    list.innerHTML='';
+  .then(res => res.json())
+  .then(data => {
+    const list = document.getElementById('todo-list');
+    list.innerHTML = '';
 
-    data.todos.forEach((todo,i)=>{
-      const div=document.createElement('div');
-      div.className='todo-item';
-
-      div.innerHTML=`
+    data.todos.forEach((todo, i) => {
+      const div = document.createElement('div');
+      div.className = 'todo-item';
+      div.innerHTML = `
         <span>${todo}</span>
         <button onclick="deleteTodo(${i})">삭제</button>
       `;
@@ -222,25 +253,26 @@ function loadTodos(){
   });
 }
 
-// 추가
 function addTodo(){
-  const v=document.getElementById('todo-input').value;
+  const v = document.getElementById('todo-input').value;
   if(!v) return;
 
   fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`)
-  .then(()=>{
-    document.getElementById('todo-input').value='';
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('todo-input').value = '';
     loadTodos();
   });
 }
 
-// 삭제
 function deleteTodo(index){
   fetch(`${GAS_URL}?action=deleteTodo&index=${index}`)
-  .then(()=>loadTodos());
+  .then(() => loadTodos());
 }
 
-window.onload = loadTodos;
+// 창이 열릴 때 데이터 불러오기 실행
+window.onload = loadAll;
 </script>
+
 </body>
 </html>
