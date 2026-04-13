@@ -169,8 +169,11 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 <div class="card">
   <div class="card-title">✂️ 머리한 날</div>
   <div class="status-value" id="hair-status">-</div>
-  <button class="btn-hair" id="btn-hair" onclick="document.getElementById('hairDateVal').showPicker()">날짜선택</button>
-  <input type="date" id="hairDateVal" style="position:absolute; opacity:0; pointer-events:none;" onchange="recordHairCut(document.getElementById('btn-hair'))">
+  
+  <div style="position: relative; width: 100%; margin-top: 5px;">
+    <button class="btn-hair" id="btn-hair" style="width: 100%; pointer-events: none;">날짜선택</button>
+    <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="recordHairCut(document.getElementById('btn-hair'))">
+  </div>
 </div>
 
 <div class="card reminder-card">
