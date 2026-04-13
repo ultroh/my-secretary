@@ -217,14 +217,13 @@ function toggleLoading(btn, isLoading, originalText) {
   }
 }
 
-function getHaircutStatus(dateStr) {
+  function getHaircutStatus(dateStr) {
   if (!dateStr) return "기록 없음";
   
-  // 🎯 오류 해결: "2026. 4. 13." 같은 형식을 "2026-4-13"으로 정제하여 모바일 오류(NaN) 방지
+  // 모바일 오류 방지용 날짜 정제 로직
   const cleanDateStr = dateStr.replace(/[.\s]+/g, '-').replace(/-$/, '');
   const targetDate = new Date(cleanDateStr);
   
-  // 혹시라도 날짜 변환이 실패하면 오류 텍스트를 반환
   if (isNaN(targetDate.getTime())) return "날짜 형식 오류";
 
   const today = new Date();
@@ -234,8 +233,8 @@ function getHaircutStatus(dateStr) {
   const diffTime = today - targetDate;
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   
-  // 7일 단위로 주차 계산 (0~6일: 0주차, 7~13일: 1주차)
-  const weeks = Math.floor(diffDays / 7);
+  // 🎯 변경된 부분: + 1을 추가하여 0~6일이 1주차부터 시작하도록 설정
+  const weeks = Math.floor(diffDays / 7) + 1;
   
   return `D+${diffDays}<br><span class="small-info">(${weeks}주차)</span><span class="small-info" style="color:#666;">${dateStr}</span>`;
 }
