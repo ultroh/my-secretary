@@ -113,10 +113,11 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   background-color: var(--primary);
 }
 
+/* 🎯 리마인더 리스트 높이 조정 (약 3줄 분량) */
 .todo-list {
   margin-top:10px;
-  max-height:180px;
-  overflow-y:auto;
+  max-height: 135px; /* 3줄 정도 보이도록 고정 */
+  overflow-y: auto;
   width:100%;
 }
 
@@ -150,26 +151,25 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 <div class="card">
   <div class="card-title">🚗 이달의 주유</div>
   <div class="status-value" id="fuel-status">- / 3회</div>
-  <button class="btn-fuel" id="btn-fuel" onclick="recordAction('addFuel', this, '주유 기록')">주유 기록</button>
+  <button class="btn-fuel" onclick="recordAction('addFuel', this, '주유 기록')">주유 기록</button>
 </div>
 
 <div class="card">
   <div class="card-title">🤖 로청이</div>
   <div class="status-value" id="robot-status">- / 2회</div>
-  <button class="btn-robot" id="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
+  <button class="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
 </div>
 
 <div class="card">
   <div class="card-title">🫧 세차</div>
   <div class="status-value" id="carwash-status">-원</div>
   <input type="number" id="wash-amount" placeholder="금액 입력">
-  <button class="btn-carwash" id="btn-carwash" onclick="recordCarWash(this)">차감</button>
+  <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
 </div>
 
 <div class="card">
   <div class="card-title">✂️ 머리한 날</div>
   <div class="status-value" id="hair-status">-</div>
-  
   <div style="position: relative; width: 100%; margin-top: 5px;">
     <button class="btn-hair" id="btn-hair" style="width: 100%; pointer-events: none;">날짜선택</button>
     <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="recordHairCut(document.getElementById('btn-hair'))">
@@ -196,7 +196,6 @@ function loadAll() {
   loadTodos();
 }
 
-// 버튼 로딩 상태 전환 함수
 function toggleLoading(btn, isLoading, originalText) {
   if (isLoading) {
     btn.disabled = true;
@@ -298,7 +297,6 @@ function addTodo(btn){
 }
 
 function deleteTodo(index, btn){
-  const originalText = btn.innerText;
   btn.disabled = true;
   btn.innerText = '...';
   fetch(`${GAS_URL}?action=deleteTodo&index=${index}`)
