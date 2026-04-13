@@ -34,11 +34,7 @@ body, html {
   flex-direction:column;
 }
 
-h2 {
-  color:white;
-  text-align:center;
-  margin:5px 0 10px;
-}
+h2 { color:white; text-align:center; margin:5px 0 10px; }
 
 #dashboard {
   flex:1;
@@ -59,10 +55,7 @@ h2 {
   text-align: center;
 }
 
-.card-title {
-  font-size:14px;
-  color: var(--text-muted);
-}
+.card-title { font-size:14px; color: var(--text-muted); }
 
 .status-value {
   font-size:22px;
@@ -87,16 +80,9 @@ input, button {
   margin-top:5px;
 }
 
-input {
-  background:#2a2a2a;
-  color:white;
-}
+input { background:#2a2a2a; color:white; }
 
-button {
-  font-weight:800;
-  color:white;
-  cursor:pointer;
-}
+button { font-weight:800; color:white; cursor:pointer; }
 
 .btn-fuel { background: var(--fuel-color); }
 .btn-robot { background: var(--robot-color); }
@@ -182,7 +168,7 @@ button {
   <div class="card-title">✂️ 머리한 날</div>
   <div class="status-value" id="hair-status">-</div>
   <button class="btn-hair" onclick="document.getElementById('hairDateVal').showPicker()">날짜선택</button>
-  <input type="date" id="hairDateVal" style="display:none;" onchange="recordHairCut()">
+  <input type="date" id="hairDateVal" style="position:absolute; opacity:0; pointer-events:none;" onchange="recordHairCut()">
 </div>
 
 <div class="card reminder-card">
@@ -198,7 +184,7 @@ button {
 </div>
 
 <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbz2y41zC2RPJhVyMum_D47_Uf5j0eh2zLTYjy3cL9hNBb2osAk_-xpU0qaHBVLAda5ddA/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwhZRmg-lxhZxxAeglplBq6yV_XCnuU-FT0rl-sm683Jq23BqjWKfYS9rg1UOl-My6vtQ/exec'; 
 
 function loadAll() {
   loadData();
@@ -236,9 +222,7 @@ function recordHairCut(){
   if(!v) return;
   fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`)
   .then(res => res.json())
-  .then(() => {
-    loadData(); 
-  });
+  .then(() => loadData());
 }
 
 function recordAction(action){
@@ -262,7 +246,6 @@ function recordCarWash(){
   });
 }
 
-/* ---------- 🎯 리마인더 리스트 불릿 기호 추가 ---------- */
 function loadTodos(){
   fetch(`${GAS_URL}?action=getTodos`)
   .then(res => res.json())
@@ -272,7 +255,6 @@ function loadTodos(){
     data.todos.forEach((todo, i) => {
       const div = document.createElement('div');
       div.className = 'todo-item';
-      // 🎯 항목 앞에 • 기호를 추가했습니다.
       div.innerHTML = `<span>• ${todo}</span><button onclick="deleteTodo(${i})">삭제</button>`;
       list.appendChild(div);
     });
