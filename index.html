@@ -1,180 +1,244 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>내 비서</title>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>내 비서</title>
 
-<style>
-:root {
-  --bg:#121212; --card:#1e1e1e;
-  --fuel:#FF9800; --robot:#4CAF50; --primary:#4A90E2;
-  --hair:#af52de; --todo:#ff5e57; --text:#fff;
-}
+    <style>
+      :root {
+        --bg-color: #121212;
+        --card-bg: #1e1e1e;
+        --primary: #4A90E2;
+        --fuel-color: #FF9800;
+        --robot-color: #4CAF50;
+        --hair-color: #af52de;
+        --todo-color: #ff5e57;
+        --text-main: #ffffff;
+        --text-muted: #aaaaaa;
+      }
 
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);font-family:sans-serif;}
+      * { box-sizing: border-box; margin: 0; padding: 0; }
 
-.app{max-width:480px;margin:auto;height:100vh;padding:10px;display:flex;flex-direction:column;}
+      body, html {
+        width: 100%; height: 100%;
+        background-color: var(--bg-color);
+        font-family: 'Pretendard', '-apple-system', sans-serif;
+      }
 
-#dashboard{
-  flex:1;
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  grid-template-rows:repeat(3,1fr);
-  gap:10px;
-}
+      .app-container {
+        max-width: 480px;
+        margin: auto;
+        height: 100dvh;
+        padding: 10px 16px;
+        display: flex;
+        flex-direction: column;
+      }
 
-.card{
-  background:var(--card);
-  border-radius:16px;
-  padding:10px;
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
-  text-align:center;
-}
+      h2 {
+        color: var(--text-main);
+        text-align: center;
+        margin-bottom: 10px;
+      }
 
-button{border:none;border-radius:10px;padding:10px;color:#fff;}
-.btn-fuel{background:var(--fuel);}
-.btn-robot{background:var(--robot);}
-.btn-car{background:var(--primary);}
-.btn-hair{background:var(--hair);}
-.btn-todo{background:var(--todo);}
+      #dashboard {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 12px;
+      }
 
-#todo-list{
-  margin-top:8px;
-  max-height:100px;
-  overflow:auto;
-  font-size:12px;
-}
-</style>
-</head>
+      .card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        text-align: center;
+      }
 
-<body>
-<div class="app">
+      .card-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text-muted);
+      }
 
-<div id="dashboard">
+      .status-value {
+        font-size: 20px;
+        font-weight: 800;
+        color: var(--text-main);
+      }
 
-<!-- 1 -->
-<div class="card">
-<div>🚗 주유</div>
-<div id="fuel-status"></div>
-<button class="btn-fuel" onclick="recordAction('addFuel')">기록</button>
-</div>
+      input {
+        width: 100%;
+        padding: 8px;
+        border-radius: 8px;
+        border: none;
+        margin-top: 5px;
+        background: #2a2a2a;
+        color: white;
+        font-size: 13px;
+        text-align: center;
+      }
 
-<!-- 2 -->
-<div class="card">
-<div>🤖 로봇</div>
-<div id="robot-status"></div>
-<button class="btn-robot" onclick="recordAction('addRobot')">기록</button>
-</div>
+      button {
+        border: none;
+        border-radius: 10px;
+        padding: 10px;
+        color: white;
+        font-weight: bold;
+      }
 
-<!-- 3 -->
-<div class="card">
-<div>🫧 세차</div>
-<div id="carwash-status"></div>
-<input id="wash" type="number" placeholder="금액">
-<button class="btn-car" onclick="useCarWash()">차감</button>
-</div>
+      .btn-todo { background: var(--todo-color); }
 
-<!-- 4 -->
-<div class="card">
-<div>✂️ Hair</div>
-<input type="date" id="hairDate" onchange="setHair()">
-</div>
+      /* ✅ ToDo 전용 */
+      #todo-list {
+        margin-top: 6px;
+        max-height: 80px;
+        overflow-y: auto;
+        font-size: 12px;
+      }
 
-<!-- 5 ✅ ToDo -->
-<div class="card">
-<div>📝 ToDo</div>
+      .todo-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+      }
 
-<input id="todo-input" placeholder="할 일 입력">
-<button class="btn-todo" onclick="addTodo()">추가</button>
+      .done {
+        text-decoration: line-through;
+        color: #777;
+      }
+    </style>
+  </head>
 
-<div id="todo-list"></div>
-</div>
+  <body>
+    <div class="app-container">
+      <h2>✨ 내 비서</h2>
 
-<!-- 6 -->
-<div class="card">
-<div>📰 뉴스</div>
-<button onclick="alert('뉴스 연결 예정')">보기</button>
-</div>
+      <div id="dashboard">
 
-</div>
-</div>
+        <!-- 기존 카드들 그대로 유지 -->
+        <div class="card">
+          <div class="card-title">🚗 이달의 주유</div>
+          <div class="status-value" id="fuel-status"></div>
+          <button onclick="recordAction('addFuel')">주유</button>
+        </div>
 
-<script>
-const URL='여기에_GAS_URL';
+        <div class="card">
+          <div class="card-title">🤖 로청이</div>
+          <div class="status-value" id="robot-status"></div>
+          <button onclick="recordAction('addRobot')">청소</button>
+        </div>
 
-// ===== 기본 =====
-function load(){
-fetch(URL+'?action=getData')
-.then(r=>r.json())
-.then(d=>{
-document.getElementById('fuel-status').innerText=d.data.fuel+'/3';
-document.getElementById('robot-status').innerText=d.data.robot+'/2';
-document.getElementById('carwash-status').innerText=d.data.carWash;
-});
-loadTodo();
-}
+        <div class="card">
+          <div class="card-title">🫧 세차</div>
+          <div class="status-value" id="carwash-status"></div>
+          <input id="wash" type="number" placeholder="금액">
+          <button onclick="useCarWash()">차감</button>
+        </div>
 
-// ===== 기존 =====
-function recordAction(a){
-fetch(URL+'?action='+a).then(load);
-}
+        <div class="card">
+          <div class="card-title">✂️ Hair</div>
+          <input type="date" id="hairDate" onchange="setHair()">
+        </div>
 
-function useCarWash(){
-const v=document.getElementById('wash').value;
-fetch(URL+'?action=useCarWash&amount='+v).then(load);
-}
+        <!-- ✅ ToDo (UI 유지 + 기능 추가) -->
+        <div class="card">
+          <div class="card-title">📝 To Do</div>
 
-function setHair(){
-const d=document.getElementById('hairDate').value;
-fetch(URL+'?action=setHairCut&dateVal='+d);
-}
+          <input id="todo-input" placeholder="할 일 입력">
+          <button class="btn-todo" onclick="addTodo()">추가</button>
 
-// ===== ToDo =====
-function loadTodo(){
-fetch(URL+'?action=getTodo')
-.then(r=>r.json())
-.then(res=>{
-const el=document.getElementById('todo-list');
-el.innerHTML='';
+          <div id="todo-list"></div>
+        </div>
 
-res.data.forEach(i=>{
-const div=document.createElement('div');
+        <!-- 뉴스 -->
+        <div class="card">
+          <div class="card-title">📰 주요뉴스</div>
+          <button onclick="alert('연결 예정')">보기</button>
+        </div>
 
-div.innerHTML=`
-<span style="${i.done?'text-decoration:line-through':''}">
-${i.text}
-</span>
-<button onclick="toggleTodo('${i.id}')">
-${i.done?'↩':'✔'}
-</button>
-<button onclick="deleteTodo('${i.id}')">❌</button>
-`;
+      </div>
+    </div>
 
-el.appendChild(div);
-});
-});
-}
+    <script>
+      const URL = '여기에_GAS_URL';
 
-function addTodo(){
-const t=document.getElementById('todo-input').value;
-fetch(URL+'?action=addTodo&text='+encodeURIComponent(t))
-.then(()=>{document.getElementById('todo-input').value='';loadTodo();});
-}
+      function load() {
+        fetch(URL + '?action=getData')
+          .then(r => r.json())
+          .then(d => {
+            document.getElementById('fuel-status').innerText = d.data.fuel + "/3";
+            document.getElementById('robot-status').innerText = d.data.robot + "/2";
+            document.getElementById('carwash-status').innerText = d.data.carWash;
+          });
 
-function toggleTodo(id){
-fetch(URL+'?action=toggleTodo&id='+id).then(loadTodo);
-}
+        loadTodo();
+      }
 
-function deleteTodo(id){
-fetch(URL+'?action=deleteTodo&id='+id).then(loadTodo);
-}
+      function recordAction(a) {
+        fetch(URL + '?action=' + a).then(load);
+      }
 
-window.onload=load;
-</script>
+      function useCarWash() {
+        const v = document.getElementById('wash').value;
+        fetch(URL + '?action=useCarWash&amount=' + v).then(load);
+      }
 
-</body>
+      function setHair() {
+        const d = document.getElementById('hairDate').value;
+        fetch(URL + '?action=setHairCut&dateVal=' + d);
+      }
+
+      // ✅ ToDo
+      function loadTodo() {
+        fetch(URL + '?action=getTodo')
+          .then(r => r.json())
+          .then(res => {
+            const el = document.getElementById('todo-list');
+            el.innerHTML = '';
+
+            res.data.forEach(i => {
+              const div = document.createElement('div');
+              div.className = 'todo-item';
+
+              div.innerHTML = `
+                <span class="${i.done ? 'done' : ''}">${i.text}</span>
+                <div>
+                  <button onclick="toggleTodo('${i.id}')">${i.done ? '↩' : '✔'}</button>
+                  <button onclick="deleteTodo('${i.id}')">❌</button>
+                </div>
+              `;
+
+              el.appendChild(div);
+            });
+          });
+      }
+
+      function addTodo() {
+        const t = document.getElementById('todo-input').value;
+        if (!t) return;
+
+        fetch(URL + '?action=addTodo&text=' + encodeURIComponent(t))
+          .then(() => {
+            document.getElementById('todo-input').value = '';
+            loadTodo();
+          });
+      }
+
+      function toggleTodo(id) {
+        fetch(URL + '?action=toggleTodo&id=' + id).then(loadTodo);
+      }
+
+      function deleteTodo(id) {
+        fetch(URL + '?action=deleteTodo&id=' + id).then(loadTodo);
+      }
+
+      window.onload = load;
+    </script>
+  </body>
 </html>
