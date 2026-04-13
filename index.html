@@ -203,12 +203,29 @@ button {
 </div>
 
 <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzkUvevOlAlTBptO0t4FTvgBVqB7KwasojlGphoybIzeYwX4UUgoVwVRlz-uwIQ4C39/exec'; // 본인의 웹앱 URL로 변경 필수
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzkUvevOlAlTBptO0t4FTvgBVqB7KwasojlGphoybIzeYwX4UUgoVwVRlz-uwIQ4C39/exec'; 
 
 /* ---------- 데이터 초기 로드 ---------- */
 function loadAll() {
   loadData();
   loadTodos();
+}
+
+// 날짜 차이 및 주차 계산 함수
+function getHaircutStatus(dateStr) {
+  if (!dateStr) return "기록 없음";
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const targetDate = new Date(dateStr);
+  targetDate.setHours(0, 0, 0, 0);
+  
+  const diffTime = today - targetDate;
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const weeks = Math.floor(diffDays / 7);
+  
+  // D+0(0주차) 2026-04-13 형식으로 반환
+  return `D+${diffDays} (${weeks}주차)<br><span style="font-size:14px; font-weight:normal; color:#aaa;">${dateStr}</span>`;
 }
 
 function loadData() {
@@ -217,21 +234,36 @@ function loadData() {
   .then(res => {
     if(res.status === 'success') {
       const d = res.data;
-      document.getElementById('fuel-status').innerText = d.fuel + "회";
-      document.getElementById('robot-status').innerText = d.robot + "회";
+      document.getElementById('fuel-status').innerText = d.fuel + " / 3회";
+      document.getElementById('robot-status').innerText = d.robot + " / 2회";
       document.getElementById('carwash-status').innerText = d.carWash.toLocaleString() + "원";
-      document.getElementById('hair-status').innerText = d.hairCutDate || "미설정";
+      
+      // 🎯 헤어 상태 표시 부분 수정
+      document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
     }
   });
 }
 
-/* ---------- 기존 기능 ---------- */
+/* ---------- 헤어 기록 기능 (알림 제거) ---------- */
+function recordHairCut(){
+  const v = document.getElementById('hairDateVal').value;
+  if(!v) return;
+  
+  // 🎯 알림창(alert) 없이 데이터만 갱신
+  fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`)
+  .then(res => res.json())
+  .then(data => {
+    loadData(); 
+  });
+}
+
+/* ---------- 기타 기능 (기존 유지) ---------- */
 function recordAction(action){
   fetch(`${GAS_URL}?action=${action}`)
   .then(res => res.json())
   .then(data => {
     if(data.message) alert(data.message);
-    loadData(); // 새로고침 대신 데이터만 다시 불러오기
+    loadData();
   });
 }
 
@@ -247,31 +279,17 @@ function recordCarWash(){
   });
 }
 
-function recordHairCut(){
-  const v = document.getElementById('hairDateVal').value;
-  fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`)
-  .then(res => res.json())
-  .then(data => {
-    alert(data.message);
-    loadData();
-  });
-}
-
-/* ---------- 🔥 리마인더 ---------- */
+// 리마인더 관련 함수들... (기존과 동일)
 function loadTodos(){
   fetch(`${GAS_URL}?action=getTodos`)
   .then(res => res.json())
   .then(data => {
     const list = document.getElementById('todo-list');
     list.innerHTML = '';
-
     data.todos.forEach((todo, i) => {
       const div = document.createElement('div');
       div.className = 'todo-item';
-      div.innerHTML = `
-        <span>${todo}</span>
-        <button onclick="deleteTodo(${i})">삭제</button>
-      `;
+      div.innerHTML = `<span>${todo}</span><button onclick="deleteTodo(${i})">삭제</button>`;
       list.appendChild(div);
     });
   });
@@ -280,10 +298,8 @@ function loadTodos(){
 function addTodo(){
   const v = document.getElementById('todo-input').value;
   if(!v) return;
-
   fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`)
-  .then(res => res.json())
-  .then(data => {
+  .then(() => {
     document.getElementById('todo-input').value = '';
     loadTodos();
   });
@@ -294,7 +310,6 @@ function deleteTodo(index){
   .then(() => loadTodos());
 }
 
-// 창이 열릴 때 데이터 불러오기 실행
 window.onload = loadAll;
 </script>
 
