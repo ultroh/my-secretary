@@ -161,12 +161,12 @@
 
         <div class="card">
           <div class="card-title">✂️ Hair Cut</div>
-          <div class="status-value" id="hair-status">D+0</div>
+          <div class="status-value" id="hair-status">-</div>
           <div class="sub-text" id="last-hair-date" style="margin-bottom: 10px;">최근: -</div>
           
-          <div style="position: relative; width: 100%;">
-            <input type="date" id="hairDateVal" onchange="recordHairCut()" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;">
-            <button class="btn-hair">머리한 날</button>
+          <div style="width: 100%;">
+            <input type="date" id="hairDateVal" onchange="recordHairCut()" style="display: none;">
+            <button class="btn-hair" onclick="document.getElementById('hairDateVal').showPicker()">머리한 날</button>
           </div>
         </div>
 
@@ -195,49 +195,42 @@
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('dashboard').classList.add('hidden');
         
-        const noCacheUrl = GAS_URL + '?action=getData&t=' + new Date().getTime();
-        
-        fetch(noCacheUrl)
+        fetch(GAS_URL + '?action=getData&t=' + new Date().getTime())
           .then(response => response.json())
           .then(res => {
             if(res.status === 'success') {
               const data = res.data;
-              
-              // 기존 데이터 업데이트
               document.getElementById('fuel-status').innerText = `${data.fuel} / 3회`;
               document.getElementById('robot-status').innerText = `${data.robot} / 2회`;
               document.getElementById('carwash-status').innerText = `${data.carWash.toLocaleString()}원`;
 
-              // ✅ 머리한 날 업데이트 로직 추가
-              if (data.hairDate) {
+              // ✅ 머리한 날 표시 로직 고도화
+              if (data.hairDate && data.hairDate !== "-") {
                 const lastDate = new Date(data.hairDate);
                 const today = new Date();
-                // 시각 차이 무시하고 날짜 차이만 계산
                 today.setHours(0,0,0,0);
                 lastDate.setHours(0,0,0,0);
                 
-                const diffTime = Math.abs(today - lastDate);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                const diffTime = today - lastDate;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
                 
                 document.getElementById('hair-status').innerText = `D+${diffDays}`;
                 document.getElementById('last-hair-date').innerText = `최근: ${data.hairDate}`;
+              } else {
+                document.getElementById('hair-status').innerText = "-";
+                document.getElementById('last-hair-date').innerText = "최근: -";
               }
 
               document.getElementById('loading').classList.add('hidden');
               document.getElementById('dashboard').classList.remove('hidden');
             }
-          })
-          .catch(err => {
-            console.error(err);
-            alert("데이터를 가져오는데 실패했습니다.");
           });
       }
 
       function recordAction(action) {
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('dashboard').classList.add('hidden');
-        const noCacheUrl = `${GAS_URL}?action=${action}&t=${new Date().getTime()}`;
-        fetch(noCacheUrl).then(() => updateDisplay());
+        fetch(`${GAS_URL}?action=${action}&t=${new Date().getTime()}`).then(() => updateDisplay());
       }
 
       function recordCarWash() {
@@ -250,11 +243,14 @@
         });
       }
 
+      // ✅ 날짜 기록 함수 수정
       function recordHairCut() {
         const dateVal = document.getElementById('hairDateVal').value;
         if (!dateVal) return;
+
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('dashboard').classList.add('hidden');
+
         const noCacheUrl = `${GAS_URL}?action=setHairCut&dateVal=${dateVal}&t=${new Date().getTime()}`;
         fetch(noCacheUrl).then(() => updateDisplay());
       }
