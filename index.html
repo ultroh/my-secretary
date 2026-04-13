@@ -12,8 +12,6 @@
         --fuel-color: #FF9800;
         --robot-color: #4CAF50;
         --hair-color: #af52de;
-        --todo-color: #ff5e57;
-        --news-color: #00c7be;
         --text-main: #ffffff;
         --text-muted: #aaaaaa;
       }
@@ -43,11 +41,11 @@
         font-weight: 800; text-align: center;
       }
       
+      /* 2x2 그리드 배열 */
       #dashboard {
         flex: 1; 
         display: grid; 
         grid-template-columns: repeat(2, 1fr); 
-        grid-template-rows: repeat(3, 1fr);
         gap: 12px; 
       }
       
@@ -82,7 +80,7 @@
         color: #d1d1d6;
       }
 
-      input[type="number"] {
+      input[type="number"], input[type="date"] {
         width: 100%;
         padding: 10px; 
         margin-bottom: 8px; 
@@ -95,7 +93,16 @@
         background-color: #2a2a2a;
         outline: none;
       }
+      
+      input[type="number"]::placeholder {
+        color: #777777;
+        font-size: 13px;
+      }
 
+      input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+      }
+      
       button {
         border: none; border-radius: 12px;
         padding: 12px 0; width: 100%; 
@@ -112,8 +119,6 @@
       .btn-robot { background-color: var(--robot-color); }
       .btn-carwash { background-color: var(--primary); }
       .btn-hair { background-color: var(--hair-color); }
-      .btn-todo { background-color: var(--todo-color); }
-      .btn-news { background-color: var(--news-color); }
 
       #loading {
         flex: 1; display: flex; justify-content: center; align-items: center;
@@ -121,25 +126,15 @@
       }
       
       .hidden { display: none !important; }
-
-      /* JS 호출을 위해 input은 시각적으로만 완전히 숨김 */
-      .hidden-date {
-        position: absolute;
-        width: 1px; height: 1px;
-        padding: 0; margin: -1px;
-        overflow: hidden;
-        clip: rect(0,0,0,0);
-        border: 0;
-      }
     </style>
   </head>
   <body>
     <div class="app-container">
       <h2>✨ 내 비서</h2>
+      
       <div id="loading">데이터 불러오는 중...</div>
 
       <div id="dashboard" class="hidden">
-        
         <div class="card">
           <div class="card-title">🚗 이달의 주유</div>
           <div class="status-value" id="fuel-status">- / 3회</div>
@@ -165,37 +160,25 @@
           <div class="sub-text" id="last-hair-date" style="margin-bottom: 10px;">최근: -</div>
           
           <div style="position: relative; width: 100%;">
-            <input type="date" id="hairDateVal" class="hidden-date" onchange="recordHairCut()">
-            <button class="btn-hair" onclick="openDatePicker()">머리한 날</button>
+            <input type="date" id="hairDateVal" onchange="recordHairCut()" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; padding: 0;">
+            <button class="btn-hair">머리한 날</button>
           </div>
         </div>
-
-        <div class="card">
-          <div class="card-title">📝 To Do List</div>
-          <div class="status-value">관리</div>
-          <button class="btn-todo" onclick="goTodo()">열기</button>
-        </div>
-
-        <div class="card">
-          <div class="card-title">📰 주요뉴스</div>
-          <div class="status-value">오늘 뉴스</div>
-          <button class="btn-news" onclick="goNews()">보기</button>
-        </div>
-
       </div>
     </div>
 
     <script>
+      // 사용자님의 구글 웹앱 URL (배포 후 주소가 바뀌면 이 부분을 업데이트 하세요)
       const GAS_URL = 'https://script.google.com/macros/s/AKfycbzoR1pexWs-u934gc3sarnDxdQo4GiVhCgdtUXmAXdfIkABmIX4RDRPmKkcoExP4BROCQ/exec';
-
-      function goTodo() { alert("To Do List 페이지 연결 예정"); }
-      function goNews() { alert("주요뉴스 페이지 연결 예정"); }
+      
 
       function updateDisplay() {
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('dashboard').classList.add('hidden');
         
-        fetch(GAS_URL + '?action=getData&t=' + new Date().getTime())
+        const noCacheUrl = GAS_URL + '?action=getData&t=' + new Date().getTime();
+        
+        fetch(noCacheUrl)
           .then(response => response.json())
           .then(res => {
             if(res.status === 'success') {
@@ -203,77 +186,84 @@
               document.getElementById('fuel-status').innerText = `${data.fuel} / 3회`;
               document.getElementById('robot-status').innerText = `${data.robot} / 2회`;
               document.getElementById('carwash-status').innerText = `${data.carWash.toLocaleString()}원`;
-
-              // ✅ 앱스크립트 배포 버전에 상관없이 작동하도록 변수 처리 (hairDate 또는 hairCutDate)
-              const receivedDate = data.hairDate || data.hairCutDate;
-
-              if (receivedDate && receivedDate !== "-" && receivedDate !== "") {
-                const lastDate = new Date(receivedDate);
+              
+              // 헤어컷 계산
+              if (data.hairCutDate) {
+                const pastDate = new Date(data.hairCutDate);
                 const today = new Date();
+                pastDate.setHours(0,0,0,0);
                 today.setHours(0,0,0,0);
-                lastDate.setHours(0,0,0,0);
                 
-                const diffTime = today - lastDate;
+                const diffTime = today.getTime() - pastDate.getTime();
                 const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                const diffWeeks = Math.floor(diffDays / 7) + 1;
                 
-                document.getElementById('hair-status').innerText = `D+${diffDays}`;
+                if (diffDays >= 0) {
+                  document.getElementById('hair-status').innerHTML = `${diffWeeks}주차<br><span class="sub-text">(D+${diffDays})</span>`;
+                } else {
+                  document.getElementById('hair-status').innerText = "예약일";
+                }
                 
-                // 구글 시트에서 넘어오는 데이터 형식이 깨질 것을 대비해 YYYY-MM-DD로 포맷팅
-                const yyyy = lastDate.getFullYear();
-                const mm = String(lastDate.getMonth() + 1).padStart(2, '0');
-                const dd = String(lastDate.getDate()).padStart(2, '0');
-                document.getElementById('last-hair-date').innerText = `최근: ${yyyy}-${mm}-${dd}`;
+                const yyyy = pastDate.getFullYear();
+                const mm = String(pastDate.getMonth() + 1).padStart(2, '0');
+                const dd = String(pastDate.getDate()).padStart(2, '0');
+                
+                // 보이지 않는 input의 value 채우기 (리프레시 대응)
+                document.getElementById('hairDateVal').value = `${yyyy}-${mm}-${dd}`;
+                // 화면에 텍스트로 최근 날짜 표시
+                document.getElementById('last-hair-date').innerText = `최근: ${yyyy}.${mm}.${dd}`;
               } else {
-                document.getElementById('hair-status').innerText = "-";
-                document.getElementById('last-hair-date').innerText = "최근: -";
+                document.getElementById('hair-status').innerText = "입력 필요";
+                document.getElementById('last-hair-date').innerText = "최근: 없음";
               }
 
               document.getElementById('loading').classList.add('hidden');
               document.getElementById('dashboard').classList.remove('hidden');
             }
-          })
-          .catch(error => {
-            console.error("데이터 로드 실패:", error);
-            alert("데이터를 불러오는데 실패했습니다. 네트워크를 확인해주세요.");
           });
       }
 
       function recordAction(action) {
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('dashboard').classList.add('hidden');
-        fetch(`${GAS_URL}?action=${action}&t=${new Date().getTime()}`).then(() => updateDisplay());
+        
+        const noCacheUrl = `${GAS_URL}?action=${action}&t=${new Date().getTime()}`;
+        
+        fetch(noCacheUrl)
+          .then(response => response.json())
+          .then(res => {
+            if (res.message.includes('사용하셨습니다') || res.message.includes('알람을 보내드립니다')) {
+              alert(res.message);
+            }
+            updateDisplay(); 
+          });
       }
 
       function recordCarWash() {
         const amountInput = document.getElementById('wash-amount').value;
-        if (!amountInput || parseInt(amountInput) <= 0) return alert("금액을 입력해 주세요.");
+        if (!amountInput || parseInt(amountInput) <= 0) {
+          return alert("차감할 금액을 입력해 주세요.");
+        }
         
         document.getElementById('loading').classList.remove('hidden');
         document.getElementById('dashboard').classList.add('hidden');
 
         const noCacheUrl = `${GAS_URL}?action=useCarWash&amount=${amountInput}&t=${new Date().getTime()}`;
-        fetch(noCacheUrl).then(() => {
-          document.getElementById('wash-amount').value = '';
-          updateDisplay();
-        });
+        
+        fetch(noCacheUrl)
+          .then(response => response.json())
+          .then(res => {
+            if (res.message.includes('부족합니다')) {
+              alert(res.message);
+            } else {
+              alert(res.message);
+            }
+            document.getElementById('wash-amount').value = ''; 
+            updateDisplay(); 
+          });
       }
 
-      // 달력을 안전하게 띄우는 함수 추가
-      function openDatePicker() {
-        const dateInput = document.getElementById('hairDateVal');
-        try {
-          if (typeof dateInput.showPicker === 'function') {
-            dateInput.showPicker();
-          } else {
-            // 구형 브라우저를 위한 폴백
-            dateInput.focus();
-            dateInput.click();
-          }
-        } catch (e) {
-          console.error("달력 호출 실패:", e);
-        }
-      }
-
+      // 날짜가 선택(변경)되었을 때 자동으로 저장되도록 함수 수정
       function recordHairCut() {
         const dateVal = document.getElementById('hairDateVal').value;
         if (!dateVal) return;
@@ -282,11 +272,17 @@
         document.getElementById('dashboard').classList.add('hidden');
 
         const noCacheUrl = `${GAS_URL}?action=setHairCut&dateVal=${dateVal}&t=${new Date().getTime()}`;
-        fetch(noCacheUrl).then(() => {
-          document.getElementById('hairDateVal').value = ''; 
-          updateDisplay();
-        });
+
+        fetch(noCacheUrl)
+          .then(response => response.json())
+          .then(res => {
+            updateDisplay();
+          });
       }
+
+      document.getElementById('wash-amount').addEventListener('blur', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
 
       window.onload = updateDisplay;
     </script>
