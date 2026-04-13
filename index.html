@@ -122,7 +122,6 @@
       
       .hidden { display: none !important; }
 
-      /* ✅ 날짜 입력칸을 투명하게 버튼 위에 띄우는 스타일 */
       .hair-input-wrapper {
         position: relative;
         width: 100%;
@@ -131,10 +130,10 @@
         position: absolute;
         top: 0; left: 0;
         width: 100%; height: 100%;
-        opacity: 0; /* 완전히 투명하게 */
-        z-index: 10; /* 버튼보다 위에 배치 */
+        opacity: 0;
+        z-index: 10;
         cursor: pointer;
-        -webkit-appearance: none; /* iOS 기본 스타일 방지 */
+        -webkit-appearance: none;
       }
     </style>
   </head>
@@ -209,9 +208,11 @@
               document.getElementById('robot-status').innerText = `${data.robot} / 2회`;
               document.getElementById('carwash-status').innerText = `${data.carWash.toLocaleString()}원`;
 
-              // ✅ 날짜 표기 로직 (수정됨)
-              if (data.hairDate && data.hairDate !== "-" && data.hairDate !== "") {
-                const lastDate = new Date(data.hairDate);
+              // ✅ 앱스크립트 배포 버전에 상관없이 작동하도록 변수 처리 (hairDate 또는 hairCutDate)
+              const receivedDate = data.hairDate || data.hairCutDate;
+
+              if (receivedDate && receivedDate !== "-" && receivedDate !== "") {
+                const lastDate = new Date(receivedDate);
                 const today = new Date();
                 today.setHours(0,0,0,0);
                 lastDate.setHours(0,0,0,0);
@@ -220,7 +221,12 @@
                 const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
                 
                 document.getElementById('hair-status').innerText = `D+${diffDays}`;
-                document.getElementById('last-hair-date').innerText = `최근: ${data.hairDate}`;
+                
+                // 구글 시트에서 넘어오는 데이터 형식이 깨질 것을 대비해 YYYY-MM-DD로 포맷팅
+                const yyyy = lastDate.getFullYear();
+                const mm = String(lastDate.getMonth() + 1).padStart(2, '0');
+                const dd = String(lastDate.getDate()).padStart(2, '0');
+                document.getElementById('last-hair-date').innerText = `최근: ${yyyy}-${mm}-${dd}`;
               } else {
                 document.getElementById('hair-status').innerText = "-";
                 document.getElementById('last-hair-date').innerText = "최근: -";
@@ -229,6 +235,10 @@
               document.getElementById('loading').classList.add('hidden');
               document.getElementById('dashboard').classList.remove('hidden');
             }
+          })
+          .catch(error => {
+            console.error("데이터 로드 실패:", error);
+            alert("데이터를 불러오는데 실패했습니다. 네트워크를 확인해주세요.");
           });
       }
 
@@ -241,6 +251,10 @@
       function recordCarWash() {
         const amountInput = document.getElementById('wash-amount').value;
         if (!amountInput || parseInt(amountInput) <= 0) return alert("금액을 입력해 주세요.");
+        
+        document.getElementById('loading').classList.remove('hidden');
+        document.getElementById('dashboard').classList.add('hidden');
+
         const noCacheUrl = `${GAS_URL}?action=useCarWash&amount=${amountInput}&t=${new Date().getTime()}`;
         fetch(noCacheUrl).then(() => {
           document.getElementById('wash-amount').value = '';
@@ -257,7 +271,7 @@
 
         const noCacheUrl = `${GAS_URL}?action=setHairCut&dateVal=${dateVal}&t=${new Date().getTime()}`;
         fetch(noCacheUrl).then(() => {
-          document.getElementById('hairDateVal').value = ''; // 초기화
+          document.getElementById('hairDateVal').value = ''; 
           updateDisplay();
         });
       }
