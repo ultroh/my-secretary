@@ -122,18 +122,14 @@
       
       .hidden { display: none !important; }
 
-      .hair-input-wrapper {
-        position: relative;
-        width: 100%;
-      }
-      .hair-input-wrapper input[type="date"] {
+      /* JS 호출을 위해 input은 시각적으로만 완전히 숨김 */
+      .hidden-date {
         position: absolute;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        opacity: 0;
-        z-index: 10;
-        cursor: pointer;
-        -webkit-appearance: none;
+        width: 1px; height: 1px;
+        padding: 0; margin: -1px;
+        overflow: hidden;
+        clip: rect(0,0,0,0);
+        border: 0;
       }
     </style>
   </head>
@@ -168,9 +164,9 @@
           <div class="status-value" id="hair-status">-</div>
           <div class="sub-text" id="last-hair-date" style="margin-bottom: 10px;">최근: -</div>
           
-          <div class="hair-input-wrapper">
-            <input type="date" id="hairDateVal" onchange="recordHairCut()">
-            <button class="btn-hair">머리한 날</button>
+          <div style="position: relative; width: 100%;">
+            <input type="date" id="hairDateVal" class="hidden-date" onchange="recordHairCut()">
+            <button class="btn-hair" onclick="openDatePicker()">머리한 날</button>
           </div>
         </div>
 
@@ -260,6 +256,22 @@
           document.getElementById('wash-amount').value = '';
           updateDisplay();
         });
+      }
+
+      // 달력을 안전하게 띄우는 함수 추가
+      function openDatePicker() {
+        const dateInput = document.getElementById('hairDateVal');
+        try {
+          if (typeof dateInput.showPicker === 'function') {
+            dateInput.showPicker();
+          } else {
+            // 구형 브라우저를 위한 폴백
+            dateInput.focus();
+            dateInput.click();
+          }
+        } catch (e) {
+          console.error("달력 호출 실패:", e);
+        }
       }
 
       function recordHairCut() {
