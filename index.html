@@ -128,23 +128,22 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   padding:8px 10px;
   border-radius:8px;
   margin-bottom:6px;
-  gap: 8px; /* 텍스트와 버튼 사이 간격 */
+  gap: 8px;
 }
 
-/* 🎯 리마인더 텍스트 스타일 수정 */
 .todo-item span { 
   flex:1; 
   text-align:left; 
   color: white; 
-  font-size: 13px; /* 20자 이상 들어가도록 폰트 크기 조정 */
-  white-space: nowrap; /* 줄바꿈 방지 */
-  overflow: hidden; /* 영역 밖 숨김 */
-  text-overflow: ellipsis; /* 넘치는 부분 말줄임표 처리 */
+  font-size: 13px; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
 }
 
 .todo-item button {
   width:auto;
-  min-width: 45px; /* 버튼 크기 고정 */
+  min-width: 45px;
   padding:5px 8px;
   margin-top: 0;
   font-size: 11px;
@@ -158,6 +157,15 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 <h2>✨ 내 비서</h2>
 
 <div id="dashboard">
+
+<div class="card reminder-card">
+  <div class="card-title">📌 리마인더</div>
+  <div class="todo-input-group">
+    <input type="text" id="todo-input" placeholder="할 일 입력">
+    <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
+  </div>
+  <div class="todo-list" id="todo-list"></div>
+</div>
 
 <div class="card">
   <div class="card-title">🚗 이달의 주유</div>
@@ -187,15 +195,6 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   </div>
 </div>
 
-<div class="card reminder-card">
-  <div class="card-title">📌 리마인더</div>
-  <div class="todo-input-group">
-    <input type="text" id="todo-input" placeholder="할 일 입력">
-    <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
-  </div>
-  <div class="todo-list" id="todo-list"></div>
-</div>
-
 </div>
 </div>
 
@@ -217,10 +216,9 @@ function toggleLoading(btn, isLoading, originalText) {
   }
 }
 
-  function getHaircutStatus(dateStr) {
+function getHaircutStatus(dateStr) {
   if (!dateStr) return "기록 없음";
   
-  // 모바일 오류 방지용 날짜 정제 로직
   const cleanDateStr = dateStr.replace(/[.\s]+/g, '-').replace(/-$/, '');
   const targetDate = new Date(cleanDateStr);
   
@@ -233,7 +231,6 @@ function toggleLoading(btn, isLoading, originalText) {
   const diffTime = today - targetDate;
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
   
-  // 🎯 변경된 부분: + 1을 추가하여 0~6일이 1주차부터 시작하도록 설정
   const weeks = Math.floor(diffDays / 7) + 1;
   
   return `D+${diffDays}<br><span class="small-info">(${weeks}주차)</span><span class="small-info" style="color:#666;">${dateStr}</span>`;
