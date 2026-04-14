@@ -39,8 +39,9 @@ h2 { color:white; text-align:center; margin:5px 0 10px; }
 #dashboard {
   flex:1;
   display:grid;
-  grid-template-columns: repeat(2,1fr);
-  grid-template-rows: auto auto 1fr;
+  grid-template-columns: repeat(2, 1fr);
+  /* 🎯 리마인더(auto) 이후 4개 카드가 2줄로 나뉘며 동일한 높이(1fr)를 가지도록 수정 */
+  grid-template-rows: auto 1fr 1fr; 
   gap:12px;
 }
 
