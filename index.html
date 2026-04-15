@@ -40,7 +40,6 @@ h2 { color:white; text-align:center; margin:5px 0 10px; }
   flex:1;
   display:grid;
   grid-template-columns: repeat(2, 1fr);
-  /* 🎯 리마인더(auto) 이후 4개 카드가 2줄로 나뉘며 동일한 높이(1fr)를 가지도록 수정 */
   grid-template-rows: auto 1fr 1fr; 
   gap:12px;
 }
@@ -238,7 +237,8 @@ function getHaircutStatus(dateStr) {
 }
 
 function loadData() {
-  fetch(`${GAS_URL}?action=getData`)
+  // 캐시 방지를 위해 timestamp(_t) 추가
+  fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`)
   .then(res => res.json())
   .then(res => {
     if(res.status === 'success') {
@@ -289,7 +289,8 @@ function recordCarWash(btn){
 }
 
 function loadTodos(){
-  fetch(`${GAS_URL}?action=getTodos`)
+  // 캐시 방지를 위해 timestamp(_t) 추가
+  fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`)
   .then(res => res.json())
   .then(data => {
     const list = document.getElementById('todo-list');
