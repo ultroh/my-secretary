@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>내 비서</title>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <style>
 :root {
@@ -131,7 +132,16 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   gap: 8px;
 }
 
-.todo-item span { 
+/* 🔥 드래그 핸들 및 애니메이션 스타일 추가 */
+.drag-handle {
+  color: #888;
+  cursor: grab;
+  font-size: 16px;
+  padding: 0 5px;
+}
+.todo-item.sortable-ghost { opacity: 0.4; }
+
+.todo-item span.text { 
   flex:1; 
   text-align:left; 
   color: white; 
@@ -216,28 +226,22 @@ function toggleLoading(btn, isLoading, originalText) {
   }
 }
 
+// ... (기존 데이터 로드 및 처리 함수들 동일) ...
 function getHaircutStatus(dateStr) {
   if (!dateStr) return "기록 없음";
-  
   const cleanDateStr = dateStr.replace(/[.\s]+/g, '-').replace(/-$/, '');
   const targetDate = new Date(cleanDateStr);
-  
   if (isNaN(targetDate.getTime())) return "날짜 형식 오류";
-
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   targetDate.setHours(0, 0, 0, 0);
-  
   const diffTime = today - targetDate;
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  
   const weeks = Math.floor(diffDays / 7) + 1;
-  
   return `D+${diffDays}<br><span class="small-info">(${weeks}주차)</span><span class="small-info" style="color:#666;">${dateStr}</span>`;
 }
 
 function loadData() {
-  // 캐시 방지를 위해 timestamp(_t) 추가
   fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`)
   .then(res => res.json())
   .then(res => {
@@ -257,10 +261,7 @@ function recordHairCut(btn){
   toggleLoading(btn, true, '날짜선택');
   fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`)
   .then(res => res.json())
-  .then(() => {
-    toggleLoading(btn, false, '날짜선택');
-    loadData();
-  });
+  .then(() => { toggleLoading(btn, false, '날짜선택'); loadData(); });
 }
 
 function recordAction(action, btn, originalText){
@@ -288,8 +289,8 @@ function recordCarWash(btn){
   });
 }
 
+// 🔥 리마인더 렌더링 및 Sortable 적용
 function loadTodos(){
-  // 캐시 방지를 위해 timestamp(_t) 추가
   fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`)
   .then(res => res.json())
   .then(data => {
@@ -298,10 +299,30 @@ function loadTodos(){
     data.todos.forEach((todo, i) => {
       const div = document.createElement('div');
       div.className = 'todo-item';
-      div.innerHTML = `<span>• ${todo}</span><button onclick="deleteTodo(${i}, this)">삭제</button>`;
+      div.dataset.text = todo; // 순서 저장용 데이터
+      div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${todo}</span><button onclick="deleteTodo(${i}, this)">삭제</button>`;
       list.appendChild(div);
     });
+
+    // Sortable 라이브러리 실행
+    new Sortable(list, {
+      handle: '.drag-handle', // ☰ 아이콘을 잡아야만 드래그 됨 (모바일 스크롤 방해 방지)
+      animation: 150,
+      onEnd: function (evt) {
+        saveOrder(); // 드래그가 끝나면 백엔드로 새로운 순서 전송
+      }
+    });
   });
+}
+
+// 🔥 변경된 순서를 백엔드로 보내는 함수 추가
+function saveOrder() {
+  const listItems = document.querySelectorAll('.todo-item');
+  const newOrder = Array.from(listItems).map(item => item.dataset.text);
+  
+  const encodedData = encodeURIComponent(JSON.stringify(newOrder));
+  fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodedData}`)
+  .then(res => console.log('순서 저장 완료'));
 }
 
 function addTodo(btn){
