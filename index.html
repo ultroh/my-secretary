@@ -106,14 +106,24 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   margin-bottom: 5px;
 }
 
-.todo-input-group input { flex: 1; margin-top: 0; }
+/* 추가 버튼 스타일 (삭제 버튼과 동일하게 설정) */
 .todo-input-group button {
   width: auto;
-  padding: 10px 20px;
+  min-width: 45px;      /* 삭제 버튼과 동일 */
+  padding: 5px 10px;    /* 삭제 버튼(5px 8px)과 유사하게 맞춤 */
   margin-top: 0;
+  font-size: 11px;      /* 글자 크기 통일 */
   background-color: var(--primary);
+  border-radius: 8px;   /* 아이템 버튼과 곡률 통일 */
 }
 
+/* 입력창 높이 밸런스 조정 */
+.todo-input-group input { 
+  flex: 1; 
+  margin-top: 0; 
+  padding: 6px 10px;    /* 버튼 크기에 맞춰 패딩 축소 */
+  font-size: 13px;
+}
 .todo-list {
   margin-top:10px;
   max-height: 135px;
@@ -171,15 +181,15 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 <div class="card reminder-card">
   <div class="card-title font-bold mb-4">📌 리마인더</div>
   
-  <div class="todo-input-group flex justify-center gap-2">
-    <input type="text" id="todo-input" placeholder="할 일 입력" 
-           class="text-center border-2 border-slate-200 p-2 rounded-xl focus:border-blue-400 outline-none transition-all w-2/3 max-w-xs">
-    
-    <button id="btn-add-todo" onclick="addTodo(this)" 
-            class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 active:scale-95 transition-all font-bold">
-      추가
-    </button>
-  </div>
+<div class="todo-input-group flex justify-center gap-2">
+  <input type="text" id="todo-input" placeholder="할 일 입력" 
+         class="text-center border-2 border-slate-200 rounded-xl focus:border-blue-400 outline-none transition-all w-2/3 max-w-xs">
+  
+  <button id="btn-add-todo" onclick="addTodo(this)" 
+          class="bg-blue-500 text-white hover:bg-blue-600 active:scale-95 transition-all font-bold">
+    추가
+  </button>
+</div>
   
   <div class="todo-list mt-6" id="todo-list"></div>
 </div>
