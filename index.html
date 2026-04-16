@@ -169,12 +169,19 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 <div id="dashboard">
 
 <div class="card reminder-card">
-  <div class="card-title">📌 리마인더</div>
-  <div class="todo-input-group flex justify-center">
-    <input type="text" id="todo-input" placeholder="할 일 입력" class="text-center border p-2 rounded-lg">
-    <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
+  <div class="card-title font-bold mb-4">📌 리마인더</div>
+  
+  <div class="todo-input-group flex justify-center gap-2">
+    <input type="text" id="todo-input" placeholder="할 일 입력" 
+           class="text-center border-2 border-slate-200 p-2 rounded-xl focus:border-blue-400 outline-none transition-all w-2/3 max-w-xs">
+    
+    <button id="btn-add-todo" onclick="addTodo(this)" 
+            class="bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 active:scale-95 transition-all font-bold">
+      추가
+    </button>
   </div>
-  <div class="todo-list" id="todo-list"></div>
+  
+  <div class="todo-list mt-6" id="todo-list"></div>
 </div>
 
 <div class="card">
