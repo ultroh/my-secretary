@@ -16,7 +16,6 @@
   --hair-color: #af52de;
   --text-main: #ffffff;
   --text-muted: #aaaaaa;
-  /* 자동차 브랜드 색상 추가 */
   --hyundai-blue: #002c5f;
   --mini-red: #e20112;
 }
@@ -27,70 +26,65 @@ body, html {
   width:100%; height:100%;
   background-color: var(--bg-color);
   font-family: 'Pretendard', sans-serif;
+  overflow: hidden; /* 스크롤 방지 */
 }
 
 .app-container {
   max-width:480px;
   margin:auto;
-  height:100dvh;
-  padding:10px 16px;
+  height: 100dvh;
+  padding: 8px 12px; /* 패딩 축소 */
   display:flex;
   flex-direction:column;
 }
 
-h2 { color:white; text-align:center; margin:5px 0 10px; }
+h2 { color:white; text-align:center; margin: 0 0 8px; font-size: 1.2rem; }
 
 #dashboard {
   flex:1;
   display:grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: auto auto 1fr 1fr; /* 줄 수 조정 */
-  gap:12px;
+  grid-template-rows: auto auto 1fr 1fr;
+  gap: 8px; /* 간격 축소 */
 }
 
 .card {
   background: var(--card-bg);
-  border-radius:16px;
-  padding:15px;
+  border-radius:14px;
+  padding: 10px; /* 패딩 축소 */
   display:flex;
   flex-direction:column;
-  justify-content:space-between;
+  justify-content: center;
   align-items:center;
   text-align: center;
 }
 
-.card-title { font-size:14px; color: var(--text-muted); }
+.card-title { font-size:13px; color: var(--text-muted); margin-bottom: 4px; }
 
 .status-value {
-  font-size:22px;
+  font-size:18px; /* 폰트 크기 소폭 축소 */
   font-weight:900;
   color:white;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 .small-info {
-  font-size: 13px;
-  font-weight: normal;
+  font-size: 11px;
   color: #888;
   display: block;
-  margin-top: 2px;
 }
 
 input, button {
   width:100%;
   border:none;
-  border-radius:10px;
-  padding:10px;
-  margin-top:5px;
+  border-radius:8px;
+  padding: 8px;
+  margin-top: 4px;
   transition: all 0.2s;
+  font-size: 13px;
 }
 
-input { 
-  background: #2a2a2a; 
-  color: white; 
-  text-align: center;
-}
-
+input { background: #2a2a2a; color: white; text-align: center; }
 button { font-weight:800; color:white; cursor:pointer; }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
 
@@ -101,70 +95,50 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .reminder-card {
   grid-column: span 2;
-  align-items: stretch;
   justify-content: flex-start;
+  padding-bottom: 8px;
 }
 
-/* --- 2부제 카드 전용 스타일 --- */
 .car-rotation-card {
   grid-column: span 2;
-  padding: 12px 15px;
+  padding: 8px 12px;
 }
 
 .car-btn-container {
   display: flex;
   width: 100%;
-  gap: 10px;
-  margin-top: 8px;
+  gap: 8px;
+  margin-top: 4px;
 }
 
 .car-mark {
   flex: 1;
-  padding: 12px;
-  border-radius: 12px;
+  padding: 8px;
+  border-radius: 10px;
   font-weight: 900;
-  font-size: 15px;
+  font-size: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s;
 }
 
-.hyundai-on { background-color: var(--hyundai-blue); color: white; border: 1px solid #1a4a8a; }
-.mini-on { background-color: var(--mini-red); color: white; border: 1px solid #ff4d4d; }
-.car-off { background-color: #2a2a2a; color: #555; opacity: 0.6; filter: grayscale(100%); }
-
-/* --------------------------- */
+.hyundai-on { background-color: var(--hyundai-blue); color: white; }
+.mini-on { background-color: var(--mini-red); color: white; }
+.car-off { background-color: #2a2a2a; color: #555; opacity: 0.5; }
 
 .todo-input-group {
   display: flex;
   width: 100%;
-  gap: 8px;
-  margin-top: 10px;
-  margin-bottom: 5px;
+  gap: 6px;
+  margin-top: 4px;
 }
 
-.todo-input-group button {
-  width: auto;
-  min-width: 55px;
-  padding: 8px 12px;
-  margin-top: 0;
-  font-size: 13px;
-  background-color: var(--primary);
-  border-radius: 8px;
-}
-
-.todo-input-group input { 
-  flex: 1; 
-  margin-top: 0; 
-  text-align: center; 
-  padding: 8px 10px; 
-  font-size: 13px;
-}
+.todo-input-group input { flex: 1; margin-top: 0; padding: 6px; }
+.todo-input-group button { width: auto; min-width: 50px; margin-top: 0; padding: 6px 10px; background-color: var(--primary); }
   
 .todo-list {
-  margin-top: 4px;
-  max-height: 135px;
+  margin-top: 6px;
+  max-height: 100px; /* 리스트 높이 조절 */
   overflow-y: auto;
   width: 100%;
 }
@@ -174,25 +148,19 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   justify-content:space-between;
   align-items:center;
   background:#2a2a2a;
-  padding:8px 10px;
-  border-radius:8px;
-  margin-bottom:6px;
-  gap: 8px;
+  padding: 6px 8px;
+  border-radius:6px;
+  margin-bottom:4px;
+  gap: 6px;
 }
 
-.drag-handle {
-  color: #888;
-  cursor: grab;
-  font-size: 16px;
-  padding: 0 5px;
-}
-.todo-item.sortable-ghost { opacity: 0.4; }
+.drag-handle { color: #666; cursor: grab; font-size: 14px; }
 
 .todo-item span.text { 
   flex:1; 
   text-align:left; 
   color: white; 
-  font-size: 13px; 
+  font-size: 12px; 
   white-space: nowrap; 
   overflow: hidden; 
   text-overflow: ellipsis; 
@@ -200,10 +168,10 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .todo-item button {
   width:auto;
-  min-width: 45px;
-  padding:5px 8px;
+  min-width: 35px;
+  padding: 3px 6px;
   margin-top: 0;
-  font-size: 11px;
+  font-size: 10px;
   background:#ff5252;
 }
 </style>
@@ -216,23 +184,16 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 <div id="dashboard">
 
 <div class="card reminder-card">
-  <div class="card-title font-bold mb-4">📌 리마인더</div>
-  
-  <div class="todo-input-group flex justify-center gap-2">
-    <input type="text" id="todo-input" placeholder="지금 떠오른 생각을 입력하세요" 
-           class="text-center border-2 border-slate-200 rounded-xl focus:border-blue-400 outline-none transition-all w-2/3 max-w-xs">
-    
-    <button id="btn-add-todo" onclick="addTodo(this)" 
-            class="bg-blue-500 text-white hover:bg-blue-600 active:scale-95 transition-all font-bold">
-      추가
-    </button>
+  <div class="card-title" style="margin-bottom:0;">📌 리마인더</div>
+  <div class="todo-input-group">
+    <input type="text" id="todo-input" placeholder="메모 입력">
+    <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
   </div>
-  
   <div class="todo-list" id="todo-list"></div>
 </div>
 
 <div class="card car-rotation-card">
-  <div class="card-title">2부제: 오늘 운행 가능 차량</div>
+  <div class="card-title">🗓️ 2부제: 오늘 운행 차량</div>
   <div class="car-btn-container">
     <div id="mark-hyundai" class="car-mark">HYUNDAI</div>
     <div id="mark-mini" class="car-mark">MINI</div>
@@ -254,14 +215,14 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 <div class="card">
   <div class="card-title">🫧 세차 잔액</div>
   <div class="status-value" id="carwash-status">-원</div>
-  <input type="number" id="wash-amount" placeholder="금액 입력">
+  <input type="number" id="wash-amount" placeholder="금액">
   <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
 </div>
 
 <div class="card">
   <div class="card-title">✂️ 머리한 날</div>
   <div class="status-value" id="hair-status">-</div>
-  <div style="position: relative; width: 100%; margin-top: 5px;">
+  <div style="position: relative; width: 100%; margin-top: 4px;">
     <button class="btn-hair" id="btn-hair" style="width: 100%; pointer-events: none;">날짜선택</button>
     <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="recordHairCut(document.getElementById('btn-hair'))">
   </div>
@@ -276,48 +237,32 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgRQ_fvLToFTWS2IWrJJSf
 function loadAll() {
   loadData();
   loadTodos();
-  updateCarRotation(); // 2부제 상태 업데이트 추가
+  updateCarRotation();
 }
 
-// 2부제 로직 업데이트 함수
 function updateCarRotation() {
   const today = new Date().getDate();
   const hyundai = document.getElementById('mark-hyundai');
   const mini = document.getElementById('mark-mini');
-
   if (today % 2 === 0) {
-    // 짝수 날: 현대 활성화, 미니 회색
-    hyundai.classList.add('hyundai-on');
-    mini.classList.add('car-off');
+    hyundai.classList.add('hyundai-on'); mini.classList.add('car-off');
   } else {
-    // 홀수 날: 미니 활성화, 현대 회색
-    mini.classList.add('mini-on');
-    hyundai.classList.add('car-off');
+    mini.classList.add('mini-on'); hyundai.classList.add('car-off');
   }
 }
 
 function toggleLoading(btn, isLoading, originalText) {
-  if (isLoading) {
-    btn.disabled = true;
-    btn.innerText = '...';
-  } else {
-    btn.disabled = false;
-    btn.innerText = originalText;
-  }
+  btn.disabled = isLoading;
+  btn.innerText = isLoading ? '...' : originalText;
 }
 
 function getHaircutStatus(dateStr) {
   if (!dateStr) return "기록 없음";
   const cleanDateStr = dateStr.replace(/[.\s]+/g, '-').replace(/-$/, '');
   const targetDate = new Date(cleanDateStr);
-  if (isNaN(targetDate.getTime())) return "날짜 형식 오류";
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  targetDate.setHours(0, 0, 0, 0);
-  const diffTime = today - targetDate;
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  const weeks = Math.floor(diffDays / 7) + 1;
-  return `D+${diffDays}<br><span class="small-info">(${weeks}주차)</span><span class="small-info" style="color:#666;">${dateStr}</span>`;
+  const today = new Date(); today.setHours(0,0,0,0); targetDate.setHours(0,0,0,0);
+  const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
+  return `D+${diffDays}<br><span class="small-info">(${Math.floor(diffDays/7)+1}주차)</span>`;
 }
 
 function loadData() {
@@ -339,15 +284,12 @@ function recordHairCut(btn){
   if(!v) return;
   toggleLoading(btn, true, '날짜선택');
   fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`)
-  .then(res => res.json())
   .then(() => { toggleLoading(btn, false, '날짜선택'); loadData(); });
 }
 
 function recordAction(action, btn, originalText){
   toggleLoading(btn, true, originalText);
-  fetch(`${GAS_URL}?action=${action}`)
-  .then(res => res.json())
-  .then(data => {
+  fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
     toggleLoading(btn, false, originalText);
     if(data.message) alert(data.message);
     loadData();
@@ -358,46 +300,45 @@ function recordCarWash(btn){
   const v = document.getElementById('wash-amount').value;
   if (!v) return;
   toggleLoading(btn, true, '차감');
-  fetch(`${GAS_URL}?action=useCarWash&amount=${v}`)
-  .then(res => res.json())
-  .then(data => {
+  fetch(`${GAS_URL}?action=useCarWash&amount=${v}`).then(() => {
     toggleLoading(btn, false, '차감');
-    alert(data.message);
     document.getElementById('wash-amount').value = '';
     loadData();
   });
 }
 
+// 리마인더 로드 (최신순 정렬)
 function loadTodos(){
   fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`)
   .then(res => res.json())
   .then(data => {
     const list = document.getElementById('todo-list');
     list.innerHTML = '';
-    data.todos.forEach((todo, i) => {
+    
+    // 원본 데이터의 인덱스를 유지하며 역순으로 렌더링
+    const reversedTodos = [...data.todos].map((text, i) => ({ text, originalIndex: i })).reverse();
+    
+    reversedTodos.forEach((todo) => {
       const div = document.createElement('div');
       div.className = 'todo-item';
-      div.dataset.text = todo;
-      div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${todo}</span><button onclick="deleteTodo(${i}, this)">삭제</button>`;
+      div.dataset.text = todo.text;
+      div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${todo.text}</span><button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
       list.appendChild(div);
     });
 
     new Sortable(list, {
       handle: '.drag-handle',
       animation: 150,
-      onEnd: function (evt) {
-        saveOrder();
-      }
+      onEnd: saveOrder
     });
   });
 }
 
 function saveOrder() {
   const listItems = document.querySelectorAll('.todo-item');
-  const newOrder = Array.from(listItems).map(item => item.dataset.text);
+  const newOrder = Array.from(listItems).map(item => item.dataset.text).reverse(); // 서버 저장 시 다시 역순으로(원래 순서로) 저장
   const encodedData = encodeURIComponent(JSON.stringify(newOrder));
-  fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodedData}`)
-  .then(res => console.log('순서 저장 완료'));
+  fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodedData}`);
 }
 
 function addTodo(btn){
@@ -415,8 +356,7 @@ function addTodo(btn){
 function deleteTodo(index, btn){
   btn.disabled = true;
   btn.innerText = '...';
-  fetch(`${GAS_URL}?action=deleteTodo&index=${index}`)
-  .then(() => loadTodos());
+  fetch(`${GAS_URL}?action=deleteTodo&index=${index}`).then(() => loadTodos());
 }
 
 window.onload = loadAll;
