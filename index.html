@@ -23,19 +23,19 @@
 * { box-sizing: border-box; margin:0; padding:0; }
 
 body, html {
-  width:100%; height:100%;
+  width:100%;
   background-color: var(--bg-color);
   font-family: 'Pretendard', sans-serif;
-  overflow: hidden; 
-  /* 모바일 기본 새로고침 방지 (커스텀 구현을 위함) */
+  /* 브라우저 기본 새로고침 방지 및 커스텀 스크롤 허용 */
   overscroll-behavior-y: contain;
+  overflow-x: hidden;
 }
 
 .app-container {
   max-width:480px;
   margin:auto;
-  height: 100dvh;
-  padding: 8px 12px;
+  min-height: 100dvh; /* 최소 높이 설정 */
+  padding: 8px 12px 40px; /* 하단 여백 대폭 추가 */
   display:flex;
   flex-direction:column;
   position: relative;
@@ -54,24 +54,22 @@ body, html {
   color: var(--primary);
   font-size: 13px;
   font-weight: bold;
-  transition: height 0.1s ease;
   z-index: 100;
 }
 
-h2 { color:white; text-align:center; margin: 0 0 8px; font-size: 1.2rem; }
+h2 { color:white; text-align:center; margin: 8px 0 12px; font-size: 1.2rem; }
 
 #dashboard {
-  flex:1;
   display:grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: auto auto 1fr 1fr;
-  gap: 8px;
+  grid-auto-rows: auto;
+  gap: 10px;
 }
 
 .card {
   background: var(--card-bg);
   border-radius:14px;
-  padding: 10px;
+  padding: 12px;
   display:flex;
   flex-direction:column;
   justify-content: center;
@@ -79,7 +77,7 @@ h2 { color:white; text-align:center; margin: 0 0 8px; font-size: 1.2rem; }
   text-align: center;
 }
 
-.card-title { font-size:13px; color: var(--text-muted); margin-bottom: 4px; }
+.card-title { font-size:13px; color: var(--text-muted); margin-bottom: 6px; }
 
 .status-value {
   font-size:18px;
@@ -94,8 +92,8 @@ input, button {
   width:100%;
   border:none;
   border-radius:8px;
-  padding: 8px;
-  margin-top: 4px;
+  padding: 10px;
+  margin-top: 6px;
   transition: all 0.2s;
   font-size: 13px;
 }
@@ -112,24 +110,24 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .reminder-card {
   grid-column: span 2;
   justify-content: flex-start;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
 }
 
 .car-rotation-card {
   grid-column: span 2;
-  padding: 8px 12px;
+  padding: 10px 14px;
 }
 
 .car-btn-container {
   display: flex;
   width: 100%;
   gap: 8px;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .car-mark {
   flex: 1;
-  padding: 8px;
+  padding: 10px;
   border-radius: 10px;
   font-weight: 900;
   font-size: 13px;
@@ -138,23 +136,23 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   justify-content: center;
 }
 
-.hyundai-on { background-color: var(--hyundai-blue); color: white; }
-.mini-on { background-color: var(--mini-red); color: white; }
+.hyundai-on { background-color: var(--hyundai-blue); color: white; border: 1px solid #1a4a8a; }
+.mini-on { background-color: var(--mini-red); color: white; border: 1px solid #ff4d4d; }
 .car-off { background-color: #2a2a2a; color: #555; opacity: 0.5; }
 
 .todo-input-group {
   display: flex;
   width: 100%;
   gap: 6px;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
-.todo-input-group input { flex: 1; margin-top: 0; padding: 6px; }
-.todo-input-group button { width: auto; min-width: 50px; margin-top: 0; padding: 6px 10px; background-color: var(--primary); }
+.todo-input-group input { flex: 1; margin-top: 0; padding: 8px; }
+.todo-input-group button { width: auto; min-width: 55px; margin-top: 0; padding: 8px 12px; background-color: var(--primary); }
   
 .todo-list {
-  margin-top: 6px;
-  max-height: 100px;
+  margin-top: 8px;
+  max-height: 140px; /* 리스트 영역을 조금 더 확보 */
   overflow-y: auto;
   width: 100%;
 }
@@ -164,10 +162,10 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   justify-content:space-between;
   align-items:center;
   background:#2a2a2a;
-  padding: 6px 8px;
-  border-radius:6px;
-  margin-bottom:4px;
-  gap: 6px;
+  padding: 8px 10px;
+  border-radius:8px;
+  margin-bottom:6px;
+  gap: 8px;
 }
 
 .drag-handle { color: #666; cursor: grab; font-size: 14px; }
@@ -184,8 +182,8 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .todo-item button {
   width:auto;
-  min-width: 35px;
-  padding: 3px 6px;
+  min-width: 40px;
+  padding: 4px 8px;
   margin-top: 0;
   font-size: 10px;
   background:#ff5252;
@@ -239,7 +237,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     <div class="card">
       <div class="card-title">✂️ 머리한 날</div>
       <div class="status-value" id="hair-status">-</div>
-      <div style="position: relative; width: 100%; margin-top: 4px;">
+      <div style="position: relative; width: 100%; margin-top: 6px;">
         <button class="btn-hair" id="btn-hair" style="width: 100%; pointer-events: none;">날짜선택</button>
         <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="recordHairCut(document.getElementById('btn-hair'))">
       </div>
@@ -250,34 +248,34 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgRQ_fvLToFTWS2IWrJJSf29uBqUzYBbBWpcFyTt8gsk5dDwLMGcHtgx1DZHNifKBfEA/exec'; 
 
-// --- Pull to Refresh 로직 ---
+// --- Pull to Refresh 로직 (스크롤 대응) ---
 let startY = 0;
 let pullDist = 0;
 const threshold = 70;
 const pullIndicator = document.getElementById('pull-indicator');
 const container = document.getElementById('main-container');
 
-container.addEventListener('touchstart', (e) => {
-  // 스크롤이 최상단일 때만 작동
-  if (container.scrollTop === 0) startY = e.touches[0].pageY;
+window.addEventListener('touchstart', (e) => {
+  // 윈도우 스크롤이 최상단일 때만 시작 좌표 기록
+  if (window.scrollY === 0) startY = e.touches[0].pageY;
 }, { passive: true });
 
-container.addEventListener('touchmove', (e) => {
+window.addEventListener('touchmove', (e) => {
   const currentY = e.touches[0].pageY;
   pullDist = currentY - startY;
 
-  if (pullDist > 0 && container.scrollTop === 0) {
-    // 당기는 깊이 제한 및 인디케이터 높이 조절
-    const displayHeight = Math.min(pullDist * 0.5, threshold + 20);
+  // 아래로 당기는 중이고 스크롤이 최상단인 경우
+  if (pullDist > 0 && window.scrollY === 0) {
+    const displayHeight = Math.min(pullDist * 0.4, threshold + 20);
     pullIndicator.style.height = displayHeight + 'px';
     pullIndicator.innerText = displayHeight > threshold ? '놓아서 새로고침' : '아래로 당겨서 새로고침';
   }
 }, { passive: true });
 
-container.addEventListener('touchend', () => {
-  if (pullDist * 0.5 > threshold) {
-    loadAll(); // 데이터 로드 실행
+window.addEventListener('touchend', () => {
+  if (window.scrollY === 0 && pullDist * 0.4 > threshold) {
     pullIndicator.innerText = '업데이트 중...';
+    loadAll();
     setTimeout(() => { pullIndicator.style.height = '0px'; }, 800);
   } else {
     pullIndicator.style.height = '0px';
@@ -296,8 +294,8 @@ function updateCarRotation() {
   const today = new Date().getDate();
   const hyundai = document.getElementById('mark-hyundai');
   const mini = document.getElementById('mark-mini');
-  hyundai.classList.remove('hyundai-on', 'car-off');
-  mini.classList.remove('mini-on', 'car-off');
+  hyundai.className = 'car-mark'; // 클래스 초기화
+  mini.className = 'car-mark';
   
   if (today % 2 === 0) {
     hyundai.classList.add('hyundai-on'); mini.classList.add('car-off');
