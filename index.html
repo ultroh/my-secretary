@@ -118,7 +118,9 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .reminder-card {
   grid-column: span 2;
   justify-content: flex-start;
-  min-height: 160px;
+  padding-top: 4px;    /* 제목 위쪽 여백을 바짝 줄임 */
+  padding-bottom: 4px; /* 제목 아래쪽 여백을 바짝 줄임 */
+  min-height: auto;    /* 고정된 최소 높이를 없애야 여백을 줄인 효과가 나타납니다 */
 }
 
 .car-rotation-card {
