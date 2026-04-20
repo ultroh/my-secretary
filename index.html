@@ -70,7 +70,7 @@ h2 { color:white; text-align:center; margin: 8px 0 12px; font-size: 1.2rem; }
   padding: 12px;
   display:flex;
   flex-direction:column;
-  justify-content: space-between; /* 상하 끝 정렬 */
+  justify-content: space-between;
   align-items:center;
   text-align: center;
 }
@@ -87,7 +87,7 @@ h2 { color:white; text-align:center; margin: 8px 0 12px; font-size: 1.2rem; }
   font-weight:900;
   color:white;
   line-height: 1.2;
-  flex: 1; /* 중앙 영역 차지 */
+  flex: 1; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -106,14 +106,6 @@ input, button {
 }
 
 input { background: #2a2a2a; color: white; text-align: center; }
-
-/* 세차 잔액 입력창 특화 수정 */
-#wash-amount {
-  padding: 6px; /* 높이 축소 */
-  margin-top: 4px;
-  margin-bottom: 2px;
-  font-size: 12px;
-}
 
 button { font-weight:800; color:white; cursor:pointer; }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -224,7 +216,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     </div>
 
     <div class="card car-rotation-card">
-      <div class="card-title">🚙 2부제: 오늘 운행 차량</div>
+      <div class="card-title">🚦 2부제: 오늘 운행 차량</div>
       <div class="car-btn-container">
         <div id="mark-hyundai" class="car-mark">HYUNDAI</div>
         <div id="mark-mini" class="car-mark">MINI</div>
@@ -245,8 +237,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
     <div class="card stat-card">
       <div class="card-title">🫧 세차 잔액</div>
-      <div class="status-value" id="carwash-status" style="flex:none; margin: 5px 0;">-원</div>
-      <input type="number" id="wash-amount" placeholder="금액">
+      <div class="status-value" id="carwash-status">-원</div>
       <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
     </div>
 
@@ -264,9 +255,8 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgRQ_fvLToFTWS2IWrJJSf29uBqUzYBbBWpcFyTt8gsk5dDwLMGcHtgx1DZHNifKBfEA/exec'; 
 
-// --- Pull to Refresh 로직 ---
-let startY = 0;
-let pullDist = 0;
+// --- Pull to Refresh ---
+let startY = 0, pullDist = 0;
 const threshold = 70;
 const pullIndicator = document.getElementById('pull-indicator');
 const container = document.getElementById('main-container');
@@ -360,13 +350,23 @@ function recordAction(action, btn, originalText){
   });
 }
 
+// 수정된 세차 차감 로직: Prompt 사용
 function recordCarWash(btn){
-  const v = document.getElementById('wash-amount').value;
-  if (!v) return;
+  const amount = prompt("차감할 금액을 입력하세요 (숫자만):");
+  if (amount === null || amount.trim() === "") return;
+  
+  const v = parseInt(amount.replace(/[^0-9]/g, ''));
+  if (isNaN(v) || v <= 0) {
+    alert("올바른 금액을 입력해주세요.");
+    return;
+  }
+
   toggleLoading(btn, true, '차감');
-  fetch(`${GAS_URL}?action=useCarWash&amount=${v}`).then(() => {
+  fetch(`${GAS_URL}?action=useCarWash&amount=${v}`)
+  .then(res => res.json())
+  .then(data => {
     toggleLoading(btn, false, '차감');
-    document.getElementById('wash-amount').value = '';
+    if (data.message) alert(data.message);
     loadData();
   });
 }
