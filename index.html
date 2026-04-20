@@ -16,6 +16,9 @@
   --hair-color: #af52de;
   --text-main: #ffffff;
   --text-muted: #aaaaaa;
+  /* 자동차 브랜드 색상 추가 */
+  --hyundai-blue: #002c5f;
+  --mini-red: #e20112;
 }
 
 * { box-sizing: border-box; margin:0; padding:0; }
@@ -41,7 +44,7 @@ h2 { color:white; text-align:center; margin:5px 0 10px; }
   flex:1;
   display:grid;
   grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: auto 1fr 1fr; 
+  grid-template-rows: auto auto 1fr 1fr; /* 줄 수 조정 */
   gap:12px;
 }
 
@@ -85,7 +88,7 @@ input, button {
 input { 
   background: #2a2a2a; 
   color: white; 
-  text-align: center; /* 👈 모든 입력창(세차, 리마인더 등)의 글자를 가운데로! */
+  text-align: center;
 }
 
 button { font-weight:800; color:white; cursor:pointer; }
@@ -102,6 +105,37 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   justify-content: flex-start;
 }
 
+/* --- 2부제 카드 전용 스타일 --- */
+.car-rotation-card {
+  grid-column: span 2;
+  padding: 12px 15px;
+}
+
+.car-btn-container {
+  display: flex;
+  width: 100%;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.car-mark {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 900;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s;
+}
+
+.hyundai-on { background-color: var(--hyundai-blue); color: white; border: 1px solid #1a4a8a; }
+.mini-on { background-color: var(--mini-red); color: white; border: 1px solid #ff4d4d; }
+.car-off { background-color: #2a2a2a; color: #555; opacity: 0.6; filter: grayscale(100%); }
+
+/* --------------------------- */
+
 .todo-input-group {
   display: flex;
   width: 100%;
@@ -110,29 +144,26 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   margin-bottom: 5px;
 }
 
-/* 추가 버튼 스타일: 리스트 아이템과 높이를 맞춤 */
 .todo-input-group button {
   width: auto;
-  min-width: 55px;      /* '추가' 글자가 여유 있게 들어가도록 소폭 조정 */
-  padding: 8px 12px;    /* 리스트 아이템(8px)과 동일한 높이감 */
+  min-width: 55px;
+  padding: 8px 12px;
   margin-top: 0;
-  font-size: 13px;      /* 리스트 텍스트와 동일한 크기 */
+  font-size: 13px;
   background-color: var(--primary);
-  border-radius: 8px;   /* 아이템과 곡률 통일 */
+  border-radius: 8px;
 }
 
-/* 입력창 스타일: 가운데 정렬 유지 및 높이 키움 */
 .todo-input-group input { 
   flex: 1; 
   margin-top: 0; 
   text-align: center; 
-  padding: 8px 10px;    /* 리스트 아이템과 동일한 패딩 */
-  font-size: 13px;      /* 리스트 텍스트와 동일한 크기 */
+  padding: 8px 10px; 
+  font-size: 13px;
 }
   
-/* 목록과 입력창 사이 간격 좁히기 */
 .todo-list {
-  margin-top: 4px;      /* 기존 10px에서 4px로 줄임 */
+  margin-top: 4px;
   max-height: 135px;
   overflow-y: auto;
   width: 100%;
@@ -149,7 +180,6 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   gap: 8px;
 }
 
-/* 🔥 드래그 핸들 및 애니메이션 스타일 추가 */
 .drag-handle {
   color: #888;
   cursor: grab;
@@ -201,6 +231,14 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   <div class="todo-list" id="todo-list"></div>
 </div>
 
+<div class="card car-rotation-card">
+  <div class="card-title">2부제: 오늘 운행 가능 차량</div>
+  <div class="car-btn-container">
+    <div id="mark-hyundai" class="car-mark">HYUNDAI</div>
+    <div id="mark-mini" class="car-mark">MINI</div>
+  </div>
+</div>
+
 <div class="card">
   <div class="card-title">🚗 이달의 주유</div>
   <div class="status-value" id="fuel-status">- / 3회</div>
@@ -238,6 +276,24 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgRQ_fvLToFTWS2IWrJJSf
 function loadAll() {
   loadData();
   loadTodos();
+  updateCarRotation(); // 2부제 상태 업데이트 추가
+}
+
+// 2부제 로직 업데이트 함수
+function updateCarRotation() {
+  const today = new Date().getDate();
+  const hyundai = document.getElementById('mark-hyundai');
+  const mini = document.getElementById('mark-mini');
+
+  if (today % 2 === 0) {
+    // 짝수 날: 현대 활성화, 미니 회색
+    hyundai.classList.add('hyundai-on');
+    mini.classList.add('car-off');
+  } else {
+    // 홀수 날: 미니 활성화, 현대 회색
+    mini.classList.add('mini-on');
+    hyundai.classList.add('car-off');
+  }
 }
 
 function toggleLoading(btn, isLoading, originalText) {
@@ -250,7 +306,6 @@ function toggleLoading(btn, isLoading, originalText) {
   }
 }
 
-// ... (기존 데이터 로드 및 처리 함수들 동일) ...
 function getHaircutStatus(dateStr) {
   if (!dateStr) return "기록 없음";
   const cleanDateStr = dateStr.replace(/[.\s]+/g, '-').replace(/-$/, '');
@@ -313,7 +368,6 @@ function recordCarWash(btn){
   });
 }
 
-// 🔥 리마인더 렌더링 및 Sortable 적용
 function loadTodos(){
   fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`)
   .then(res => res.json())
@@ -323,27 +377,24 @@ function loadTodos(){
     data.todos.forEach((todo, i) => {
       const div = document.createElement('div');
       div.className = 'todo-item';
-      div.dataset.text = todo; // 순서 저장용 데이터
+      div.dataset.text = todo;
       div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${todo}</span><button onclick="deleteTodo(${i}, this)">삭제</button>`;
       list.appendChild(div);
     });
 
-    // Sortable 라이브러리 실행
     new Sortable(list, {
-      handle: '.drag-handle', // ☰ 아이콘을 잡아야만 드래그 됨 (모바일 스크롤 방해 방지)
+      handle: '.drag-handle',
       animation: 150,
       onEnd: function (evt) {
-        saveOrder(); // 드래그가 끝나면 백엔드로 새로운 순서 전송
+        saveOrder();
       }
     });
   });
 }
 
-// 🔥 변경된 순서를 백엔드로 보내는 함수 추가
 function saveOrder() {
   const listItems = document.querySelectorAll('.todo-item');
   const newOrder = Array.from(listItems).map(item => item.dataset.text);
-  
   const encodedData = encodeURIComponent(JSON.stringify(newOrder));
   fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodedData}`)
   .then(res => console.log('순서 저장 완료'));
