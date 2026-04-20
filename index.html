@@ -26,16 +26,36 @@ body, html {
   width:100%; height:100%;
   background-color: var(--bg-color);
   font-family: 'Pretendard', sans-serif;
-  overflow: hidden; /* 스크롤 방지 */
+  overflow: hidden; 
+  /* 모바일 기본 새로고침 방지 (커스텀 구현을 위함) */
+  overscroll-behavior-y: contain;
 }
 
 .app-container {
   max-width:480px;
   margin:auto;
   height: 100dvh;
-  padding: 8px 12px; /* 패딩 축소 */
+  padding: 8px 12px;
   display:flex;
   flex-direction:column;
+  position: relative;
+}
+
+/* 당겨서 새로고침 인디케이터 */
+#pull-indicator {
+  position: absolute;
+  top: 0; left: 0; width: 100%;
+  height: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-color);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: bold;
+  transition: height 0.1s ease;
+  z-index: 100;
 }
 
 h2 { color:white; text-align:center; margin: 0 0 8px; font-size: 1.2rem; }
@@ -45,13 +65,13 @@ h2 { color:white; text-align:center; margin: 0 0 8px; font-size: 1.2rem; }
   display:grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: auto auto 1fr 1fr;
-  gap: 8px; /* 간격 축소 */
+  gap: 8px;
 }
 
 .card {
   background: var(--card-bg);
   border-radius:14px;
-  padding: 10px; /* 패딩 축소 */
+  padding: 10px;
   display:flex;
   flex-direction:column;
   justify-content: center;
@@ -62,17 +82,13 @@ h2 { color:white; text-align:center; margin: 0 0 8px; font-size: 1.2rem; }
 .card-title { font-size:13px; color: var(--text-muted); margin-bottom: 4px; }
 
 .status-value {
-  font-size:18px; /* 폰트 크기 소폭 축소 */
+  font-size:18px;
   font-weight:900;
   color:white;
   line-height: 1.1;
 }
 
-.small-info {
-  font-size: 11px;
-  color: #888;
-  display: block;
-}
+.small-info { font-size: 11px; color: #888; display: block; }
 
 input, button {
   width:100%;
@@ -138,7 +154,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   
 .todo-list {
   margin-top: 6px;
-  max-height: 100px; /* 리스트 높이 조절 */
+  max-height: 100px;
   overflow-y: auto;
   width: 100%;
 }
@@ -178,61 +194,97 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 </head>
 
 <body>
-<div class="app-container">
-<h2>✨ My Log 🌸</h2>
+<div class="app-container" id="main-container">
+  <div id="pull-indicator">아래로 당겨서 새로고침</div>
+  
+  <h2>✨ My Log 🌸</h2>
 
-<div id="dashboard">
+  <div id="dashboard">
+    <div class="card reminder-card">
+      <div class="card-title" style="margin-bottom:0;">📌 리마인더</div>
+      <div class="todo-input-group">
+        <input type="text" id="todo-input" placeholder="메모 입력">
+        <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
+      </div>
+      <div class="todo-list" id="todo-list"></div>
+    </div>
 
-<div class="card reminder-card">
-  <div class="card-title" style="margin-bottom:0;">📌 리마인더</div>
-  <div class="todo-input-group">
-    <input type="text" id="todo-input" placeholder="메모 입력">
-    <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
+    <div class="card car-rotation-card">
+      <div class="card-title">🗓️ 2부제: 오늘 운행 차량</div>
+      <div class="car-btn-container">
+        <div id="mark-hyundai" class="car-mark">HYUNDAI</div>
+        <div id="mark-mini" class="car-mark">MINI</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🚗 이달의 주유</div>
+      <div class="status-value" id="fuel-status">- / 3회</div>
+      <button class="btn-fuel" onclick="recordAction('addFuel', this, '주유 기록')">주유 기록</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🤖 로청이</div>
+      <div class="status-value" id="robot-status">- / 2회</div>
+      <button class="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">🫧 세차 잔액</div>
+      <div class="status-value" id="carwash-status">-원</div>
+      <input type="number" id="wash-amount" placeholder="금액">
+      <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">✂️ 머리한 날</div>
+      <div class="status-value" id="hair-status">-</div>
+      <div style="position: relative; width: 100%; margin-top: 4px;">
+        <button class="btn-hair" id="btn-hair" style="width: 100%; pointer-events: none;">날짜선택</button>
+        <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="recordHairCut(document.getElementById('btn-hair'))">
+      </div>
+    </div>
   </div>
-  <div class="todo-list" id="todo-list"></div>
-</div>
-
-<div class="card car-rotation-card">
-  <div class="card-title">🗓️ 2부제: 오늘 운행 차량</div>
-  <div class="car-btn-container">
-    <div id="mark-hyundai" class="car-mark">HYUNDAI</div>
-    <div id="mark-mini" class="car-mark">MINI</div>
-  </div>
-</div>
-
-<div class="card">
-  <div class="card-title">🚗 이달의 주유</div>
-  <div class="status-value" id="fuel-status">- / 3회</div>
-  <button class="btn-fuel" onclick="recordAction('addFuel', this, '주유 기록')">주유 기록</button>
-</div>
-
-<div class="card">
-  <div class="card-title">🤖 로청이</div>
-  <div class="status-value" id="robot-status">- / 2회</div>
-  <button class="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
-</div>
-
-<div class="card">
-  <div class="card-title">🫧 세차 잔액</div>
-  <div class="status-value" id="carwash-status">-원</div>
-  <input type="number" id="wash-amount" placeholder="금액">
-  <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
-</div>
-
-<div class="card">
-  <div class="card-title">✂️ 머리한 날</div>
-  <div class="status-value" id="hair-status">-</div>
-  <div style="position: relative; width: 100%; margin-top: 4px;">
-    <button class="btn-hair" id="btn-hair" style="width: 100%; pointer-events: none;">날짜선택</button>
-    <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="recordHairCut(document.getElementById('btn-hair'))">
-  </div>
-</div>
-
-</div>
 </div>
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgRQ_fvLToFTWS2IWrJJSf29uBqUzYBbBWpcFyTt8gsk5dDwLMGcHtgx1DZHNifKBfEA/exec'; 
+
+// --- Pull to Refresh 로직 ---
+let startY = 0;
+let pullDist = 0;
+const threshold = 70;
+const pullIndicator = document.getElementById('pull-indicator');
+const container = document.getElementById('main-container');
+
+container.addEventListener('touchstart', (e) => {
+  // 스크롤이 최상단일 때만 작동
+  if (container.scrollTop === 0) startY = e.touches[0].pageY;
+}, { passive: true });
+
+container.addEventListener('touchmove', (e) => {
+  const currentY = e.touches[0].pageY;
+  pullDist = currentY - startY;
+
+  if (pullDist > 0 && container.scrollTop === 0) {
+    // 당기는 깊이 제한 및 인디케이터 높이 조절
+    const displayHeight = Math.min(pullDist * 0.5, threshold + 20);
+    pullIndicator.style.height = displayHeight + 'px';
+    pullIndicator.innerText = displayHeight > threshold ? '놓아서 새로고침' : '아래로 당겨서 새로고침';
+  }
+}, { passive: true });
+
+container.addEventListener('touchend', () => {
+  if (pullDist * 0.5 > threshold) {
+    loadAll(); // 데이터 로드 실행
+    pullIndicator.innerText = '업데이트 중...';
+    setTimeout(() => { pullIndicator.style.height = '0px'; }, 800);
+  } else {
+    pullIndicator.style.height = '0px';
+  }
+  pullDist = 0;
+});
+// -------------------------
 
 function loadAll() {
   loadData();
@@ -244,6 +296,9 @@ function updateCarRotation() {
   const today = new Date().getDate();
   const hyundai = document.getElementById('mark-hyundai');
   const mini = document.getElementById('mark-mini');
+  hyundai.classList.remove('hyundai-on', 'car-off');
+  mini.classList.remove('mini-on', 'car-off');
+  
   if (today % 2 === 0) {
     hyundai.classList.add('hyundai-on'); mini.classList.add('car-off');
   } else {
@@ -273,7 +328,7 @@ function loadData() {
       const d = res.data;
       document.getElementById('fuel-status').innerText = d.fuel + " / 3회";
       document.getElementById('robot-status').innerText = d.robot + " / 2회";
-      document.getElementById('carwash-status').innerText = d.carWash.toLocaleString() + "원";
+      document.getElementById('carwash-status').innerText = (d.carWash || 0).toLocaleString() + "원";
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
     }
   });
@@ -307,15 +362,12 @@ function recordCarWash(btn){
   });
 }
 
-// 리마인더 로드 (최신순 정렬)
 function loadTodos(){
   fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`)
   .then(res => res.json())
   .then(data => {
     const list = document.getElementById('todo-list');
     list.innerHTML = '';
-    
-    // 원본 데이터의 인덱스를 유지하며 역순으로 렌더링
     const reversedTodos = [...data.todos].map((text, i) => ({ text, originalIndex: i })).reverse();
     
     reversedTodos.forEach((todo) => {
@@ -336,7 +388,7 @@ function loadTodos(){
 
 function saveOrder() {
   const listItems = document.querySelectorAll('.todo-item');
-  const newOrder = Array.from(listItems).map(item => item.dataset.text).reverse(); // 서버 저장 시 다시 역순으로(원래 순서로) 저장
+  const newOrder = Array.from(listItems).map(item => item.dataset.text).reverse(); 
   const encodedData = encodeURIComponent(JSON.stringify(newOrder));
   fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodedData}`);
 }
