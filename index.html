@@ -40,6 +40,7 @@ body, html {
   position: relative;
 }
 
+/* 수정: 텍스트 대신 아이콘을 위한 폰트 크기 조정 */
 #pull-indicator {
   position: absolute;
   top: 0; left: 0; width: 100%;
@@ -50,7 +51,7 @@ body, html {
   justify-content: center;
   background: var(--bg-color);
   color: var(--primary);
-  font-size: 13px;
+  font-size: 24px; /* 아이콘 크기 확대 */
   font-weight: bold;
   z-index: 100;
 }
@@ -203,7 +204,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 <body>
 <div class="app-container" id="main-container">
-  <div id="pull-indicator">아래로 당겨서 새로고침</div>
+  <div id="pull-indicator">↻</div>
   
   <h2>✨ My Log 🌸</h2>
 
@@ -257,29 +258,33 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgRQ_fvLToFTWS2IWrJJSf29uBqUzYBbBWpcFyTt8gsk5dDwLMGcHtgx1DZHNifKBfEA/exec'; 
 
-// --- Pull to Refresh ---
+// --- Pull to Refresh (수정된 로직) ---
 let startY = 0, pullDist = 0;
 const threshold = 70;
 const pullIndicator = document.getElementById('pull-indicator');
 const container = document.getElementById('main-container');
 
 window.addEventListener('touchstart', (e) => {
+  // 수정: 리마인더 리스트 내부에서 터치가 시작된 경우 무시
+  if (e.target.closest('#todo-list')) { startY = -1; return; }
   if (window.scrollY === 0) startY = e.touches[0].pageY;
 }, { passive: true });
 
 window.addEventListener('touchmove', (e) => {
+  if (startY === -1) return; // 리마인더 내부 이동 시 무시
   const currentY = e.touches[0].pageY;
   pullDist = currentY - startY;
   if (pullDist > 0 && window.scrollY === 0) {
     const displayHeight = Math.min(pullDist * 0.4, threshold + 20);
     pullIndicator.style.height = displayHeight + 'px';
-    pullIndicator.innerText = displayHeight > threshold ? '놓아서 새로고침' : '아래로 당겨서 새로고침';
+    // 수정: 안내 문구 업데이트 로직 제거 (CSS 아이콘만 유지)
   }
 }, { passive: true });
 
-window.addEventListener('touchend', () => {
+window.addEventListener('touchend', (e) => {
+  if (startY === -1) { startY = 0; return; }
   if (window.scrollY === 0 && pullDist * 0.4 > threshold) {
-    pullIndicator.innerText = '업데이트 중...';
+    // 수정: 안내 문구 대신 아이콘만 유지하며 로딩
     loadAll();
     setTimeout(() => { pullIndicator.style.height = '0px'; }, 800);
   } else {
