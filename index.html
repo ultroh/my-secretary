@@ -34,8 +34,7 @@ body, html {
   max-width:480px;
   margin:auto;
   min-height: 100dvh;
-  /* 아이폰 하단 여백 확보 (safe-area 대응) */
-  padding: 8px 12px calc(60px + env(safe-area-inset-bottom));
+  padding: 8px 12px calc(50px + env(safe-area-inset-bottom));
   display:flex;
   flex-direction:column;
   position: relative;
@@ -69,39 +68,40 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .reminder-card { grid-column: span 2; border-top: 6px solid var(--accent-red); }
 
-/* 리마인더 리스트 높이를 화면의 약 2/5 수준으로 조정 */
+/* 리스트 높이를 항목 3개 분량(약 105px)으로 고정 */
 .todo-list {
   margin-top: 8px;
-  max-height: 38dvh; 
+  max-height: 105px; 
   overflow-y: auto;
   width: 100%;
 }
 
 .todo-item {
   display:flex; justify-content:space-between; align-items:center;
-  padding: 10px 4px; border-bottom: 1px solid var(--line-color);
+  padding: 6px 2px; /* 줄 간격 축소 */
+  border-bottom: 1px solid var(--line-color);
 }
 
-/* 드래그 핸들 스타일 */
 .drag-handle {
-  color: #ccc; cursor: grab; padding-right: 10px; font-size: 16px; user-select: none;
+  color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none;
 }
 
 .todo-item span.text { 
   flex:1; text-align:left; color: var(--text-main); font-size: 13px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+  line-height: 1.4;
 }
 
 .todo-item.expanded span.text { white-space: normal; overflow: visible; }
 
-/* 추가/삭제 버튼 균형 조정 */
+/* 추가/삭제 버튼 디자인 통일 */
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; }
 .todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 10px; }
 .todo-input-group button, .todo-item button { 
-  width: auto; padding: 8px 12px; margin-top: 0; font-size: 12px; font-weight: 800; border-radius: 6px;
+  width: auto; padding: 6px 10px; margin-top: 0; font-size: 12px; font-weight: 800; border-radius: 6px;
 }
 .todo-input-group button { background-color: var(--accent-red); min-width: 55px; }
-.todo-item button { background-color: #888; min-width: 50px; margin-left: 8px; }
+.todo-item button { background-color: #888; min-width: 45px; margin-left: 6px; }
 
 .car-rotation-card { grid-column: span 2; padding: 10px 14px; }
 .car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
@@ -194,7 +194,6 @@ function loadTodos(){
         <button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
       list.appendChild(div);
     });
-    // 순서 변경 활성화
     new Sortable(list, { handle: '.drag-handle', animation: 150, onEnd: saveOrder });
   });
 }
@@ -256,8 +255,7 @@ function recordHairCut(btn){
   fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData());
 }
 
-// Pull to Refresh
-let startY = 0, pullDist = 0;
+let startY = 0;
 window.addEventListener('touchstart', (e) => { if (window.scrollY === 0) startY = e.touches[0].pageY; }, { passive: true });
 window.addEventListener('touchmove', (e) => {
   const dist = e.touches[0].pageY - startY;
