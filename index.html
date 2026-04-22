@@ -16,7 +16,7 @@
   --text-muted: #666666;
   --line-color: #e0e0e0;
   --hyundai-blue: #002c5f;
-  --mini-red: #e20112;
+  --mini-red: #E20112; /* Chili Red 스타일 */
 }
 
 * { box-sizing: border-box; margin:0; padding:0; }
@@ -39,7 +39,7 @@ body, html {
   position: relative;
 }
 
-h2 { color:white; text-align:center; margin: 12px 0; font-size: 1.2rem; font-weight: 900; letter-spacing: 1px; }
+h2 { color:white; text-align:center; margin: 12px 0; font-size: 1.2rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
 
 #dashboard { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
@@ -53,7 +53,7 @@ h2 { color:white; text-align:center; margin: 12px 0; font-size: 1.2rem; font-wei
 .card-title { font-size: 11px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
 .status-value { font-size:18px; font-weight:900; color: var(--text-main); flex: 1; display: flex; align-items: center; }
 
-input, button { border:none; border-radius:6px; font-size: 13px; }
+input, button { border:none; border-radius:6px; font-size: 13px; outline: none; }
 input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; }
 button { font-weight:800; color:white; cursor:pointer; }
 .btn-fuel, .btn-robot, .btn-carwash, .btn-hair { width: 100%; padding: 10px; margin-top: 6px; background: var(--primary); }
@@ -69,7 +69,8 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .todo-item {
   display:flex; justify-content:space-between; align-items:center;
-  padding: 6px 2px; border-bottom: 1px solid var(--line-color);
+  padding: 6px 0px; /* 좌우 여백 제거하여 정렬 최적화 */
+  border-bottom: 1px solid var(--line-color);
 }
 
 .drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; }
@@ -82,9 +83,9 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .todo-item.expanded span.text { white-space: normal; overflow: visible; }
 
-/* 추가/삭제 버튼 크기 동일화 (가로 50px, 세로 32px 고정) */
-.todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; }
-.todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 8px; margin-top: 0; }
+/* 추가/삭제 버튼 크기 및 정렬 수정 */
+.todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
+.todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 8px; margin: 0; }
 
 .todo-input-group button, .todo-item button { 
   width: 50px; 
@@ -92,19 +93,22 @@ button { font-weight:800; color:white; cursor:pointer; }
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 0;
+  margin: 0;
   font-size: 12px;
   font-weight: 800;
   border-radius: 6px;
+  flex-shrink: 0; /* 버튼 크기 고정 */
 }
 .todo-input-group button { background-color: var(--accent-red); }
-.todo-item button { background-color: #888; margin-left: 6px; }
+.todo-item button { background-color: #888; }
 
 .car-rotation-card { grid-column: span 2; padding: 10px 14px; }
 .car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
 .car-mark { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+
+/* 자동차 버튼 색상 수정 */
 .hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
-.mini-on { background-color: var(--mini-red) !important; color: white !important; }
+.mini-on { background-color: var(--mini-red) !important; color: #000000 !important; } /* 칠리레드 배경 + 검정 글자 */
 .car-off { background-color: #eeeeee !important; color: #bbbbbb !important; opacity: 0.6; }
 </style>
 </head>
