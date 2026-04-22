@@ -7,15 +7,14 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <style>
-/* Oxford Notebook Theme Color Palette */
 :root {
-  --bg-color: #002147;       /* Oxford Deep Navy */
-  --card-bg: #ffffff;        /* Paper White */
-  --primary: #002147;        /* Oxford Blue */
-  --accent-red: #C8102E;     /* Oxford Red */
+  --bg-color: #002147;
+  --card-bg: #ffffff;
+  --primary: #002147;
+  --accent-red: #C8102E;
   --text-main: #1a1a1a;
   --text-muted: #666666;
-  --line-color: #e0e0e0;     /* Notebook Rule Line */
+  --line-color: #e0e0e0;
   --hyundai-blue: #002c5f;
   --mini-red: #e20112;
 }
@@ -24,20 +23,20 @@
 
 body, html {
   width:100%;
-  /* 옥스포드 노트 커버 느낌의 텍스처 효과 */
+  height: 100%; /* 전체 높이 고정 */
   background-color: var(--bg-color);
   background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
   background-size: 24px 24px;
   font-family: 'Pretendard', -apple-system, sans-serif;
   overscroll-behavior-y: contain;
-  overflow-x: hidden;
+  overflow: hidden; /* 전체 스크롤 방지 */
 }
 
 .app-container {
   max-width:480px;
   margin:auto;
-  min-height: 100dvh;
-  padding: 8px 12px 40px;
+  height: 100dvh; /* 기기 화면 높이에 맞춤 */
+  padding: 4px 12px 12px; /* 상하 패딩 대폭 축소 */
   display:flex;
   flex-direction:column;
   position: relative;
@@ -53,205 +52,116 @@ body, html {
   justify-content: center;
   background: var(--bg-color);
   color: #ffffff;
-  font-size: 24px;
-  font-weight: bold;
   z-index: 100;
 }
 
-/* 제목: 옥스포드 로고 스타일링 */
 h2 { 
   color:white; 
   text-align:center; 
-  margin: 12px 0 16px; 
-  font-size: 1.4rem; 
+  margin: 8px 0 8px; /* 여백 축소 */
+  font-size: 1.2rem; 
   font-weight: 900;
   letter-spacing: 1px;
-  text-transform: uppercase;
 }
 
 #dashboard {
   display:grid;
   grid-template-columns: repeat(2, 1fr);
   grid-auto-rows: auto;
-  gap: 12px;
+  gap: 8px; /* 카드 사이 간격 축소 */
+  flex: 1; /* 남은 공간 차지 */
 }
 
 .card {
   background: var(--card-bg);
   border-radius: 12px;
-  padding: 14px;
+  padding: 10px; /* 내부 패딩 축소 */
   display:flex;
   flex-direction:column;
   justify-content: space-between;
   align-items:center;
-  text-align: center;
-  /* 종이가 놓인 듯한 부드러운 그림자 */
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  border-top: 4px solid var(--accent-red); /* 옥스포드 포인트 라인 */
+  border-top: 3px solid var(--accent-red); /* 선 두께 약간 축소 */
 }
 
 .stat-card {
-  height: 140px; 
+  height: 130px; /* 높이 10px 축소 */
 }
 
 .card-title { 
-  font-size: 12px; 
+  font-size: 11px; /* 폰트 살짝 축소 */
   font-weight: 800;
   color: var(--primary); 
-  margin-bottom: 6px;
-  text-transform: uppercase;
+  margin-bottom: 4px;
 }
 
 .status-value {
-  font-size:18px;
+  font-size:17px;
   font-weight:900;
   color: var(--text-main);
-  line-height: 1.2;
   flex: 1; 
   display: flex;
   align-items: center;
-  justify-content: center;
 }
-
-.small-info { font-size: 11px; color: var(--text-muted); display: block; }
 
 input, button {
   width:100%;
-  border:none;
   border-radius:6px;
-  padding: 10px;
-  margin-top: 6px;
-  transition: all 0.2s;
+  padding: 8px; /* 버튼/입력창 높이 축소 */
+  margin-top: 4px;
   font-size: 13px;
 }
 
-input { 
-  background: #f0f0f0; 
-  color: var(--text-main); 
-  text-align: center; 
-  border: 1px solid var(--line-color);
-}
+input { background: #f0f0f0; border: 1px solid var(--line-color); }
+button { font-weight:800; color:white; border:none; }
 
-button { font-weight:800; color:white; cursor:pointer; }
-button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-/* 버튼들을 옥스포드 테마 컬러로 통일 */
-.btn-fuel, .btn-robot, .btn-carwash, .btn-hair { 
-  background: var(--primary); 
-}
-.btn-fuel:active, .btn-robot:active, .btn-carwash:active, .btn-hair:active {
-  background: var(--accent-red);
-}
+.btn-fuel, .btn-robot, .btn-carwash, .btn-hair { background: var(--primary); }
 
 .reminder-card {
   grid-column: span 2;
-  justify-content: flex-start;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  min-height: auto;
-  border-top: 6px solid var(--accent-red);
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-top: 5px solid var(--accent-red);
 }
 
 .car-rotation-card {
   grid-column: span 2;
-  padding: 12px 14px;
+  padding: 8px 12px;
 }
 
-.car-btn-container {
-  display: flex;
-  width: 100%;
-  gap: 8px;
-  margin-top: 6px;
-}
+.car-btn-container { display: flex; width: 100%; gap: 6px; margin-top: 4px; }
 
 .car-mark {
   flex: 1;
-  padding: 10px;
+  padding: 8px;
   border-radius: 8px;
   font-weight: 900;
-  font-size: 13px;
+  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.hyundai-on { background-color: var(--hyundai-blue); color: white; }
-.mini-on { background-color: var(--mini-red); color: white; }
-.car-off { background-color: #eee; color: #bbb; }
-
-.todo-input-group {
-  display: flex;
-  width: 100%;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.todo-input-group input { 
-  flex: 1; 
-  margin-top: 0; 
-  padding: 8px; 
-  text-align: left;
-  background: #fff;
-  border: 1px solid var(--line-color);
-}
-
-.todo-input-group button { 
-  width: auto; 
-  min-width: 55px; 
-  margin-top: 0; 
-  padding: 8px 12px; 
-  background-color: var(--accent-red); 
-}
+.todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 4px; }
+.todo-input-group input { flex: 1; text-align: left; background: #fff; }
+.todo-input-group button { width: auto; min-width: 50px; background-color: var(--accent-red); }
   
 .todo-list {
-  margin-top: 8px;
-  /* 아이템 약 3개 높이인 115px로 고정 */
-  max-height: 115px; 
+  margin-top: 4px;
+  max-height: 105px; /* 리스트 높이 살짝 더 축소 */
   overflow-y: auto;
   width: 100%;
-  /* 스크롤바가 보이지 않게 하려면 아래 속성 추가 (선택사항) */
-  -ms-overflow-style: none; /* IE, Edge */
-  scrollbar-width: none; /* Firefox */
 }
-
-/* Chrome, Safari, Opera에서 스크롤바 숨기기 */
-.todo-list::-webkit-scrollbar {
-  display: none;
-}
-
 
 .todo-item {
   display:flex;
-  justify-content:space-between;
-  align-items:center;
-  background: transparent;
-  padding: 10px 4px;
-  border-bottom: 1px solid var(--line-color); /* 노트 줄무늬 느낌 */
-  margin-bottom: 0;
+  padding: 8px 4px;
+  border-bottom: 1px solid var(--line-color);
   gap: 8px;
 }
 
-.drag-handle { color: var(--line-color); cursor: grab; font-size: 14px; }
-
-.todo-item span.text { 
-  flex:1; 
-  text-align:left; 
-  color: var(--text-main); 
-  font-size: 13px; 
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-}
-
-.todo-item button {
-  width:auto;
-  min-width: 35px;
-  padding: 4px 6px;
-  margin-top: 0;
-  font-size: 10px;
-  background: #999;
-  border-radius: 4px;
-}
+.todo-item span.text { font-size: 12px; }
+.todo-item button { width:auto; min-width: 35px; padding: 3px 6px; font-size: 10px; background: #999; }
 </style>
 </head>
 
