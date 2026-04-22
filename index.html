@@ -8,35 +8,34 @@
 
 <style>
 :root {
-  --bg-color: #002147;
-  --card-bg: #ffffff;
+  --bg-color: #002147;       /* Oxford Navy */
+  --card-bg: #ffffff;        /* Paper White */
   --primary: #002147;
-  --accent-red: #C8102E;
+  --accent-red: #C8102E;     /* Oxford Red */
   --text-main: #1a1a1a;
   --text-muted: #666666;
   --line-color: #e0e0e0;
-  --hyundai-blue: #002c5f;
-  --mini-red: #e20112;
+  --hyundai-blue: #002c5f;   /* 현대 브랜드 블루 */
+  --mini-red: #e20112;      /* 미니 브랜드 레드 */
 }
 
 * { box-sizing: border-box; margin:0; padding:0; }
 
 body, html {
   width:100%;
-  height: 100%; /* 전체 높이 고정 */
   background-color: var(--bg-color);
   background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
   background-size: 24px 24px;
   font-family: 'Pretendard', -apple-system, sans-serif;
   overscroll-behavior-y: contain;
-  overflow: hidden; /* 전체 스크롤 방지 */
+  overflow-y: auto; /* 전체 스크롤바 활성화 */
 }
 
 .app-container {
   max-width:480px;
   margin:auto;
-  height: 100dvh; /* 기기 화면 높이에 맞춤 */
-  padding: 4px 12px 12px; /* 상하 패딩 대폭 축소 */
+  min-height: 100dvh; /* 최소 높이 설정 */
+  padding: 8px 12px 40px;
   display:flex;
   flex-direction:column;
   position: relative;
@@ -56,112 +55,108 @@ body, html {
 }
 
 h2 { 
-  color:white; 
-  text-align:center; 
-  margin: 8px 0 8px; /* 여백 축소 */
-  font-size: 1.2rem; 
-  font-weight: 900;
-  letter-spacing: 1px;
+  color:white; text-align:center; margin: 12px 0 12px; font-size: 1.2rem; font-weight: 900; letter-spacing: 1px;
 }
 
 #dashboard {
   display:grid;
   grid-template-columns: repeat(2, 1fr);
   grid-auto-rows: auto;
-  gap: 8px; /* 카드 사이 간격 축소 */
-  flex: 1; /* 남은 공간 차지 */
+  gap: 10px;
 }
 
 .card {
   background: var(--card-bg);
   border-radius: 12px;
-  padding: 10px; /* 내부 패딩 축소 */
+  padding: 12px;
   display:flex;
   flex-direction:column;
   justify-content: space-between;
   align-items:center;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  border-top: 3px solid var(--accent-red); /* 선 두께 약간 축소 */
+  border-top: 4px solid var(--accent-red);
 }
 
-.stat-card {
-  height: 130px; /* 높이 10px 축소 */
-}
+.stat-card { height: 135px; }
 
-.card-title { 
-  font-size: 11px; /* 폰트 살짝 축소 */
-  font-weight: 800;
-  color: var(--primary); 
-  margin-bottom: 4px;
-}
+.card-title { font-size: 11px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
 
 .status-value {
-  font-size:17px;
-  font-weight:900;
-  color: var(--text-main);
-  flex: 1; 
-  display: flex;
-  align-items: center;
+  font-size:18px; font-weight:900; color: var(--text-main); flex: 1; display: flex; align-items: center;
 }
+
+.small-info { font-size: 11px; color: var(--text-muted); display: block; }
 
 input, button {
-  width:100%;
-  border-radius:6px;
-  padding: 8px; /* 버튼/입력창 높이 축소 */
-  margin-top: 4px;
-  font-size: 13px;
+  width:100%; border:none; border-radius:6px; padding: 10px; margin-top: 6px; font-size: 13px;
 }
 
-input { background: #f0f0f0; border: 1px solid var(--line-color); }
-button { font-weight:800; color:white; border:none; }
+input { background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); }
+button { font-weight:800; color:white; cursor:pointer; }
 
+/* 공통 버튼 색상 */
 .btn-fuel, .btn-robot, .btn-carwash, .btn-hair { background: var(--primary); }
 
 .reminder-card {
   grid-column: span 2;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  border-top: 5px solid var(--accent-red);
+  border-top: 6px solid var(--accent-red);
 }
 
-.car-rotation-card {
-  grid-column: span 2;
-  padding: 8px 12px;
-}
+.car-rotation-card { grid-column: span 2; padding: 10px 14px; }
 
-.car-btn-container { display: flex; width: 100%; gap: 6px; margin-top: 4px; }
+.car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
 
+/* 자동차 버튼 색상 설정 */
 .car-mark {
   flex: 1;
-  padding: 8px;
-  border-radius: 8px;
+  padding: 10px;
+  border-radius: 10px;
   font-weight: 900;
-  font-size: 12px;
+  font-size: 13px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
 }
 
-.todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 4px; }
+/* 활성화 상태 색상 */
+.hyundai-on { 
+  background-color: var(--hyundai-blue) !important; 
+  color: white !important; 
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+}
+
+.mini-on { 
+  background-color: var(--mini-red) !important; 
+  color: white !important; 
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
+}
+
+/* 비활성화 상태 색상 */
+.car-off { 
+  background-color: #eeeeee !important; 
+  color: #bbbbbb !important; 
+  opacity: 0.6;
+}
+
+.todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; }
 .todo-input-group input { flex: 1; text-align: left; background: #fff; }
-.todo-input-group button { width: auto; min-width: 50px; background-color: var(--accent-red); }
+.todo-input-group button { width: auto; min-width: 55px; background-color: var(--accent-red); margin-top: 0; }
   
 .todo-list {
-  margin-top: 4px;
-  max-height: 105px; /* 리스트 높이 살짝 더 축소 */
+  margin-top: 8px;
+  max-height: 115px; /* 아이템 3개 정도 높이 */
   overflow-y: auto;
   width: 100%;
 }
 
 .todo-item {
-  display:flex;
-  padding: 8px 4px;
-  border-bottom: 1px solid var(--line-color);
-  gap: 8px;
+  display:flex; justify-content:space-between; align-items:center;
+  padding: 10px 4px; border-bottom: 1px solid var(--line-color);
 }
 
-.todo-item span.text { font-size: 12px; }
-.todo-item button { width:auto; min-width: 35px; padding: 3px 6px; font-size: 10px; background: #999; }
+.todo-item span.text { flex:1; text-align:left; color: var(--text-main); font-size: 13px; }
+.todo-item button { width:auto; min-width: 40px; padding: 4px 8px; margin-top: 0; font-size: 10px; background:#999; }
 </style>
 </head>
 
@@ -173,9 +168,9 @@ button { font-weight:800; color:white; border:none; }
 
   <div id="dashboard">
     <div class="card reminder-card">
-      <div class="card-title" style="margin-bottom:4px;">📌 REMINDERS</div>
+      <div class="card-title">📌 REMINDERS</div>
       <div class="todo-input-group">
-        <input type="text" id="todo-input" placeholder="새로운 아이디어 입력...">
+        <input type="text" id="todo-input" placeholder="새로운 메모 입력...">
         <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
       </div>
       <div class="todo-list" id="todo-list"></div>
@@ -219,7 +214,7 @@ button { font-weight:800; color:white; border:none; }
 </div>
 
 <script>
-/* 기존 JavaScript 로직은 동일하게 유지됩니다. */
+/* 기존 JavaScript 로직 유지 (updateCarRotation 포함) */
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgRQ_fvLToFTWS2IWrJJSf29uBqUzYBbBWpcFyTt8gsk5dDwLMGcHtgx1DZHNifKBfEA/exec'; 
 
 let startY = 0, pullDist = 0;
@@ -263,12 +258,16 @@ function updateCarRotation() {
   const today = new Date().getDate();
   const hyundai = document.getElementById('mark-hyundai');
   const mini = document.getElementById('mark-mini');
-  hyundai.className = 'car-mark';
-  mini.className = 'car-mark';
+  
+  hyundai.classList.remove('hyundai-on', 'car-off');
+  mini.classList.remove('mini-on', 'car-off');
+  
   if (today % 2 === 0) {
-    hyundai.classList.add('hyundai-on'); mini.classList.add('car-off');
+    hyundai.classList.add('hyundai-on');
+    mini.classList.add('car-off');
   } else {
-    mini.classList.add('mini-on'); hyundai.classList.add('car-off');
+    mini.classList.add('mini-on');
+    hyundai.classList.add('car-off');
   }
 }
 
@@ -346,18 +345,10 @@ function loadTodos(){
       const div = document.createElement('div');
       div.className = 'todo-item';
       div.dataset.text = todo.text;
-      div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${todo.text}</span><button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
+      div.innerHTML = `<span class="text">${todo.text}</span><button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
       list.appendChild(div);
     });
-    new Sortable(list, { handle: '.drag-handle', animation: 150, onEnd: saveOrder });
   });
-}
-
-function saveOrder() {
-  const listItems = document.querySelectorAll('.todo-item');
-  const newOrder = Array.from(listItems).map(item => item.dataset.text).reverse(); 
-  const encodedData = encodeURIComponent(JSON.stringify(newOrder));
-  fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodedData}`);
 }
 
 function addTodo(btn){
