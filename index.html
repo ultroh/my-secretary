@@ -27,7 +27,6 @@ body, html {
   background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
   background-size: 24px 24px;
   font-family: 'Pretendard', -apple-system, sans-serif;
-  overscroll-behavior-y: contain;
 }
 
 .app-container {
@@ -38,13 +37,6 @@ body, html {
   display:flex;
   flex-direction:column;
   position: relative;
-}
-
-#pull-indicator {
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 0;
-  overflow: hidden; display: flex; align-items: center; justify-content: center;
-  background: var(--bg-color); color: #ffffff; z-index: 100;
 }
 
 h2 { color:white; text-align:center; margin: 12px 0; font-size: 1.2rem; font-weight: 900; letter-spacing: 1px; }
@@ -61,14 +53,13 @@ h2 { color:white; text-align:center; margin: 12px 0; font-size: 1.2rem; font-wei
 .card-title { font-size: 11px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
 .status-value { font-size:18px; font-weight:900; color: var(--text-main); flex: 1; display: flex; align-items: center; }
 
-input, button { width:100%; border:none; border-radius:6px; padding: 10px; margin-top: 6px; font-size: 13px; }
-input { background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); }
+input, button { border:none; border-radius:6px; font-size: 13px; }
+input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; }
 button { font-weight:800; color:white; cursor:pointer; }
-.btn-fuel, .btn-robot, .btn-carwash, .btn-hair { background: var(--primary); }
+.btn-fuel, .btn-robot, .btn-carwash, .btn-hair { width: 100%; padding: 10px; margin-top: 6px; background: var(--primary); }
 
 .reminder-card { grid-column: span 2; border-top: 6px solid var(--accent-red); }
 
-/* 리스트 높이를 항목 3개 분량(약 105px)으로 고정 */
 .todo-list {
   margin-top: 8px;
   max-height: 105px; 
@@ -78,13 +69,10 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .todo-item {
   display:flex; justify-content:space-between; align-items:center;
-  padding: 6px 2px; /* 줄 간격 축소 */
-  border-bottom: 1px solid var(--line-color);
+  padding: 6px 2px; border-bottom: 1px solid var(--line-color);
 }
 
-.drag-handle {
-  color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none;
-}
+.drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; }
 
 .todo-item span.text { 
   flex:1; text-align:left; color: var(--text-main); font-size: 13px;
@@ -94,14 +82,23 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .todo-item.expanded span.text { white-space: normal; overflow: visible; }
 
-/* 추가/삭제 버튼 디자인 통일 */
+/* 추가/삭제 버튼 크기 동일화 (가로 50px, 세로 32px 고정) */
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; }
-.todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 10px; }
+.todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 8px; margin-top: 0; }
+
 .todo-input-group button, .todo-item button { 
-  width: auto; padding: 6px 10px; margin-top: 0; font-size: 12px; font-weight: 800; border-radius: 6px;
+  width: 50px; 
+  height: 32px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0;
+  font-size: 12px;
+  font-weight: 800;
+  border-radius: 6px;
 }
-.todo-input-group button { background-color: var(--accent-red); min-width: 55px; }
-.todo-item button { background-color: #888; min-width: 45px; margin-left: 6px; }
+.todo-input-group button { background-color: var(--accent-red); }
+.todo-item button { background-color: #888; margin-left: 6px; }
 
 .car-rotation-card { grid-column: span 2; padding: 10px 14px; }
 .car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
@@ -113,15 +110,14 @@ button { font-weight:800; color:white; cursor:pointer; }
 </head>
 
 <body>
-<div class="app-container" id="main-container">
-  <div id="pull-indicator">↻</div>
+<div class="app-container">
   <h2>OXFORD ARCHIVE</h2>
 
   <div id="dashboard">
     <div class="card reminder-card">
       <div class="card-title">📌 REMINDERS</div>
       <div class="todo-input-group">
-        <input type="text" id="todo-input" placeholder="새로운 메모 입력...">
+        <input type="text" id="todo-input" placeholder="메모 입력...">
         <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
       </div>
       <div class="todo-list" id="todo-list"></div>
@@ -157,7 +153,7 @@ button { font-weight:800; color:white; cursor:pointer; }
       <div class="card-title">✂️ HAIR CUT</div>
       <div class="status-value" id="hair-status">-</div>
       <div style="position: relative; width: 100%; margin-top: 6px;">
-        <button class="btn-hair" id="btn-hair" style="width: 100%; pointer-events: none;">날짜선택</button>
+        <button class="btn-hair" id="btn-hair" style="width: 100%; pointer-events: none; padding: 10px;">날짜선택</button>
         <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="recordHairCut(document.getElementById('btn-hair'))">
       </div>
     </div>
@@ -254,17 +250,6 @@ function recordHairCut(btn){
   if(!v) return;
   fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData());
 }
-
-let startY = 0;
-window.addEventListener('touchstart', (e) => { if (window.scrollY === 0) startY = e.touches[0].pageY; }, { passive: true });
-window.addEventListener('touchmove', (e) => {
-  const dist = e.touches[0].pageY - startY;
-  if (dist > 0 && window.scrollY === 0) document.getElementById('pull-indicator').style.height = Math.min(dist * 0.4, 80) + 'px';
-}, { passive: true });
-window.addEventListener('touchend', () => {
-  if (parseInt(document.getElementById('pull-indicator').style.height) > 60) loadAll();
-  document.getElementById('pull-indicator').style.height = '0px';
-});
 
 window.onload = loadAll;
 </script>
