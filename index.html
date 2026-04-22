@@ -205,10 +205,20 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   
 .todo-list {
   margin-top: 8px;
-  max-height: 150px;
+  /* 아이템 약 3개 높이인 115px로 고정 */
+  max-height: 115px; 
   overflow-y: auto;
   width: 100%;
+  /* 스크롤바가 보이지 않게 하려면 아래 속성 추가 (선택사항) */
+  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none; /* Firefox */
 }
+
+/* Chrome, Safari, Opera에서 스크롤바 숨기기 */
+.todo-list::-webkit-scrollbar {
+  display: none;
+}
+
 
 .todo-item {
   display:flex;
