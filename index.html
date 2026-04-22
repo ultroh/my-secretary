@@ -28,14 +28,14 @@ body, html {
   background-size: 24px 24px;
   font-family: 'Pretendard', -apple-system, sans-serif;
   overscroll-behavior-y: contain;
-  overflow-y: auto;
 }
 
 .app-container {
   max-width:480px;
   margin:auto;
   min-height: 100dvh;
-  padding: 8px 12px 40px;
+  /* 아이폰 하단 여백 확보 (safe-area 대응) */
+  padding: 8px 12px calc(60px + env(safe-area-inset-bottom));
   display:flex;
   flex-direction:column;
   position: relative;
@@ -43,92 +43,36 @@ body, html {
 
 #pull-indicator {
   position: absolute;
-  top: 0; left: 0; width: 100%;
-  height: 0;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-color);
-  color: #ffffff;
-  z-index: 100;
+  top: 0; left: 0; width: 100%; height: 0;
+  overflow: hidden; display: flex; align-items: center; justify-content: center;
+  background: var(--bg-color); color: #ffffff; z-index: 100;
 }
 
-h2 { 
-  color:white; text-align:center; margin: 12px 0 12px; font-size: 1.2rem; font-weight: 900; letter-spacing: 1px;
-}
+h2 { color:white; text-align:center; margin: 12px 0; font-size: 1.2rem; font-weight: 900; letter-spacing: 1px; }
 
-#dashboard {
-  display:grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: auto;
-  gap: 10px;
-}
+#dashboard { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
 .card {
-  background: var(--card-bg);
-  border-radius: 12px;
-  padding: 12px;
-  display:flex;
-  flex-direction:column;
-  justify-content: space-between;
-  align-items:center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  border-top: 4px solid var(--accent-red);
+  background: var(--card-bg); border-radius: 12px; padding: 12px;
+  display:flex; flex-direction:column; justify-content: space-between; align-items:center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 4px solid var(--accent-red);
 }
 
 .stat-card { height: 135px; }
-
 .card-title { font-size: 11px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
+.status-value { font-size:18px; font-weight:900; color: var(--text-main); flex: 1; display: flex; align-items: center; }
 
-.status-value {
-  font-size:18px; font-weight:900; color: var(--text-main); flex: 1; display: flex; align-items: center;
-}
-
-input, button {
-  width:100%; border:none; border-radius:6px; padding: 10px; margin-top: 6px; font-size: 13px;
-}
-
+input, button { width:100%; border:none; border-radius:6px; padding: 10px; margin-top: 6px; font-size: 13px; }
 input { background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); }
 button { font-weight:800; color:white; cursor:pointer; }
-
 .btn-fuel, .btn-robot, .btn-carwash, .btn-hair { background: var(--primary); }
 
-.reminder-card {
-  grid-column: span 2;
-  border-top: 6px solid var(--accent-red);
-}
+.reminder-card { grid-column: span 2; border-top: 6px solid var(--accent-red); }
 
-.car-rotation-card { grid-column: span 2; padding: 10px 14px; }
-.car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
-
-.car-mark {
-  flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px;
-  display: flex; align-items: center; justify-content: center;
-}
-
-.hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
-.mini-on { background-color: var(--mini-red) !important; color: white !important; }
-.car-off { background-color: #eeeeee !important; color: #bbbbbb !important; opacity: 0.6; }
-
-.todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; }
-.todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 10px; }
-
-/* 추가/삭제 버튼 스타일 통일 */
-.todo-input-group button, .todo-item button { 
-  width: auto; 
-  padding: 8px 14px; 
-  margin-top: 0; 
-  font-size: 12px; 
-  font-weight: 800;
-  border-radius: 6px;
-}
-.todo-input-group button { background-color: var(--accent-red); min-width: 55px; }
-.todo-item button { background-color: #555; min-width: 50px; margin-left: 8px; }
-  
+/* 리마인더 리스트 높이를 화면의 약 2/5 수준으로 조정 */
 .todo-list {
   margin-top: 8px;
-  max-height: 150px; 
+  max-height: 38dvh; 
   overflow-y: auto;
   width: 100%;
 }
@@ -136,33 +80,41 @@ button { font-weight:800; color:white; cursor:pointer; }
 .todo-item {
   display:flex; justify-content:space-between; align-items:center;
   padding: 10px 4px; border-bottom: 1px solid var(--line-color);
-  cursor: pointer;
 }
 
-/* 리마인더 텍스트 한 줄 제한 및 말줄임표 처리 */
+/* 드래그 핸들 스타일 */
+.drag-handle {
+  color: #ccc; cursor: grab; padding-right: 10px; font-size: 16px; user-select: none;
+}
+
 .todo-item span.text { 
-  flex:1; 
-  text-align:left; 
-  color: var(--text-main); 
-  font-size: 13px; 
-  white-space: nowrap; 
-  overflow: hidden; 
-  text-overflow: ellipsis; 
-  transition: all 0.2s ease;
+  flex:1; text-align:left; color: var(--text-main); font-size: 13px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
 }
 
-/* 확장 시 텍스트 모두 노출 */
-.todo-item.expanded span.text {
-  white-space: normal;
-  overflow: visible;
+.todo-item.expanded span.text { white-space: normal; overflow: visible; }
+
+/* 추가/삭제 버튼 균형 조정 */
+.todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; }
+.todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 10px; }
+.todo-input-group button, .todo-item button { 
+  width: auto; padding: 8px 12px; margin-top: 0; font-size: 12px; font-weight: 800; border-radius: 6px;
 }
+.todo-input-group button { background-color: var(--accent-red); min-width: 55px; }
+.todo-item button { background-color: #888; min-width: 50px; margin-left: 8px; }
+
+.car-rotation-card { grid-column: span 2; padding: 10px 14px; }
+.car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
+.car-mark { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
+.mini-on { background-color: var(--mini-red) !important; color: white !important; }
+.car-off { background-color: #eeeeee !important; color: #bbbbbb !important; opacity: 0.6; }
 </style>
 </head>
 
 <body>
 <div class="app-container" id="main-container">
   <div id="pull-indicator">↻</div>
-  
   <h2>OXFORD ARCHIVE</h2>
 
   <div id="dashboard">
@@ -215,114 +167,14 @@ button { font-weight:800; color:white; cursor:pointer; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgRQ_fvLToFTWS2IWrJJSf29uBqUzYBbBWpcFyTt8gsk5dDwLMGcHtgx1DZHNifKBfEA/exec'; 
 
-let startY = 0, pullDist = 0;
-const threshold = 70;
-const pullIndicator = document.getElementById('pull-indicator');
-
-window.addEventListener('touchstart', (e) => {
-  if (e.target.closest('#todo-list')) { startY = -1; return; }
-  if (window.scrollY === 0) startY = e.touches[0].pageY;
-}, { passive: true });
-
-window.addEventListener('touchmove', (e) => {
-  if (startY === -1) return;
-  const currentY = e.touches[0].pageY;
-  pullDist = currentY - startY;
-  if (pullDist > 0 && window.scrollY === 0) {
-    const displayHeight = Math.min(pullDist * 0.4, threshold + 20);
-    pullIndicator.style.height = displayHeight + 'px';
-  }
-}, { passive: true });
-
-window.addEventListener('touchend', (e) => {
-  if (startY === -1) { startY = 0; return; }
-  if (window.scrollY === 0 && pullDist * 0.4 > threshold) {
-    loadAll();
-    setTimeout(() => { pullIndicator.style.height = '0px'; }, 800);
-  } else {
-    pullIndicator.style.height = '0px';
-  }
-  pullDist = 0;
-});
-
-function loadAll() {
-  loadData();
-  loadTodos();
-  updateCarRotation();
-}
+function loadAll() { loadData(); loadTodos(); updateCarRotation(); }
 
 function updateCarRotation() {
   const today = new Date().getDate();
-  const hyundai = document.getElementById('mark-hyundai');
-  const mini = document.getElementById('mark-mini');
-  hyundai.classList.remove('hyundai-on', 'car-off');
-  mini.classList.remove('mini-on', 'car-off');
-  if (today % 2 === 0) {
-    hyundai.classList.add('hyundai-on'); mini.classList.add('car-off');
-  } else {
-    mini.classList.add('mini-on'); hyundai.classList.add('car-off');
-  }
-}
-
-function toggleLoading(btn, isLoading, originalText) {
-  btn.disabled = isLoading;
-  btn.innerText = isLoading ? '...' : originalText;
-}
-
-// 리마인더 확장 토글 함수
-function toggleExpand(el) {
-  el.classList.toggle('expanded');
-}
-
-function loadData() {
-  fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`)
-  .then(res => res.json())
-  .then(res => {
-    if(res.status === 'success') {
-      const d = res.data;
-      document.getElementById('fuel-status').innerText = d.fuel + " / 3회";
-      document.getElementById('robot-status').innerText = d.robot + " / 2회";
-      document.getElementById('carwash-status').innerText = (d.carWash || 0).toLocaleString() + "원";
-      document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
-    }
-  });
-}
-
-function getHaircutStatus(dateStr) {
-  if (!dateStr) return "기록 없음";
-  const cleanDateStr = dateStr.replace(/[.\s]+/g, '-').replace(/-$/, '');
-  const targetDate = new Date(cleanDateStr);
-  const today = new Date(); today.setHours(0,0,0,0);
-  const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
-  return `D+${diffDays}<br><span class="small-info">(${Math.floor(diffDays/7)+1}주차)</span>`;
-}
-
-function recordHairCut(btn){
-  const v = document.getElementById('hairDateVal').value;
-  if(!v) return;
-  toggleLoading(btn, true, '날짜선택');
-  fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => { toggleLoading(btn, false, '날짜선택'); loadData(); });
-}
-
-function recordAction(action, btn, originalText){
-  toggleLoading(btn, true, originalText);
-  fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
-    toggleLoading(btn, false, originalText);
-    if(data.message) alert(data.message);
-    loadData();
-  });
-}
-
-function recordCarWash(btn){
-  const amount = prompt("차감할 금액을 입력하세요:");
-  if (!amount) return;
-  const v = parseInt(amount.replace(/[^0-9]/g, ''));
-  if (isNaN(v)) return;
-  toggleLoading(btn, true, '차감');
-  fetch(`${GAS_URL}?action=useCarWash&amount=${v}`).then(res => res.json()).then(data => {
-    toggleLoading(btn, false, '차감');
-    loadData();
-  });
+  const h = document.getElementById('mark-hyundai'), m = document.getElementById('mark-mini');
+  h.classList.remove('hyundai-on', 'car-off'); m.classList.remove('mini-on', 'car-off');
+  if (today % 2 === 0) { h.classList.add('hyundai-on'); m.classList.add('car-off'); }
+  else { m.classList.add('mini-on'); h.classList.add('car-off'); }
 }
 
 function loadTodos(){
@@ -335,29 +187,86 @@ function loadTodos(){
     reversedTodos.forEach((todo) => {
       const div = document.createElement('div');
       div.className = 'todo-item';
-      div.onclick = function() { toggleExpand(this); }; // 터치 시 확장
-      div.innerHTML = `<span class="text">${todo.text}</span><button onclick="event.stopPropagation(); deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
+      div.dataset.text = todo.text;
+      div.innerHTML = `
+        <span class="drag-handle">☰</span>
+        <span class="text" onclick="this.parentElement.classList.toggle('expanded')">${todo.text}</span>
+        <button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
       list.appendChild(div);
     });
+    // 순서 변경 활성화
+    new Sortable(list, { handle: '.drag-handle', animation: 150, onEnd: saveOrder });
   });
+}
+
+function saveOrder() {
+  const listItems = document.querySelectorAll('.todo-item');
+  const newOrder = Array.from(listItems).map(item => item.dataset.text).reverse(); 
+  fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodeURIComponent(JSON.stringify(newOrder))}`);
 }
 
 function addTodo(btn){
   const v = document.getElementById('todo-input').value;
   if(!v) return;
-  toggleLoading(btn, true, '추가');
+  btn.disabled = true;
   fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => {
-    toggleLoading(btn, false, '추가');
-    document.getElementById('todo-input').value = '';
-    loadTodos();
+    btn.disabled = false; document.getElementById('todo-input').value = ''; loadTodos();
   });
 }
 
 function deleteTodo(index, btn){
   btn.disabled = true;
-  btn.innerText = '...';
   fetch(`${GAS_URL}?action=deleteTodo&index=${index}`).then(() => loadTodos());
 }
+
+function loadData() {
+  fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => {
+    if(res.status === 'success') {
+      const d = res.data;
+      document.getElementById('fuel-status').innerText = d.fuel + " / 3회";
+      document.getElementById('robot-status').innerText = d.robot + " / 2회";
+      document.getElementById('carwash-status').innerText = (d.carWash || 0).toLocaleString() + "원";
+      document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
+    }
+  });
+}
+
+function getHaircutStatus(dateStr) {
+  if (!dateStr) return "기록 없음";
+  const targetDate = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
+  return `D+${diffDays}<br><span style="font-size:11px; color:#888;">(${Math.floor(diffDays/7)+1}주차)</span>`;
+}
+
+function recordAction(action, btn, txt){
+  btn.disabled = true;
+  fetch(`${GAS_URL}?action=${action}`).then(() => { btn.disabled = false; loadData(); });
+}
+
+function recordCarWash(btn){
+  const amount = prompt("차감할 금액:");
+  if (!amount) return;
+  fetch(`${GAS_URL}?action=useCarWash&amount=${amount.replace(/[^0-9]/g, '')}`).then(() => loadData());
+}
+
+function recordHairCut(btn){
+  const v = document.getElementById('hairDateVal').value;
+  if(!v) return;
+  fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData());
+}
+
+// Pull to Refresh
+let startY = 0, pullDist = 0;
+window.addEventListener('touchstart', (e) => { if (window.scrollY === 0) startY = e.touches[0].pageY; }, { passive: true });
+window.addEventListener('touchmove', (e) => {
+  const dist = e.touches[0].pageY - startY;
+  if (dist > 0 && window.scrollY === 0) document.getElementById('pull-indicator').style.height = Math.min(dist * 0.4, 80) + 'px';
+}, { passive: true });
+window.addEventListener('touchend', () => {
+  if (parseInt(document.getElementById('pull-indicator').style.height) > 60) loadAll();
+  document.getElementById('pull-indicator').style.height = '0px';
+});
 
 window.onload = loadAll;
 </script>
