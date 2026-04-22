@@ -8,15 +8,15 @@
 
 <style>
 :root {
-  --bg-color: #002147;       /* Oxford Navy */
-  --card-bg: #ffffff;        /* Paper White */
+  --bg-color: #002147;
+  --card-bg: #ffffff;
   --primary: #002147;
-  --accent-red: #C8102E;     /* Oxford Red */
+  --accent-red: #C8102E;
   --text-main: #1a1a1a;
   --text-muted: #666666;
   --line-color: #e0e0e0;
-  --hyundai-blue: #002c5f;   /* 현대 브랜드 블루 */
-  --mini-red: #e20112;      /* 미니 브랜드 레드 */
+  --hyundai-blue: #002c5f;
+  --mini-red: #e20112;
 }
 
 * { box-sizing: border-box; margin:0; padding:0; }
@@ -28,13 +28,13 @@ body, html {
   background-size: 24px 24px;
   font-family: 'Pretendard', -apple-system, sans-serif;
   overscroll-behavior-y: contain;
-  overflow-y: auto; /* 전체 스크롤바 활성화 */
+  overflow-y: auto;
 }
 
 .app-container {
   max-width:480px;
   margin:auto;
-  min-height: 100dvh; /* 최소 높이 설정 */
+  min-height: 100dvh;
   padding: 8px 12px 40px;
   display:flex;
   flex-direction:column;
@@ -85,8 +85,6 @@ h2 {
   font-size:18px; font-weight:900; color: var(--text-main); flex: 1; display: flex; align-items: center;
 }
 
-.small-info { font-size: 11px; color: var(--text-muted); display: block; }
-
 input, button {
   width:100%; border:none; border-radius:6px; padding: 10px; margin-top: 6px; font-size: 13px;
 }
@@ -94,7 +92,6 @@ input, button {
 input { background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); }
 button { font-weight:800; color:white; cursor:pointer; }
 
-/* 공통 버튼 색상 */
 .btn-fuel, .btn-robot, .btn-carwash, .btn-hair { background: var(--primary); }
 
 .reminder-card {
@@ -103,49 +100,35 @@ button { font-weight:800; color:white; cursor:pointer; }
 }
 
 .car-rotation-card { grid-column: span 2; padding: 10px 14px; }
-
 .car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
 
-/* 자동차 버튼 색상 설정 */
 .car-mark {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  font-weight: 900;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
+  flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px;
+  display: flex; align-items: center; justify-content: center;
 }
 
-/* 활성화 상태 색상 */
-.hyundai-on { 
-  background-color: var(--hyundai-blue) !important; 
-  color: white !important; 
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-}
-
-.mini-on { 
-  background-color: var(--mini-red) !important; 
-  color: white !important; 
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.2);
-}
-
-/* 비활성화 상태 색상 */
-.car-off { 
-  background-color: #eeeeee !important; 
-  color: #bbbbbb !important; 
-  opacity: 0.6;
-}
+.hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
+.mini-on { background-color: var(--mini-red) !important; color: white !important; }
+.car-off { background-color: #eeeeee !important; color: #bbbbbb !important; opacity: 0.6; }
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; }
-.todo-input-group input { flex: 1; text-align: left; background: #fff; }
-.todo-input-group button { width: auto; min-width: 55px; background-color: var(--accent-red); margin-top: 0; }
+.todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 10px; }
+
+/* 추가/삭제 버튼 스타일 통일 */
+.todo-input-group button, .todo-item button { 
+  width: auto; 
+  padding: 8px 14px; 
+  margin-top: 0; 
+  font-size: 12px; 
+  font-weight: 800;
+  border-radius: 6px;
+}
+.todo-input-group button { background-color: var(--accent-red); min-width: 55px; }
+.todo-item button { background-color: #555; min-width: 50px; margin-left: 8px; }
   
 .todo-list {
   margin-top: 8px;
-  max-height: 115px; /* 아이템 3개 정도 높이 */
+  max-height: 150px; 
   overflow-y: auto;
   width: 100%;
 }
@@ -153,10 +136,26 @@ button { font-weight:800; color:white; cursor:pointer; }
 .todo-item {
   display:flex; justify-content:space-between; align-items:center;
   padding: 10px 4px; border-bottom: 1px solid var(--line-color);
+  cursor: pointer;
 }
 
-.todo-item span.text { flex:1; text-align:left; color: var(--text-main); font-size: 13px; }
-.todo-item button { width:auto; min-width: 40px; padding: 4px 8px; margin-top: 0; font-size: 10px; background:#999; }
+/* 리마인더 텍스트 한 줄 제한 및 말줄임표 처리 */
+.todo-item span.text { 
+  flex:1; 
+  text-align:left; 
+  color: var(--text-main); 
+  font-size: 13px; 
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+  transition: all 0.2s ease;
+}
+
+/* 확장 시 텍스트 모두 노출 */
+.todo-item.expanded span.text {
+  white-space: normal;
+  overflow: visible;
+}
 </style>
 </head>
 
@@ -214,13 +213,11 @@ button { font-weight:800; color:white; cursor:pointer; }
 </div>
 
 <script>
-/* 기존 JavaScript 로직 유지 (updateCarRotation 포함) */
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgRQ_fvLToFTWS2IWrJJSf29uBqUzYBbBWpcFyTt8gsk5dDwLMGcHtgx1DZHNifKBfEA/exec'; 
 
 let startY = 0, pullDist = 0;
 const threshold = 70;
 const pullIndicator = document.getElementById('pull-indicator');
-const container = document.getElementById('main-container');
 
 window.addEventListener('touchstart', (e) => {
   if (e.target.closest('#todo-list')) { startY = -1; return; }
@@ -258,16 +255,12 @@ function updateCarRotation() {
   const today = new Date().getDate();
   const hyundai = document.getElementById('mark-hyundai');
   const mini = document.getElementById('mark-mini');
-  
   hyundai.classList.remove('hyundai-on', 'car-off');
   mini.classList.remove('mini-on', 'car-off');
-  
   if (today % 2 === 0) {
-    hyundai.classList.add('hyundai-on');
-    mini.classList.add('car-off');
+    hyundai.classList.add('hyundai-on'); mini.classList.add('car-off');
   } else {
-    mini.classList.add('mini-on');
-    hyundai.classList.add('car-off');
+    mini.classList.add('mini-on'); hyundai.classList.add('car-off');
   }
 }
 
@@ -276,13 +269,9 @@ function toggleLoading(btn, isLoading, originalText) {
   btn.innerText = isLoading ? '...' : originalText;
 }
 
-function getHaircutStatus(dateStr) {
-  if (!dateStr) return "기록 없음";
-  const cleanDateStr = dateStr.replace(/[.\s]+/g, '-').replace(/-$/, '');
-  const targetDate = new Date(cleanDateStr);
-  const today = new Date(); today.setHours(0,0,0,0); targetDate.setHours(0,0,0,0);
-  const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
-  return `D+${diffDays}<br><span class="small-info">(${Math.floor(diffDays/7)+1}주차)</span>`;
+// 리마인더 확장 토글 함수
+function toggleExpand(el) {
+  el.classList.toggle('expanded');
 }
 
 function loadData() {
@@ -299,12 +288,20 @@ function loadData() {
   });
 }
 
+function getHaircutStatus(dateStr) {
+  if (!dateStr) return "기록 없음";
+  const cleanDateStr = dateStr.replace(/[.\s]+/g, '-').replace(/-$/, '');
+  const targetDate = new Date(cleanDateStr);
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
+  return `D+${diffDays}<br><span class="small-info">(${Math.floor(diffDays/7)+1}주차)</span>`;
+}
+
 function recordHairCut(btn){
   const v = document.getElementById('hairDateVal').value;
   if(!v) return;
   toggleLoading(btn, true, '날짜선택');
-  fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`)
-  .then(() => { toggleLoading(btn, false, '날짜선택'); loadData(); });
+  fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => { toggleLoading(btn, false, '날짜선택'); loadData(); });
 }
 
 function recordAction(action, btn, originalText){
@@ -317,19 +314,13 @@ function recordAction(action, btn, originalText){
 }
 
 function recordCarWash(btn){
-  const amount = prompt("차감할 금액을 입력하세요 (숫자만):");
-  if (amount === null || amount.trim() === "") return;
+  const amount = prompt("차감할 금액을 입력하세요:");
+  if (!amount) return;
   const v = parseInt(amount.replace(/[^0-9]/g, ''));
-  if (isNaN(v) || v <= 0) {
-    alert("올바른 금액을 입력해주세요.");
-    return;
-  }
+  if (isNaN(v)) return;
   toggleLoading(btn, true, '차감');
-  fetch(`${GAS_URL}?action=useCarWash&amount=${v}`)
-  .then(res => res.json())
-  .then(data => {
+  fetch(`${GAS_URL}?action=useCarWash&amount=${v}`).then(res => res.json()).then(data => {
     toggleLoading(btn, false, '차감');
-    if (data.message) alert(data.message);
     loadData();
   });
 }
@@ -344,8 +335,8 @@ function loadTodos(){
     reversedTodos.forEach((todo) => {
       const div = document.createElement('div');
       div.className = 'todo-item';
-      div.dataset.text = todo.text;
-      div.innerHTML = `<span class="text">${todo.text}</span><button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
+      div.onclick = function() { toggleExpand(this); }; // 터치 시 확장
+      div.innerHTML = `<span class="text">${todo.text}</span><button onclick="event.stopPropagation(); deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
       list.appendChild(div);
     });
   });
@@ -355,8 +346,7 @@ function addTodo(btn){
   const v = document.getElementById('todo-input').value;
   if(!v) return;
   toggleLoading(btn, true, '추가');
-  fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`)
-  .then(() => {
+  fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => {
     toggleLoading(btn, false, '추가');
     document.getElementById('todo-input').value = '';
     loadTodos();
