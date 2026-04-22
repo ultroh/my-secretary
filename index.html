@@ -7,15 +7,15 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <style>
+/* Oxford Notebook Theme Color Palette */
 :root {
-  --bg-color: #121212;
-  --card-bg: #1e1e1e;
-  --primary: #4A90E2;
-  --fuel-color: #FF9800;
-  --robot-color: #4CAF50;
-  --hair-color: #af52de;
-  --text-main: #ffffff;
-  --text-muted: #aaaaaa;
+  --bg-color: #002147;       /* Oxford Deep Navy */
+  --card-bg: #ffffff;        /* Paper White */
+  --primary: #002147;        /* Oxford Blue */
+  --accent-red: #C8102E;     /* Oxford Red */
+  --text-main: #1a1a1a;
+  --text-muted: #666666;
+  --line-color: #e0e0e0;     /* Notebook Rule Line */
   --hyundai-blue: #002c5f;
   --mini-red: #e20112;
 }
@@ -24,8 +24,11 @@
 
 body, html {
   width:100%;
+  /* 옥스포드 노트 커버 느낌의 텍스처 효과 */
   background-color: var(--bg-color);
-  font-family: 'Pretendard', sans-serif;
+  background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+  background-size: 24px 24px;
+  font-family: 'Pretendard', -apple-system, sans-serif;
   overscroll-behavior-y: contain;
   overflow-x: hidden;
 }
@@ -40,7 +43,6 @@ body, html {
   position: relative;
 }
 
-/* 수정: 텍스트 대신 아이콘을 위한 폰트 크기 조정 */
 #pull-indicator {
   position: absolute;
   top: 0; left: 0; width: 100%;
@@ -50,43 +52,60 @@ body, html {
   align-items: center;
   justify-content: center;
   background: var(--bg-color);
-  color: var(--primary);
-  font-size: 24px; /* 아이콘 크기 확대 */
+  color: #ffffff;
+  font-size: 24px;
   font-weight: bold;
   z-index: 100;
 }
 
-h2 { color:white; text-align:center; margin: 8px 0 8px; font-size: 1.2rem; }
+/* 제목: 옥스포드 로고 스타일링 */
+h2 { 
+  color:white; 
+  text-align:center; 
+  margin: 12px 0 16px; 
+  font-size: 1.4rem; 
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
 
 #dashboard {
   display:grid;
   grid-template-columns: repeat(2, 1fr);
   grid-auto-rows: auto;
-  gap: 10px;
+  gap: 12px;
 }
 
 .card {
   background: var(--card-bg);
-  border-radius:14px;
-  padding: 12px;
+  border-radius: 12px;
+  padding: 14px;
   display:flex;
   flex-direction:column;
   justify-content: space-between;
   align-items:center;
   text-align: center;
+  /* 종이가 놓인 듯한 부드러운 그림자 */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  border-top: 4px solid var(--accent-red); /* 옥스포드 포인트 라인 */
 }
 
-/* 하단 4개 소형 카드 높이 고정 */
 .stat-card {
   height: 140px; 
 }
 
-.card-title { font-size:13px; color: var(--text-muted); margin-bottom: 4px; }
+.card-title { 
+  font-size: 12px; 
+  font-weight: 800;
+  color: var(--primary); 
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
 
 .status-value {
   font-size:18px;
   font-weight:900;
-  color:white;
+  color: var(--text-main);
   line-height: 1.2;
   flex: 1; 
   display: flex;
@@ -94,39 +113,48 @@ h2 { color:white; text-align:center; margin: 8px 0 8px; font-size: 1.2rem; }
   justify-content: center;
 }
 
-.small-info { font-size: 11px; color: #888; display: block; }
+.small-info { font-size: 11px; color: var(--text-muted); display: block; }
 
 input, button {
   width:100%;
   border:none;
-  border-radius:8px;
+  border-radius:6px;
   padding: 10px;
   margin-top: 6px;
   transition: all 0.2s;
   font-size: 13px;
 }
 
-input { background: #2a2a2a; color: white; text-align: center; }
+input { 
+  background: #f0f0f0; 
+  color: var(--text-main); 
+  text-align: center; 
+  border: 1px solid var(--line-color);
+}
 
 button { font-weight:800; color:white; cursor:pointer; }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-.btn-fuel { background: var(--fuel-color); }
-.btn-robot { background: var(--robot-color); }
-.btn-carwash { background: var(--primary); }
-.btn-hair { background: var(--hair-color); }
+/* 버튼들을 옥스포드 테마 컬러로 통일 */
+.btn-fuel, .btn-robot, .btn-carwash, .btn-hair { 
+  background: var(--primary); 
+}
+.btn-fuel:active, .btn-robot:active, .btn-carwash:active, .btn-hair:active {
+  background: var(--accent-red);
+}
 
 .reminder-card {
   grid-column: span 2;
   justify-content: flex-start;
-  padding-top: 4px;    /* 제목 위쪽 여백을 바짝 줄임 */
-  padding-bottom: 4px; /* 제목 아래쪽 여백을 바짝 줄임 */
-  min-height: auto;    /* 고정된 최소 높이를 없애야 여백을 줄인 효과가 나타납니다 */
+  padding-top: 10px;
+  padding-bottom: 10px;
+  min-height: auto;
+  border-top: 6px solid var(--accent-red);
 }
 
 .car-rotation-card {
   grid-column: span 2;
-  padding: 10px 14px;
+  padding: 12px 14px;
 }
 
 .car-btn-container {
@@ -139,7 +167,7 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 .car-mark {
   flex: 1;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 8px;
   font-weight: 900;
   font-size: 13px;
   display: flex;
@@ -147,9 +175,9 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   justify-content: center;
 }
 
-.hyundai-on { background-color: var(--hyundai-blue); color: white; border: 1px solid #1a4a8a; }
-.mini-on { background-color: var(--mini-red); color: white; border: 1px solid #ff4d4d; }
-.car-off { background-color: #2a2a2a; color: #555; opacity: 0.5; }
+.hyundai-on { background-color: var(--hyundai-blue); color: white; }
+.mini-on { background-color: var(--mini-red); color: white; }
+.car-off { background-color: #eee; color: #bbb; }
 
 .todo-input-group {
   display: flex;
@@ -158,12 +186,26 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   margin-top: 6px;
 }
 
-.todo-input-group input { flex: 1; margin-top: 0; padding: 8px; }
-.todo-input-group button { width: auto; min-width: 55px; margin-top: 0; padding: 8px 12px; background-color: var(--primary); }
+.todo-input-group input { 
+  flex: 1; 
+  margin-top: 0; 
+  padding: 8px; 
+  text-align: left;
+  background: #fff;
+  border: 1px solid var(--line-color);
+}
+
+.todo-input-group button { 
+  width: auto; 
+  min-width: 55px; 
+  margin-top: 0; 
+  padding: 8px 12px; 
+  background-color: var(--accent-red); 
+}
   
 .todo-list {
   margin-top: 8px;
-  max-height: 120px;
+  max-height: 150px;
   overflow-y: auto;
   width: 100%;
 }
@@ -172,20 +214,20 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
   display:flex;
   justify-content:space-between;
   align-items:center;
-  background:#2a2a2a;
-  padding: 8px 10px;
-  border-radius:8px;
-  margin-bottom:6px;
+  background: transparent;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--line-color); /* 노트 줄무늬 느낌 */
+  margin-bottom: 0;
   gap: 8px;
 }
 
-.drag-handle { color: #666; cursor: grab; font-size: 14px; }
+.drag-handle { color: var(--line-color); cursor: grab; font-size: 14px; }
 
 .todo-item span.text { 
   flex:1; 
   text-align:left; 
-  color: white; 
-  font-size: 12px; 
+  color: var(--text-main); 
+  font-size: 13px; 
   white-space: nowrap; 
   overflow: hidden; 
   text-overflow: ellipsis; 
@@ -193,11 +235,12 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .todo-item button {
   width:auto;
-  min-width: 40px;
-  padding: 4px 8px;
+  min-width: 35px;
+  padding: 4px 6px;
   margin-top: 0;
   font-size: 10px;
-  background:#ff5252;
+  background: #999;
+  border-radius: 4px;
 }
 </style>
 </head>
@@ -206,20 +249,20 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 <div class="app-container" id="main-container">
   <div id="pull-indicator">↻</div>
   
-  <h2>✨ Log It 🌸</h2>
+  <h2>OXFORD ARCHIVE</h2>
 
   <div id="dashboard">
     <div class="card reminder-card">
-      <div class="card-title" style="margin-bottom:0;">📌 리마인더</div>
+      <div class="card-title" style="margin-bottom:4px;">📌 REMINDERS</div>
       <div class="todo-input-group">
-        <input type="text" id="todo-input" placeholder="지금 기억나는 아이디어를 입력하세요">
+        <input type="text" id="todo-input" placeholder="새로운 아이디어 입력...">
         <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
       </div>
       <div class="todo-list" id="todo-list"></div>
     </div>
 
     <div class="card car-rotation-card">
-      <div class="card-title">🚦 2부제: 오늘 운행 가능 차량</div>
+      <div class="card-title">🚦 TODAY'S DRIVE</div>
       <div class="car-btn-container">
         <div id="mark-hyundai" class="car-mark">HYUNDAI</div>
         <div id="mark-mini" class="car-mark">JCW</div>
@@ -227,25 +270,25 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
     </div>
 
     <div class="card stat-card">
-      <div class="card-title">🚗 이달의 주유</div>
+      <div class="card-title">🚗 FUEL</div>
       <div class="status-value" id="fuel-status">- / 3회</div>
       <button class="btn-fuel" onclick="recordAction('addFuel', this, '주유 기록')">주유 기록</button>
     </div>
 
     <div class="card stat-card">
-      <div class="card-title">🤖 로청이</div>
+      <div class="card-title">🤖 ROBOT</div>
       <div class="status-value" id="robot-status">- / 2회</div>
       <button class="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
     </div>
 
     <div class="card stat-card">
-      <div class="card-title">🫧 세차 잔액</div>
+      <div class="card-title">🫧 CAR WASH</div>
       <div class="status-value" id="carwash-status">-원</div>
       <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
     </div>
 
     <div class="card stat-card">
-      <div class="card-title">✂️ 머리한 날</div>
+      <div class="card-title">✂️ HAIR CUT</div>
       <div class="status-value" id="hair-status">-</div>
       <div style="position: relative; width: 100%; margin-top: 6px;">
         <button class="btn-hair" id="btn-hair" style="width: 100%; pointer-events: none;">날짜선택</button>
@@ -256,35 +299,32 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 </div>
 
 <script>
+/* 기존 JavaScript 로직은 동일하게 유지됩니다. */
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgRQ_fvLToFTWS2IWrJJSf29uBqUzYBbBWpcFyTt8gsk5dDwLMGcHtgx1DZHNifKBfEA/exec'; 
 
-// --- Pull to Refresh (수정된 로직) ---
 let startY = 0, pullDist = 0;
 const threshold = 70;
 const pullIndicator = document.getElementById('pull-indicator');
 const container = document.getElementById('main-container');
 
 window.addEventListener('touchstart', (e) => {
-  // 수정: 리마인더 리스트 내부에서 터치가 시작된 경우 무시
   if (e.target.closest('#todo-list')) { startY = -1; return; }
   if (window.scrollY === 0) startY = e.touches[0].pageY;
 }, { passive: true });
 
 window.addEventListener('touchmove', (e) => {
-  if (startY === -1) return; // 리마인더 내부 이동 시 무시
+  if (startY === -1) return;
   const currentY = e.touches[0].pageY;
   pullDist = currentY - startY;
   if (pullDist > 0 && window.scrollY === 0) {
     const displayHeight = Math.min(pullDist * 0.4, threshold + 20);
     pullIndicator.style.height = displayHeight + 'px';
-    // 수정: 안내 문구 업데이트 로직 제거 (CSS 아이콘만 유지)
   }
 }, { passive: true });
 
 window.addEventListener('touchend', (e) => {
   if (startY === -1) { startY = 0; return; }
   if (window.scrollY === 0 && pullDist * 0.4 > threshold) {
-    // 수정: 안내 문구 대신 아이콘만 유지하며 로딩
     loadAll();
     setTimeout(() => { pullIndicator.style.height = '0px'; }, 800);
   } else {
@@ -357,17 +397,14 @@ function recordAction(action, btn, originalText){
   });
 }
 
-// 수정된 세차 차감 로직: Prompt 사용
 function recordCarWash(btn){
   const amount = prompt("차감할 금액을 입력하세요 (숫자만):");
   if (amount === null || amount.trim() === "") return;
-  
   const v = parseInt(amount.replace(/[^0-9]/g, ''));
   if (isNaN(v) || v <= 0) {
     alert("올바른 금액을 입력해주세요.");
     return;
   }
-
   toggleLoading(btn, true, '차감');
   fetch(`${GAS_URL}?action=useCarWash&amount=${v}`)
   .then(res => res.json())
@@ -423,6 +460,5 @@ function deleteTodo(index, btn){
 
 window.onload = loadAll;
 </script>
-
 </body>
 </html>
