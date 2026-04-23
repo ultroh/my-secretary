@@ -116,9 +116,16 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .reminder-card { grid-column: span 2; border-top: 6px solid var(--accent-red); }
 
-/* 🔥 버튼 정렬 및 크기 통일 수정 */
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
-.todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 8px; margin: 0; }
+
+/* 🔥 입력창 가운데 정렬 수정 */
+.todo-input-group input { 
+  flex: 1; 
+  text-align: center; /* 텍스트 및 플레이스홀더 가운데 정렬 */
+  background: #fff; 
+  padding: 8px; 
+  margin: 0; 
+}
 
 .todo-list { margin-top: 6px; max-height: 105px; overflow-y: auto; width: 100%; }
 
@@ -133,7 +140,6 @@ button { font-weight:800; color:white; cursor:pointer; }
   line-height: 1.2;
 }
 
-/* 추가 버튼과 삭제 버튼 크기 동일화 (44x26) 및 우측 정렬 */
 .todo-input-group button, .todo-item button { 
   width: 44px; height: 26px; display: flex; align-items: center; justify-content: center;
   margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0;
@@ -161,7 +167,7 @@ button { font-weight:800; color:white; cursor:pointer; }
     <div class="card reminder-card">
       <div class="card-title">📌 REMINDERS</div>
       <div class="todo-input-group">
-        <input type="text" id="todo-input" placeholder="메모 입력...">
+        <input type="text" id="todo-input" placeholder="빛나는 아이디어를 알려주세요.">
         <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
       </div>
       <div id="todo-list" class="todo-list"></div>
