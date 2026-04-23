@@ -50,33 +50,26 @@ h2 { color:white; text-align:center; margin: 12px 0; font-size: 1.2rem; font-wei
 }
 
 .stat-card { height: 135px; }
-.card-title { font-size: 11px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
-.status-value { font-size:18px; font-weight:900; color: var(--text-main); flex: 1; display: flex; align-items: center; }
+.card-title { font-size: 11px; font-weight: 800; color: var(--primary); margin-bottom: 4px; text-transform: uppercase; }
+.status-value { font-size:16px; font-weight:900; color: var(--text-main); flex: 1; display: flex; align-items: center; text-align: center; line-height: 1.2;}
 
 input, button { border:none; border-radius:6px; font-size: 13px; outline: none; }
 input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; }
 button { font-weight:800; color:white; cursor:pointer; }
 
-/* 기본 버튼 (세차, 날짜) */
 .btn-carwash, .btn-hair { width: 100%; padding: 10px; margin-top: 6px; background: var(--primary); }
 
-/* 🔥 주유 기록 & 로봇청소기 버튼 애니메이션 통합 */
+/* 주유 & 로봇 애니메이션 버튼 */
 .btn-fuel, .btn-robot {
   width: 100%; padding: 10px; margin-top: 6px;
-  background-color: var(--primary); /* 기본 네이비 */
-  color: #fff;
-  border: 1.5px solid var(--primary);
-  position: relative;
-  overflow: hidden;
-  background-repeat: no-repeat;
+  background-color: var(--primary); color: #fff;
+  border: 1.5px solid var(--primary); position: relative; overflow: hidden;
   transition: background-color 0.1s;
 }
-
 .btn-fuel.loading, .btn-robot.loading {
-  background-color: transparent; /* 터치 시 투명화 */
-  color: var(--primary);
+  background-color: transparent; color: var(--primary);
   background-image: linear-gradient(var(--primary), var(--primary));
-  background-size: 0% 100%;
+  background-size: 0% 100%; background-repeat: no-repeat;
   animation: fillAnimation 1.2s forwards ease-in-out;
 }
 
@@ -86,47 +79,46 @@ button { font-weight:800; color:white; cursor:pointer; }
   100% { background-size: 100% 100%; color: #fff; background-color: var(--primary); }
 }
 
+/* 고지혈약 버튼 스타일 */
+.btn-med {
+  width: 100%; padding: 10px; margin-top: 6px;
+  border: 1.5px solid var(--primary);
+  transition: all 0.3s;
+}
+/* 복용 전 (Bad) */
+.med-bad { background-color: transparent; color: var(--primary); }
+/* 복용 완료 (Good) */
+.med-good { background-color: var(--primary); color: white; }
+
 .reminder-card { grid-column: span 2; border-top: 6px solid var(--accent-red); }
 
-.todo-list {
-  margin-top: 8px;
-  max-height: 105px; 
-  overflow-y: auto;
-  width: 100%;
-}
-
-.todo-item {
-  display:flex; justify-content:space-between; align-items:center;
-  padding: 6px 0px; border-bottom: 1px solid var(--line-color);
-}
-
+.todo-list { margin-top: 8px; max-height: 105px; overflow-y: auto; width: 100%; }
+.todo-item { display:flex; justify-content:space-between; align-items:center; padding: 6px 0px; border-bottom: 1px solid var(--line-color); }
 .drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; }
-
-.todo-item span.text { 
-  flex:1; text-align:left; color: var(--text-main); font-size: 13px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
-  line-height: 1.4;
-}
-
+.todo-item span.text { flex:1; text-align:left; color: var(--text-main); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; line-height: 1.4; }
 .todo-item.expanded span.text { white-space: normal; overflow: visible; }
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
 .todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 8px; margin: 0; }
-
-.todo-input-group button, .todo-item button { 
-  width: 50px; height: 32px; display: flex; align-items: center; justify-content: center;
-  margin: 0; font-size: 12px; font-weight: 800; border-radius: 6px; flex-shrink: 0;
-}
+.todo-input-group button, .todo-item button { width: 50px; height: 32px; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 12px; font-weight: 800; border-radius: 6px; flex-shrink: 0; }
 .todo-input-group button { background-color: var(--accent-red); }
 .todo-item button { background-color: #888; }
 
-.car-rotation-card { grid-column: span 2; padding: 10px 14px; }
-.car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
-.car-mark { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; }
-
+/* 차 로고 버튼 스타일링 */
+.car-btn-container { display: flex; width: 100%; gap: 6px; margin-top: 6px; }
+.car-mark { 
+  flex: 1; padding: 12px 5px; border-radius: 10px; 
+  font-weight: 900; font-size: 16px; 
+  display: flex; align-items: center; justify-content: center; 
+}
 .hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
 .mini-on { background-color: var(--mini-red) !important; color: #000 !important; }
 .car-off { background-color: #eee !important; color: #bbb !important; opacity: 0.6; }
+
+/* 로고 텍스트 스타일 */
+.logo-h { font-style: italic; letter-spacing: -1px; }
+.logo-m { border: 2px solid currentColor; border-radius: 50%; width: 24px; height: 24px; font-size: 10px; display: flex; align-items: center; justify-content: center; }
+
 </style>
 </head>
 
@@ -144,12 +136,19 @@ button { font-weight:800; color:white; cursor:pointer; }
       <div id="todo-list" class="todo-list"></div>
     </div>
 
-    <div class="card car-rotation-card">
-      <div class="card-title">🚦 TODAY'S DRIVE</div>
+    <div class="card stat-card">
+      <div class="card-title">🚦 DRIVE</div>
+      <div id="drive-status" class="status-value" style="font-size: 13px;">운행 가능 차량</div>
       <div class="car-btn-container">
-        <div id="mark-hyundai" class="car-mark">HYUNDAI</div>
-        <div id="mark-mini" class="car-mark">JCW</div>
+        <div id="mark-hyundai" class="car-mark logo-h"><i>H</i></div>
+        <div id="mark-mini" class="car-mark logo-m"><span>M</span></div>
       </div>
+    </div>
+
+    <div class="card stat-card">
+      <div class="card-title">💊 MEDICINE</div>
+      <div id="med-status" class="status-value">기록 대기</div>
+      <button id="btn-med" class="btn-med med-bad" onclick="recordAction('addMed', this, '복용전: Bad')">복용전: Bad</button>
     </div>
 
     <div class="card stat-card">
@@ -196,18 +195,16 @@ function updateCarRotation() {
 
 function recordAction(action, btn, txt){
   btn.disabled = true;
-  // 주유 및 로봇 버튼 터치 시 애니메이션 활성화
   if(action === 'addRobot' || action === 'addFuel') btn.classList.add('loading');
 
   fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
     btn.disabled = false;
     if(action === 'addRobot' || action === 'addFuel') btn.classList.remove('loading');
     
-    // 팝업 알림 로직
     if(action === 'addRobot' && data.message && data.message.includes('2회')) {
       alert("2회 청소하였습니다. 오늘 저녁에 알림 메일을 예약하였습니다.");
     } else if(data.message) {
-      alert(data.message);
+      // alert(data.message); // 약 복용 토글 시 알림이 번거로우면 주석 처리 가능
     }
     loadData();
   });
@@ -221,6 +218,19 @@ function loadData() {
       document.getElementById('robot-status').innerText = d.robot + " / 2회";
       document.getElementById('carwash-status').innerText = (d.carWash || 0).toLocaleString() + "원";
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
+      
+      // 약 복용 상태 업데이트
+      const medStatus = document.getElementById('med-status');
+      const medBtn = document.getElementById('btn-med');
+      if (d.med == 1) {
+        medStatus.innerText = "복용완료: Good";
+        medBtn.innerText = "복용완료: Good";
+        medBtn.className = "btn-med med-good";
+      } else {
+        medStatus.innerText = "복용전: Bad";
+        medBtn.innerText = "복용전: Bad";
+        medBtn.className = "btn-med med-bad";
+      }
     }
   });
 }
