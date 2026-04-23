@@ -55,30 +55,35 @@ h2 { color:white; text-align:center; margin: 12px 0; font-size: 1.2rem; font-wei
 
 input, button { border:none; border-radius:6px; font-size: 13px; outline: none; }
 input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; }
-button { font-weight:800; color:white; cursor:pointer; transition: all 0.2s; }
+button { font-weight:800; color:white; cursor:pointer; }
 
-/* 기본 버튼 색상 */
+/* 기본 버튼 (주유, 세차, 날짜) */
 .btn-fuel, .btn-carwash, .btn-hair { width: 100%; padding: 10px; margin-top: 6px; background: var(--primary); }
 
-/* 🔥 로봇청소기 버튼 애니메이션 설정 */
+/* 🔥 로봇청소기 버튼 애니메이션 (기본 네이비 -> 터치 시 비워졌다가 채워짐) */
 .btn-robot {
   width: 100%; padding: 10px; margin-top: 6px;
-  background-color: transparent;
-  color: var(--primary);
+  background-color: var(--primary); /* 기본 상태 네이비 */
+  color: #fff;
   border: 1.5px solid var(--primary);
   position: relative;
   overflow: hidden;
-  background-image: linear-gradient(var(--primary), var(--primary));
   background-repeat: no-repeat;
-  background-size: 0% 100%; /* 초기 상태: 0% */
-  transition: background-size 1.2s ease-in-out, color 0.3s;
+  transition: background-color 0.1s;
 }
 
-/* 로딩 중일 때 채워지는 효과 */
 .btn-robot.loading {
-  background-size: 100% 100%;
-  color: #fff;
-  border-color: var(--primary);
+  background-color: transparent; /* 터치 시 배경을 비움 */
+  color: var(--primary);
+  background-image: linear-gradient(var(--primary), var(--primary));
+  background-size: 0% 100%;
+  animation: fillAnimation 1.2s forwards ease-in-out;
+}
+
+@keyframes fillAnimation {
+  0% { background-size: 0% 100%; color: var(--primary); }
+  80% { background-size: 100% 100%; color: #fff; }
+  100% { background-size: 100% 100%; color: #fff; background-color: var(--primary); }
 }
 
 .reminder-card { grid-column: span 2; border-top: 6px solid var(--accent-red); }
@@ -92,8 +97,7 @@ button { font-weight:800; color:white; cursor:pointer; transition: all 0.2s; }
 
 .todo-item {
   display:flex; justify-content:space-between; align-items:center;
-  padding: 6px 0px;
-  border-bottom: 1px solid var(--line-color);
+  padding: 6px 0px; border-bottom: 1px solid var(--line-color);
 }
 
 .drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; }
@@ -137,7 +141,7 @@ button { font-weight:800; color:white; cursor:pointer; transition: all 0.2s; }
         <input type="text" id="todo-input" placeholder="메모 입력...">
         <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
       </div>
-      <div class="todo-list" id="todo-list"></div>
+      <div id="todo-list" class="todo-list"></div>
     </div>
 
     <div class="card car-rotation-card">
@@ -157,7 +161,7 @@ button { font-weight:800; color:white; cursor:pointer; transition: all 0.2s; }
     <div class="card stat-card">
       <div class="card-title">🤖 ROBOT</div>
       <div class="status-value" id="robot-status">- / 2회</div>
-      <button class="btn-robot" id="btn-robot-main" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
+      <button class="btn-robot" id="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
     </div>
 
     <div class="card stat-card">
@@ -178,7 +182,7 @@ button { font-weight:800; color:white; cursor:pointer; transition: all 0.2s; }
 </div>
 
 <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgRQ_fvLToFTWS2IWrJJSf29uBqUzYBbBWpcFyTt8gsk5dDwLMGcHtgx1DZHNifKBfEA/exec'; 
 
 function loadAll() { loadData(); loadTodos(); updateCarRotation(); }
 
@@ -189,6 +193,38 @@ function updateCarRotation() {
   if (today % 2 === 0) { h.classList.add('hyundai-on'); m.classList.add('car-off'); }
   else { m.classList.add('mini-on'); h.classList.add('car-off'); }
 }
+
+function loadData() {
+  fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => {
+    if(res.status === 'success') {
+      const d = res.data;
+      document.getElementById('fuel-status').innerText = d.fuel + " / 3회";
+      document.getElementById('robot-status').innerText = d.robot + " / 2회";
+      document.getElementById('carwash-status').innerText = (d.carWash || 0).toLocaleString() + "원";
+      document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
+    }
+  });
+}
+
+function recordAction(action, btn, txt){
+  btn.disabled = true;
+  if(action === 'addRobot') btn.classList.add('loading');
+
+  fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
+    btn.disabled = false;
+    if(action === 'addRobot') btn.classList.remove('loading');
+    
+    // 팝업 알림 로직
+    if(action === 'addRobot' && data.message && data.message.includes('2회')) {
+      alert("2회 청소하였습니다. 오늘 저녁에 알림 메일을 예약하였습니다.");
+    } else if(data.message) {
+      alert(data.message);
+    }
+    loadData();
+  });
+}
+
+// 나머지 함수들(loadTodos, saveOrder, deleteTodo, addTodo, recordCarWash, recordHairCut, getHaircutStatus)은 기존과 동일하므로 생략하거나 유지하시면 됩니다.
 
 function loadTodos(){
   fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`)
@@ -214,43 +250,18 @@ function saveOrder() {
   fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodeURIComponent(JSON.stringify(newOrder))}`);
 }
 
-function recordAction(action, btn, txt){
+function addTodo(btn){
+  const v = document.getElementById('todo-input').value;
+  if(!v) return;
   btn.disabled = true;
-  // 로봇청소기 버튼일 경우 애니메이션 클래스 추가
-  if(action === 'addRobot') btn.classList.add('loading');
-
-  fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
-    btn.disabled = false;
-    if(action === 'addRobot') btn.classList.remove('loading');
-    
-    // 2회 완료 팝업 처리 로직
-    if(action === 'addRobot' && data.message && data.message.includes('2회')) {
-      alert("2회 청소하였습니다. 오늘 저녁에 알림 메일을 예약하였습니다.");
-    } else if(data.message) {
-      alert(data.message);
-    }
-    loadData();
+  fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => {
+    btn.disabled = false; document.getElementById('todo-input').value = ''; loadTodos();
   });
 }
 
-function loadData() {
-  fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => {
-    if(res.status === 'success') {
-      const d = res.data;
-      document.getElementById('fuel-status').innerText = d.fuel + " / 3회";
-      document.getElementById('robot-status').innerText = d.robot + " / 2회";
-      document.getElementById('carwash-status').innerText = (d.carWash || 0).toLocaleString() + "원";
-      document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
-    }
-  });
-}
-
-function getHaircutStatus(dateStr) {
-  if (!dateStr) return "기록 없음";
-  const targetDate = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
-  const today = new Date(); today.setHours(0,0,0,0);
-  const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
-  return `D+${diffDays}<br><span style="font-size:11px; color:#888;">(${Math.floor(diffDays/7)+1}주차)</span>`;
+function deleteTodo(index, btn){
+  btn.disabled = true;
+  fetch(`${GAS_URL}?action=deleteTodo&index=${index}`).then(() => loadTodos());
 }
 
 function recordCarWash(btn){
@@ -265,18 +276,12 @@ function recordHairCut(btn){
   fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData());
 }
 
-function addTodo(btn){
-  const v = document.getElementById('todo-input').value;
-  if(!v) return;
-  btn.disabled = true;
-  fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => {
-    btn.disabled = false; document.getElementById('todo-input').value = ''; loadTodos();
-  });
-}
-
-function deleteTodo(index, btn){
-  btn.disabled = true;
-  fetch(`${GAS_URL}?action=deleteTodo&index=${index}`).then(() => loadTodos());
+function getHaircutStatus(dateStr) {
+  if (!dateStr) return "기록 없음";
+  const targetDate = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
+  const today = new Date(); today.setHours(0,0,0,0);
+  const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
+  return `D+${diffDays}<br><span style="font-size:11px; color:#888;">(${Math.floor(diffDays/7)+1}주차)</span>`;
 }
 
 window.onload = loadAll;
