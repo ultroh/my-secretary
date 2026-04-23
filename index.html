@@ -57,13 +57,13 @@ input, button { border:none; border-radius:6px; font-size: 13px; outline: none; 
 input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; }
 button { font-weight:800; color:white; cursor:pointer; }
 
-/* 기본 버튼 (주유, 세차, 날짜) */
-.btn-fuel, .btn-carwash, .btn-hair { width: 100%; padding: 10px; margin-top: 6px; background: var(--primary); }
+/* 기본 버튼 (세차, 날짜) */
+.btn-carwash, .btn-hair { width: 100%; padding: 10px; margin-top: 6px; background: var(--primary); }
 
-/* 🔥 로봇청소기 버튼 애니메이션 (기본 네이비 -> 터치 시 비워졌다가 채워짐) */
-.btn-robot {
+/* 🔥 주유 기록 & 로봇청소기 버튼 애니메이션 통합 */
+.btn-fuel, .btn-robot {
   width: 100%; padding: 10px; margin-top: 6px;
-  background-color: var(--primary); /* 기본 상태 네이비 */
+  background-color: var(--primary); /* 기본 네이비 */
   color: #fff;
   border: 1.5px solid var(--primary);
   position: relative;
@@ -72,8 +72,8 @@ button { font-weight:800; color:white; cursor:pointer; }
   transition: background-color 0.1s;
 }
 
-.btn-robot.loading {
-  background-color: transparent; /* 터치 시 배경을 비움 */
+.btn-fuel.loading, .btn-robot.loading {
+  background-color: transparent; /* 터치 시 투명화 */
   color: var(--primary);
   background-image: linear-gradient(var(--primary), var(--primary));
   background-size: 0% 100%;
@@ -161,7 +161,7 @@ button { font-weight:800; color:white; cursor:pointer; }
     <div class="card stat-card">
       <div class="card-title">🤖 ROBOT</div>
       <div class="status-value" id="robot-status">- / 2회</div>
-      <button class="btn-robot" id="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
+      <button class="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
     </div>
 
     <div class="card stat-card">
@@ -182,7 +182,7 @@ button { font-weight:800; color:white; cursor:pointer; }
 </div>
 
 <script>
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbzgRQ_fvLToFTWS2IWrJJSf29uBqUzYBbBWpcFyTt8gsk5dDwLMGcHtgx1DZHNifKBfEA/exec'; 
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
 function loadAll() { loadData(); loadTodos(); updateCarRotation(); }
 
@@ -192,6 +192,25 @@ function updateCarRotation() {
   h.classList.remove('hyundai-on', 'car-off'); m.classList.remove('mini-on', 'car-off');
   if (today % 2 === 0) { h.classList.add('hyundai-on'); m.classList.add('car-off'); }
   else { m.classList.add('mini-on'); h.classList.add('car-off'); }
+}
+
+function recordAction(action, btn, txt){
+  btn.disabled = true;
+  // 주유 및 로봇 버튼 터치 시 애니메이션 활성화
+  if(action === 'addRobot' || action === 'addFuel') btn.classList.add('loading');
+
+  fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
+    btn.disabled = false;
+    if(action === 'addRobot' || action === 'addFuel') btn.classList.remove('loading');
+    
+    // 팝업 알림 로직
+    if(action === 'addRobot' && data.message && data.message.includes('2회')) {
+      alert("2회 청소하였습니다. 오늘 저녁에 알림 메일을 예약하였습니다.");
+    } else if(data.message) {
+      alert(data.message);
+    }
+    loadData();
+  });
 }
 
 function loadData() {
@@ -205,26 +224,6 @@ function loadData() {
     }
   });
 }
-
-function recordAction(action, btn, txt){
-  btn.disabled = true;
-  if(action === 'addRobot') btn.classList.add('loading');
-
-  fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
-    btn.disabled = false;
-    if(action === 'addRobot') btn.classList.remove('loading');
-    
-    // 팝업 알림 로직
-    if(action === 'addRobot' && data.message && data.message.includes('2회')) {
-      alert("2회 청소하였습니다. 오늘 저녁에 알림 메일을 예약하였습니다.");
-    } else if(data.message) {
-      alert(data.message);
-    }
-    loadData();
-  });
-}
-
-// 나머지 함수들(loadTodos, saveOrder, deleteTodo, addTodo, recordCarWash, recordHairCut, getHaircutStatus)은 기존과 동일하므로 생략하거나 유지하시면 됩니다.
 
 function loadTodos(){
   fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`)
