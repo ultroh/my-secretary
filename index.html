@@ -57,28 +57,29 @@ h2:active {
   transform: scale(0.95);
 }
 
-/* 🌈 무지개 스와이프 테마 (좌에서 우로 스르륵) */
+/* 🌈 빨주노초파남보 스르륵 물드는 애니메이션 테마 */
 .rainbow-theme {
-  /* 좌측: 무지개, 우측: 기존 텍스트 색상(흰색) */
+  /* 배경의 너비를 3배(300%)로 만들어서 무지개-경계-흰색 영역을 분리 */
   background: linear-gradient(to right, 
-    #FF3B30 0%,    /* Red */
-    #FF9500 12%,   /* Orange */
-    #FFCC00 24%,   /* Yellow */
-    #4CD964 36%,   /* Green */
-    #5AC8FA 48%,   /* Light Blue */
-    #007AFF 60%,   /* Blue */
-    #5856D6 72%,   /* Purple */
-    #ffffff 85%,   /* White (기본 글자색) */
-    #ffffff 100%
+    #FF3B30 0%,     /* 빨 */
+    #FF9500 5.5%,   /* 주 */
+    #FFCC00 11.1%,  /* 노 */
+    #4CD964 16.6%,  /* 초 */
+    #5AC8FA 22.2%,  /* 파 (하늘색 느낌) */
+    #007AFF 27.7%,  /* 남 (깊은 파랑) */
+    #5856D6 33.3%,  /* 보 */
+    #ffffff 45%,    /* 무지개에서 흰색으로 스르륵 넘어가는 경계 */
+    #ffffff 100%    /* 기본 글자색 (흰색) */
   );
   background-size: 300% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  /* 애니메이션: 우측 끝(흰색)에서 좌측(무지개)으로 배경 이동 */
-  animation: sweepRainbow 0.8s ease-out forwards;
+  /* 2초 동안 천천히 물들도록 ease-in-out 설정 */
+  animation: sweepRainbow 2s ease-in-out forwards;
 }
 
+/* 배경 위치를 우측 끝(흰색)에서 좌측 끝(무지개)으로 2초간 이동 */
 @keyframes sweepRainbow {
   0% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
@@ -228,7 +229,7 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17
 // 앱 실행 시 약 복용 체크 로직 추가
 function loadAll() { loadData(); loadTodos(); updateCarRotation(); checkMedication(); }
 
-// 💊 약 복용 기록 체크 함수
+// 💊 약 복용 기록 체크 함수 (하루 종일 유지)
 function checkMedication() {
   const today = new Date().toDateString(); 
   const savedDate = localStorage.getItem('medication_taken_date');
@@ -246,13 +247,12 @@ function toggleMedication() {
   const titleEl = document.getElementById('log-it-title');
   const today = new Date().toDateString();
   
-  // 터치 시 애니메이션 클래스 껐다 켜기
   titleEl.classList.toggle('rainbow-theme');
   
   if (titleEl.classList.contains('rainbow-theme')) {
     localStorage.setItem('medication_taken_date', today);
   } else {
-    localStorage.removeItem('medication_taken_date');
+    localStorage.removeItem('medication_taken_date'); // 실수로 눌렀을 때 취소 가능
   }
 }
 
