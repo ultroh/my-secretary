@@ -117,10 +117,9 @@ button { font-weight:800; color:white; cursor:pointer; }
 .reminder-card { grid-column: span 2; border-top: 6px solid var(--accent-red); }
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
-
 .todo-input-group input { 
   flex: 1; 
-  text-align: center; 
+  text-align: center; /* 텍스트 및 플레이스홀더 가운데 정렬 */
   background: #fff; 
   padding: 8px; 
   margin: 0; 
@@ -137,6 +136,12 @@ button { font-weight:800; color:white; cursor:pointer; }
   flex:1; text-align:left; color: var(--text-main); font-size: 13px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
   line-height: 1.2;
+}
+
+/* 🔥 누락되었던 확장(펼치기) 속성 복구 */
+.todo-item.expanded span.text { 
+  white-space: normal; 
+  overflow: visible; 
 }
 
 .todo-input-group button, .todo-item button { 
@@ -166,7 +171,7 @@ button { font-weight:800; color:white; cursor:pointer; }
     <div class="card reminder-card">
       <div class="card-title">📌 REMINDERS</div>
       <div class="todo-input-group">
-        <input type="text" id="todo-input" placeholder="아이디어를 기록하세요">
+        <input type="text" id="todo-input" placeholder="빛나는 아이디어를 알려주세요.">
         <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
       </div>
       <div id="todo-list" class="todo-list"></div>
@@ -179,21 +184,25 @@ button { font-weight:800; color:white; cursor:pointer; }
         <div id="mark-mini" class="car-mark">JCW</div>
       </div>
     </div>
+
     <div class="card stat-card">
       <div class="card-title">🚗 FUEL</div>
       <div class="status-value" id="fuel-status">- / 3회</div>
       <button class="btn-fuel" onclick="recordAction('addFuel', this, '주유 기록')">주유 기록</button>
     </div>
+
     <div class="card stat-card">
       <div class="card-title">🤖 ROBOT</div>
       <div class="status-value" id="robot-status">- / 2회</div>
       <button class="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
     </div>
+
     <div class="card stat-card">
       <div class="card-title">🫧 CAR WASH</div>
       <div class="status-value" id="carwash-status">-원</div>
       <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
     </div>
+
     <div class="card stat-card">
       <div class="card-title">✂️ HAIR CUT</div>
       <div class="status-value" id="hair-status">-</div>
@@ -218,34 +227,22 @@ function checkMedication() {
   else titleEl.classList.remove('rainbow-theme');
 }
 
-// 🔥 약 복용 토글 함수 수정 (서버 전송 기능 추가)
 function toggleMedication() {
   const titleEl = document.getElementById('log-it-title');
   const today = new Date().toDateString();
   
-  // 1. UI 상태 반전
   titleEl.classList.toggle('rainbow-theme');
   const isTaken = titleEl.classList.contains('rainbow-theme');
   
-  // 2. 스마트폰 로컬 저장소 업데이트
   if (isTaken) {
     localStorage.setItem('medication_taken_date', today);
   } else {
     localStorage.removeItem('medication_taken_date');
   }
 
-  // 3. 서버(Google Apps Script)로 상태 실시간 전송
-  // state=true 면 '복용완료', state=false 면 '미복용'으로 서버에 기록됨
+  // 구글 서버로 상태 전송 (백그라운드)
   fetch(`${GAS_URL}?action=toggleMedication&state=${isTaken}`)
-    .then(res => res.json())
-    .then(data => {
-      if(data.status === 'success') {
-        const msg = isTaken ? "약 복용이 확인되었습니다." : "복용 기록이 취소되었습니다. 저녁에 알림이 발송됩니다.";
-        // 필요시 alert(msg); 의 주석을 해제하면 터치할 때마다 팝업으로 결과를 볼 수 있습니다.
-        // alert(msg);
-      }
-    })
-    .catch(err => console.error('기록 서버 전송 실패:', err));
+    .catch(error => console.error('기록 전송 실패:', error));
 }
 
 function updateCarRotation() {
