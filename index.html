@@ -118,10 +118,9 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
 
-/* 🔥 입력창 가운데 정렬 수정 */
 .todo-input-group input { 
   flex: 1; 
-  text-align: center; /* 텍스트 및 플레이스홀더 가운데 정렬 */
+  text-align: center; 
   background: #fff; 
   padding: 8px; 
   margin: 0; 
@@ -219,12 +218,34 @@ function checkMedication() {
   else titleEl.classList.remove('rainbow-theme');
 }
 
+// 🔥 약 복용 토글 함수 수정 (서버 전송 기능 추가)
 function toggleMedication() {
   const titleEl = document.getElementById('log-it-title');
   const today = new Date().toDateString();
+  
+  // 1. UI 상태 반전
   titleEl.classList.toggle('rainbow-theme');
-  if (titleEl.classList.contains('rainbow-theme')) localStorage.setItem('medication_taken_date', today);
-  else localStorage.removeItem('medication_taken_date');
+  const isTaken = titleEl.classList.contains('rainbow-theme');
+  
+  // 2. 스마트폰 로컬 저장소 업데이트
+  if (isTaken) {
+    localStorage.setItem('medication_taken_date', today);
+  } else {
+    localStorage.removeItem('medication_taken_date');
+  }
+
+  // 3. 서버(Google Apps Script)로 상태 실시간 전송
+  // state=true 면 '복용완료', state=false 면 '미복용'으로 서버에 기록됨
+  fetch(`${GAS_URL}?action=toggleMedication&state=${isTaken}`)
+    .then(res => res.json())
+    .then(data => {
+      if(data.status === 'success') {
+        const msg = isTaken ? "약 복용이 확인되었습니다." : "복용 기록이 취소되었습니다. 저녁에 알림이 발송됩니다.";
+        // 필요시 alert(msg); 의 주석을 해제하면 터치할 때마다 팝업으로 결과를 볼 수 있습니다.
+        // alert(msg);
+      }
+    })
+    .catch(err => console.error('기록 서버 전송 실패:', err));
 }
 
 function updateCarRotation() {
