@@ -39,28 +39,7 @@ body, html {
   position: relative;
 }
 
-/* 로고 영역 스타일 수정 */
-h2 { 
-  text-align:center; 
-  margin: 12px 0; 
-  display: flex; 
-  justify-content: center; 
-  align-items: center; 
-}
-
-.logo-img {
-  height: 2rem; /* 기존 글자 크기와 동일하게 설정 */
-  width: auto;
-  filter: grayscale(100%); /* 기본 흑백 */
-  transition: filter 0.3s ease; /* 부드러운 색상 전환 */
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent; /* 모바일 터치 시 파란 박스 제거 */
-}
-
-/* 터치하거나 클릭할 때 컬러로 변경 */
-.logo-img:active {
-  filter: grayscale(0%);
-}
+h2 { color:white; text-align:center; margin: 12px 0; font-size: 1.2rem; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
 
 #dashboard { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
@@ -78,11 +57,13 @@ input, button { border:none; border-radius:6px; font-size: 13px; outline: none; 
 input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; }
 button { font-weight:800; color:white; cursor:pointer; }
 
+/* 기본 버튼 (세차, 날짜) */
 .btn-carwash, .btn-hair { width: 100%; padding: 10px; margin-top: 6px; background: var(--primary); }
 
+/* 🔥 주유 기록 & 로봇청소기 버튼 애니메이션 통합 */
 .btn-fuel, .btn-robot {
   width: 100%; padding: 10px; margin-top: 6px;
-  background-color: var(--primary);
+  background-color: var(--primary); /* 기본 네이비 */
   color: #fff;
   border: 1.5px solid var(--primary);
   position: relative;
@@ -92,7 +73,7 @@ button { font-weight:800; color:white; cursor:pointer; }
 }
 
 .btn-fuel.loading, .btn-robot.loading {
-  background-color: transparent;
+  background-color: transparent; /* 터치 시 투명화 */
   color: var(--primary);
   background-image: linear-gradient(var(--primary), var(--primary));
   background-size: 0% 100%;
@@ -151,9 +132,7 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 <body>
 <div class="app-container">
-  <h2>
-    <img src="img/logo.png" alt="LOG IT" class="logo-img">
-  </h2>
+  <h2>LOG IT</h2>
 
   <div id="dashboard">
     <div class="card reminder-card">
@@ -203,7 +182,6 @@ button { font-weight:800; color:white; cursor:pointer; }
 </div>
 
 <script>
-// 기존 스크립트와 동일 (생략 가능하나 유지를 위해 남겨둠)
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
 function loadAll() { loadData(); loadTodos(); updateCarRotation(); }
@@ -218,10 +196,14 @@ function updateCarRotation() {
 
 function recordAction(action, btn, txt){
   btn.disabled = true;
+  // 주유 및 로봇 버튼 터치 시 애니메이션 활성화
   if(action === 'addRobot' || action === 'addFuel') btn.classList.add('loading');
+
   fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
     btn.disabled = false;
     if(action === 'addRobot' || action === 'addFuel') btn.classList.remove('loading');
+    
+    // 팝업 알림 로직
     if(action === 'addRobot' && data.message && data.message.includes('2회')) {
       alert("2회 청소하였습니다. 오늘 저녁에 알림 메일을 예약하였습니다.");
     } else if(data.message) {
