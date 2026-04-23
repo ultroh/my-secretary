@@ -39,7 +39,6 @@ body, html {
   position: relative;
 }
 
-/* 제목 기본 스타일 + 터치 효과 */
 h2 { 
   color:white; 
   text-align:center; 
@@ -50,36 +49,29 @@ h2 {
   text-transform: uppercase; 
   cursor: pointer;
   transition: transform 0.1s ease-in-out;
-  user-select: none; /* 텍스트 선택 방지 */
+  user-select: none;
 }
 
-h2:active {
-  transform: scale(0.95);
-}
+h2:active { transform: scale(0.95); }
 
-/* 🌈 빨주노초파남보 명확하게 나뉘는 애니메이션 테마 */
 .rainbow-theme {
-  /* 글자 너비의 정확히 1/7씩 차지하도록 경계를 딱딱 끊어서 설정 (Hard Color Stops) */
   background: linear-gradient(to right, 
-    #FF3B30 0%, #FF3B30 14.28%,     /* 빨 */
-    #FF9500 14.28%, #FF9500 28.57%, /* 주 */
-    #FFCC00 28.57%, #FFCC00 42.85%, /* 노 */
-    #4CD964 42.85%, #4CD964 57.14%, /* 초 */
-    #5AC8FA 57.14%, #5AC8FA 71.42%, /* 파 */
-    #007AFF 71.42%, #007AFF 85.71%, /* 남 */
-    #5856D6 85.71%, #5856D6 100%,   /* 보 */
-    #ffffff 100%, #ffffff 200%      /* 스와이프를 위한 우측 여백(흰색) */
+    #FF3B30 0%, #FF3B30 14.28%,
+    #FF9500 14.28%, #FF9500 28.57%,
+    #FFCC00 28.57%, #FFCC00 42.85%,
+    #4CD964 42.85%, #4CD964 57.14%,
+    #5AC8FA 57.14%, #5AC8FA 71.42%,
+    #007AFF 71.42%, #007AFF 85.71%,
+    #5856D6 85.71%, #5856D6 100%,
+    #ffffff 100%, #ffffff 200%
   );
-  /* 너비를 2배로 설정 (왼쪽 절반은 무지개, 오른쪽 절반은 흰색) */
   background-size: 200% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  /* 2초 동안 천천히 물들도록 설정 */
   animation: sweepRainbow 2s ease-in-out forwards;
 }
 
-/* 우측(흰색)에서 좌측(무지개)으로 배경 이동 */
 @keyframes sweepRainbow {
   0% { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
@@ -105,21 +97,15 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .btn-fuel, .btn-robot {
   width: 100%; padding: 10px; margin-top: 6px;
-  background-color: var(--primary); 
-  color: #fff;
-  border: 1.5px solid var(--primary);
-  position: relative;
-  overflow: hidden;
-  background-repeat: no-repeat;
+  background-color: var(--primary); color: #fff; border: 1.5px solid var(--primary);
+  position: relative; overflow: hidden; background-repeat: no-repeat;
   transition: background-color 0.1s;
 }
 
 .btn-fuel.loading, .btn-robot.loading {
-  background-color: transparent; 
-  color: var(--primary);
+  background-color: transparent; color: var(--primary);
   background-image: linear-gradient(var(--primary), var(--primary));
-  background-size: 0% 100%;
-  animation: fillAnimation 1.2s forwards ease-in-out;
+  background-size: 0% 100%; animation: fillAnimation 1.2s forwards ease-in-out;
 }
 
 @keyframes fillAnimation {
@@ -130,37 +116,32 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .reminder-card { grid-column: span 2; border-top: 6px solid var(--accent-red); }
 
-.todo-list {
-  margin-top: 8px;
-  max-height: 105px; 
-  overflow-y: auto;
-  width: 100%;
-}
+/* 🔥 버튼 정렬 및 크기 통일 수정 */
+.todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
+.todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 8px; margin: 0; }
+
+.todo-list { margin-top: 6px; max-height: 105px; overflow-y: auto; width: 100%; }
 
 .todo-item {
   display:flex; justify-content:space-between; align-items:center;
-  padding: 6px 0px; border-bottom: 1px solid var(--line-color);
+  padding: 4px 0px; border-bottom: 1px solid var(--line-color);
 }
-
-.drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; }
 
 .todo-item span.text { 
   flex:1; text-align:left; color: var(--text-main); font-size: 13px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
-  line-height: 1.4;
+  line-height: 1.2;
 }
 
-.todo-item.expanded span.text { white-space: normal; overflow: visible; }
-
-.todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
-.todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 8px; margin: 0; }
-
+/* 추가 버튼과 삭제 버튼 크기 동일화 (44x26) 및 우측 정렬 */
 .todo-input-group button, .todo-item button { 
-  width: 50px; height: 32px; display: flex; align-items: center; justify-content: center;
-  margin: 0; font-size: 12px; font-weight: 800; border-radius: 6px; flex-shrink: 0;
+  width: 44px; height: 26px; display: flex; align-items: center; justify-content: center;
+  margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0;
 }
 .todo-input-group button { background-color: var(--accent-red); }
 .todo-item button { background-color: #888; }
+
+.drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; }
 
 .car-rotation-card { grid-column: span 2; padding: 10px 14px; }
 .car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
@@ -193,25 +174,21 @@ button { font-weight:800; color:white; cursor:pointer; }
         <div id="mark-mini" class="car-mark">JCW</div>
       </div>
     </div>
-
     <div class="card stat-card">
       <div class="card-title">🚗 FUEL</div>
       <div class="status-value" id="fuel-status">- / 3회</div>
       <button class="btn-fuel" onclick="recordAction('addFuel', this, '주유 기록')">주유 기록</button>
     </div>
-
     <div class="card stat-card">
       <div class="card-title">🤖 ROBOT</div>
       <div class="status-value" id="robot-status">- / 2회</div>
       <button class="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
     </div>
-
     <div class="card stat-card">
       <div class="card-title">🫧 CAR WASH</div>
       <div class="status-value" id="carwash-status">-원</div>
       <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
     </div>
-
     <div class="card stat-card">
       <div class="card-title">✂️ HAIR CUT</div>
       <div class="status-value" id="hair-status">-</div>
@@ -226,34 +203,22 @@ button { font-weight:800; color:white; cursor:pointer; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
-// 앱 실행 시 약 복용 체크 로직 추가
 function loadAll() { loadData(); loadTodos(); updateCarRotation(); checkMedication(); }
 
-// 💊 약 복용 기록 체크 함수 (하루 종일 유지)
 function checkMedication() {
   const today = new Date().toDateString(); 
   const savedDate = localStorage.getItem('medication_taken_date');
   const titleEl = document.getElementById('log-it-title');
-  
-  if (savedDate === today) {
-    titleEl.classList.add('rainbow-theme');
-  } else {
-    titleEl.classList.remove('rainbow-theme');
-  }
+  if (savedDate === today) titleEl.classList.add('rainbow-theme');
+  else titleEl.classList.remove('rainbow-theme');
 }
 
-// 💊 약 복용 토글 함수
 function toggleMedication() {
   const titleEl = document.getElementById('log-it-title');
   const today = new Date().toDateString();
-  
   titleEl.classList.toggle('rainbow-theme');
-  
-  if (titleEl.classList.contains('rainbow-theme')) {
-    localStorage.setItem('medication_taken_date', today);
-  } else {
-    localStorage.removeItem('medication_taken_date'); // 실수로 눌렀을 때 취소 가능
-  }
+  if (titleEl.classList.contains('rainbow-theme')) localStorage.setItem('medication_taken_date', today);
+  else localStorage.removeItem('medication_taken_date');
 }
 
 function updateCarRotation() {
@@ -267,16 +232,11 @@ function updateCarRotation() {
 function recordAction(action, btn, txt){
   btn.disabled = true;
   if(action === 'addRobot' || action === 'addFuel') btn.classList.add('loading');
-
   fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
     btn.disabled = false;
     if(action === 'addRobot' || action === 'addFuel') btn.classList.remove('loading');
-    
-    if(action === 'addRobot' && data.message && data.message.includes('2회')) {
-      alert("2회 청소하였습니다. 오늘 저녁에 알림 메일을 예약하였습니다.");
-    } else if(data.message) {
-      alert(data.message);
-    }
+    if(action === 'addRobot' && data.message && data.message.includes('2회')) alert("2회 청소하였습니다. 오늘 저녁에 알림 메일을 예약하였습니다.");
+    else if(data.message) alert(data.message);
     loadData();
   });
 }
@@ -294,9 +254,7 @@ function loadData() {
 }
 
 function loadTodos(){
-  fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`)
-  .then(res => res.json())
-  .then(data => {
+  fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`).then(res => res.json()).then(data => {
     const list = document.getElementById('todo-list');
     list.innerHTML = '';
     const reversedTodos = [...data.todos].map((text, i) => ({ text, originalIndex: i })).reverse();
