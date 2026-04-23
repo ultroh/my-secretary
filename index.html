@@ -57,20 +57,13 @@ h2:active {
   transform: scale(0.95);
 }
 
-/* 🌈 폴스미스 시그니처 패턴 클래스 */
-.paul-smith-theme {
+/* 💊 약 복용 완료 테마 (밝은 노랑, 초록, 파랑 위주) */
+.pill-taken-theme {
   background: linear-gradient(to right,
-    #012641 0%, #012641 8%,   /* Navy */
-    #0095B6 8%, #0095B6 16%,  /* Bondi Blue */
-    #528A4C 16%, #528A4C 24%, /* Green */
-    #EFE048 24%, #EFE048 30%, /* Yellow */
-    #F08E3A 30%, #F08E3A 38%, /* Orange */
-    #E44E45 38%, #E44E45 48%, /* Red */
-    #C61453 48%, #C61453 58%, /* Deep Pink */
-    #892F67 58%, #892F67 68%, /* Purple */
-    #EBA0B5 68%, #EBA0B5 76%, /* Light Pink */
-    #7A4B3A 76%, #7A4B3A 86%, /* Brown */
-    #1A2B3C 86%, #1A2B3C 100% /* Dark Blue */
+    #FFEB3B 0%, #FFEB3B 25%,   /* 밝은 노랑 */
+    #4CAF50 25%, #4CAF50 50%,  /* 싱그러운 초록 */
+    #2196F3 50%, #2196F3 75%,  /* 맑은 파랑 */
+    #FF9800 75%, #FF9800 100%  /* 따뜻한 주황 (포인트) */
   );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -166,7 +159,7 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 <body>
 <div class="app-container">
-  <h2 onclick="this.classList.toggle('paul-smith-theme')">LOG IT</h2>
+  <h2 id="log-it-title" onclick="toggleMedication()">LOG IT</h2>
 
   <div id="dashboard">
     <div class="card reminder-card">
@@ -218,7 +211,39 @@ button { font-weight:800; color:white; cursor:pointer; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
-function loadAll() { loadData(); loadTodos(); updateCarRotation(); }
+// 앱 실행 시 약 복용 체크 로직 추가
+function loadAll() { loadData(); loadTodos(); updateCarRotation(); checkMedication(); }
+
+// 💊 약 복용 기록 유지 함수
+function checkMedication() {
+  const today = new Date().toDateString(); // 오늘 날짜 텍스트 (예: "Thu Apr 23 2026")
+  const savedDate = localStorage.getItem('medication_taken_date');
+  const titleEl = document.getElementById('log-it-title');
+  
+  if (savedDate === today) {
+    // 오늘 저장된 기록이 있으면 색상 활성화
+    titleEl.classList.add('pill-taken-theme');
+  } else {
+    // 날짜가 지났거나 기록이 없으면 색상 해제
+    titleEl.classList.remove('pill-taken-theme');
+  }
+}
+
+// 💊 약 복용 터치 토글 함수
+function toggleMedication() {
+  const titleEl = document.getElementById('log-it-title');
+  const today = new Date().toDateString();
+  
+  titleEl.classList.toggle('pill-taken-theme');
+  
+  if (titleEl.classList.contains('pill-taken-theme')) {
+    // 색상이 켜졌을 때 오늘 날짜를 저장
+    localStorage.setItem('medication_taken_date', today);
+  } else {
+    // 다시 터치해서 색상을 껐을 때 기록 삭제 (실수로 눌렀을 때 대비)
+    localStorage.removeItem('medication_taken_date');
+  }
+}
 
 function updateCarRotation() {
   const today = new Date().getDate();
