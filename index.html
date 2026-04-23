@@ -16,7 +16,7 @@
   --text-muted: #666666;
   --line-color: #e0e0e0;
   --hyundai-blue: #002c5f;
-  --mini-red: #E20112; /* Chili Red 스타일 */
+  --mini-red: #E20112;
 }
 
 * { box-sizing: border-box; margin:0; padding:0; }
@@ -55,8 +55,31 @@ h2 { color:white; text-align:center; margin: 12px 0; font-size: 1.2rem; font-wei
 
 input, button { border:none; border-radius:6px; font-size: 13px; outline: none; }
 input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; }
-button { font-weight:800; color:white; cursor:pointer; }
-.btn-fuel, .btn-robot, .btn-carwash, .btn-hair { width: 100%; padding: 10px; margin-top: 6px; background: var(--primary); }
+button { font-weight:800; color:white; cursor:pointer; transition: all 0.2s; }
+
+/* 기본 버튼 색상 */
+.btn-fuel, .btn-carwash, .btn-hair { width: 100%; padding: 10px; margin-top: 6px; background: var(--primary); }
+
+/* 🔥 로봇청소기 버튼 애니메이션 설정 */
+.btn-robot {
+  width: 100%; padding: 10px; margin-top: 6px;
+  background-color: transparent;
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(var(--primary), var(--primary));
+  background-repeat: no-repeat;
+  background-size: 0% 100%; /* 초기 상태: 0% */
+  transition: background-size 1.2s ease-in-out, color 0.3s;
+}
+
+/* 로딩 중일 때 채워지는 효과 */
+.btn-robot.loading {
+  background-size: 100% 100%;
+  color: #fff;
+  border-color: var(--primary);
+}
 
 .reminder-card { grid-column: span 2; border-top: 6px solid var(--accent-red); }
 
@@ -69,7 +92,7 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .todo-item {
   display:flex; justify-content:space-between; align-items:center;
-  padding: 6px 0px; /* 좌우 여백 제거하여 정렬 최적화 */
+  padding: 6px 0px;
   border-bottom: 1px solid var(--line-color);
 }
 
@@ -83,21 +106,12 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .todo-item.expanded span.text { white-space: normal; overflow: visible; }
 
-/* 추가/삭제 버튼 크기 및 정렬 수정 */
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
 .todo-input-group input { flex: 1; text-align: left; background: #fff; padding: 8px; margin: 0; }
 
 .todo-input-group button, .todo-item button { 
-  width: 50px; 
-  height: 32px; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  font-size: 12px;
-  font-weight: 800;
-  border-radius: 6px;
-  flex-shrink: 0; /* 버튼 크기 고정 */
+  width: 50px; height: 32px; display: flex; align-items: center; justify-content: center;
+  margin: 0; font-size: 12px; font-weight: 800; border-radius: 6px; flex-shrink: 0;
 }
 .todo-input-group button { background-color: var(--accent-red); }
 .todo-item button { background-color: #888; }
@@ -106,10 +120,9 @@ button { font-weight:800; color:white; cursor:pointer; }
 .car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
 .car-mark { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; }
 
-/* 자동차 버튼 색상 수정 */
 .hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
-.mini-on { background-color: var(--mini-red) !important; color: #000000 !important; } /* 칠리레드 배경 + 검정 글자 */
-.car-off { background-color: #eeeeee !important; color: #bbbbbb !important; opacity: 0.6; }
+.mini-on { background-color: var(--mini-red) !important; color: #000 !important; }
+.car-off { background-color: #eee !important; color: #bbb !important; opacity: 0.6; }
 </style>
 </head>
 
@@ -144,7 +157,7 @@ button { font-weight:800; color:white; cursor:pointer; }
     <div class="card stat-card">
       <div class="card-title">🤖 ROBOT</div>
       <div class="status-value" id="robot-status">- / 2회</div>
-      <button class="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
+      <button class="btn-robot" id="btn-robot-main" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
     </div>
 
     <div class="card stat-card">
@@ -188,10 +201,7 @@ function loadTodos(){
       const div = document.createElement('div');
       div.className = 'todo-item';
       div.dataset.text = todo.text;
-      div.innerHTML = `
-        <span class="drag-handle">☰</span>
-        <span class="text" onclick="this.parentElement.classList.toggle('expanded')">${todo.text}</span>
-        <button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
+      div.innerHTML = `<span class="drag-handle">☰</span><span class="text" onclick="this.parentElement.classList.toggle('expanded')">${todo.text}</span><button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
       list.appendChild(div);
     });
     new Sortable(list, { handle: '.drag-handle', animation: 150, onEnd: saveOrder });
@@ -204,18 +214,23 @@ function saveOrder() {
   fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodeURIComponent(JSON.stringify(newOrder))}`);
 }
 
-function addTodo(btn){
-  const v = document.getElementById('todo-input').value;
-  if(!v) return;
+function recordAction(action, btn, txt){
   btn.disabled = true;
-  fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => {
-    btn.disabled = false; document.getElementById('todo-input').value = ''; loadTodos();
-  });
-}
+  // 로봇청소기 버튼일 경우 애니메이션 클래스 추가
+  if(action === 'addRobot') btn.classList.add('loading');
 
-function deleteTodo(index, btn){
-  btn.disabled = true;
-  fetch(`${GAS_URL}?action=deleteTodo&index=${index}`).then(() => loadTodos());
+  fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
+    btn.disabled = false;
+    if(action === 'addRobot') btn.classList.remove('loading');
+    
+    // 2회 완료 팝업 처리 로직
+    if(action === 'addRobot' && data.message && data.message.includes('2회')) {
+      alert("2회 청소하였습니다. 오늘 저녁에 알림 메일을 예약하였습니다.");
+    } else if(data.message) {
+      alert(data.message);
+    }
+    loadData();
+  });
 }
 
 function loadData() {
@@ -238,11 +253,6 @@ function getHaircutStatus(dateStr) {
   return `D+${diffDays}<br><span style="font-size:11px; color:#888;">(${Math.floor(diffDays/7)+1}주차)</span>`;
 }
 
-function recordAction(action, btn, txt){
-  btn.disabled = true;
-  fetch(`${GAS_URL}?action=${action}`).then(() => { btn.disabled = false; loadData(); });
-}
-
 function recordCarWash(btn){
   const amount = prompt("차감할 금액:");
   if (!amount) return;
@@ -253,6 +263,20 @@ function recordHairCut(btn){
   const v = document.getElementById('hairDateVal').value;
   if(!v) return;
   fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData());
+}
+
+function addTodo(btn){
+  const v = document.getElementById('todo-input').value;
+  if(!v) return;
+  btn.disabled = true;
+  fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => {
+    btn.disabled = false; document.getElementById('todo-input').value = ''; loadTodos();
+  });
+}
+
+function deleteTodo(index, btn){
+  btn.disabled = true;
+  fetch(`${GAS_URL}?action=deleteTodo&index=${index}`).then(() => loadTodos());
 }
 
 window.onload = loadAll;
