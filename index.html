@@ -15,7 +15,7 @@
   --hyundai-blue: #002c5f;
   --mini-red: #C8102E; 
 
-  /* 다이내믹 테마 변수 */
+  /* 다이내믹 테마 변수 (초기값) */
   --dynamic-app-bg: #002147;
   --dynamic-memo-bg: #ffffff;
   --dynamic-btn-main: #002147;
@@ -31,7 +31,7 @@ body, html {
   background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
   background-size: 24px 24px;
   font-family: 'Pretendard', -apple-system, sans-serif;
-  transition: background-color 1s ease;
+  transition: background-color 0.8s ease;
 }
 
 .app-container {
@@ -61,12 +61,12 @@ h2:active { transform: scale(0.95); }
 .card {
   background: var(--card-bg); border-radius: 12px; padding: 12px;
   display:flex; flex-direction:column; justify-content: space-between; align-items:center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 4px solid var(--dynamic-border); transition: border-top 1s ease, background-color 1s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 4px solid var(--dynamic-border); transition: border-top 0.8s ease;
 }
 
 .reminder-card { grid-column: span 2; border-top: 6px solid var(--dynamic-border); background-color: var(--dynamic-memo-bg); }
 .stat-card { height: 135px; overflow: hidden; }
-.card-title { font-size: 11px; font-weight: 800; color: var(--dynamic-btn-main); margin-bottom: 4px; transition: color 1s ease; }
+.card-title { font-size: 11px; font-weight: 800; color: var(--dynamic-btn-main); margin-bottom: 4px; transition: color 0.8s ease; }
 
 .status-value { 
   color: var(--text-main); 
@@ -87,7 +87,7 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
   width: 100%; height: 36px; margin-top: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px;
-  background-color: var(--dynamic-btn-main); transition: background-color 1s ease, border-color 1s ease, color 1s ease;
+  background-color: var(--dynamic-btn-main); transition: background-color 0.8s ease, border-color 0.8s ease, color 0.8s ease;
 }
 .btn-carwash, .btn-hair { border: 1.5px solid transparent; }
 .btn-fuel, .btn-robot { color: #fff; border: 1.5px solid var(--dynamic-btn-main); position: relative; overflow: hidden; background-repeat: no-repeat; }
@@ -96,13 +96,13 @@ button { font-weight:800; color:white; cursor:pointer; }
 @keyframes fillAnimation { 0% { background-size: 0% 100%; color: var(--dynamic-btn-main); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); } }
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
-.todo-input-group input { flex: 1; text-align: center; background: rgba(255, 255, 255, 0.6); padding: 8px; margin: 0; transition: background-color 1s ease; }
+.todo-input-group input { flex: 1; text-align: center; background: rgba(255, 255, 255, 0.6); padding: 8px; margin: 0; }
 .todo-list { margin-top: 6px; max-height: 105px; overflow-y: auto; width: 100%; }
 .todo-item { display:flex; justify-content:space-between; align-items:center; padding: 4px 0px; border-bottom: 1px solid var(--line-color); }
 .todo-item span.text { flex:1; text-align:left; color: var(--text-main); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; line-height: 1.2; }
 .todo-item.expanded span.text { white-space: normal; overflow: visible; }
 
-.todo-input-group button, .todo-item button { width: 44px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0; position: relative; overflow: hidden; background-repeat: no-repeat; transition: background-color 1s ease, border-color 1s ease; }
+.todo-input-group button, .todo-item button { width: 44px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0; position: relative; overflow: hidden; background-repeat: no-repeat; transition: background-color 0.8s ease, border-color 0.8s ease; }
 .todo-input-group button { background-color: var(--dynamic-btn-main); border: 1.5px solid var(--dynamic-btn-main); }
 .todo-item button { background-color: var(--dynamic-btn-sub); border: 1.5px solid var(--dynamic-btn-sub); }
 
@@ -197,52 +197,31 @@ button { font-weight:800; color:white; cursor:pointer; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
-function loadAll() { applyTimeBasedTheme(); loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
+function loadAll() { applyRandomTheme(); loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
 
-// 🔥 깔끔한 딥블루-레드 톤을 베이스로 한 시간대/랜덤 미세 변형 로직
-function applyTimeBasedTheme() {
-  const hour = new Date().getHours();
+// 🔥 새로고침마다 고정된 5가지 산뜻한 테마 중 하나를 랜덤으로 적용
+function applyRandomTheme() {
+  const themes = [
+    { bg: '#002147', border: '#C8102E' }, // 1. 클래식 네이비 & 크림슨 레드 (기존)
+    { bg: '#1A3622', border: '#E9C46A' }, // 2. 포레스트 그린 & 선 골드 (우아함)
+    { bg: '#2C3E50', border: '#F1C40F' }, // 3. 슬레이트 블루 & 머스타드 (지적임)
+    { bg: '#222831', border: '#2A9D8F' }, // 4. 딥 차콜 & 민트 (도시적임)
+    { bg: '#370617', border: '#E76F51' }  // 5. 다크 플럼 & 코랄 (고급스러움)
+  ];
+  
+  // 랜덤 인덱스 추출
+  const randomIndex = Math.floor(Math.random() * themes.length);
+  const selectedTheme = themes[randomIndex];
+  
   const root = document.documentElement;
   
-  // 기본 스탠다드 색상 (딥블루, 레드) 고정
-  let appH = 212, appS = 100, appL = 14;
-  let btnH = 212, btnS = 100, btnL = 25;
-  let borderH = 351, borderS = 85, borderL = 42;
-
-  // 시간대별 밝기(L)만 미세하게 조정하여 톤앤매너 유지
-  if (hour >= 0 && hour < 6) {
-    // 0~6시: 새벽 (더 깊고 차분한 다크 네이비)
-    appL = 10; btnL = 20; borderL = 38;
-  } else if (hour >= 6 && hour < 12) {
-    // 6~12시: 오전 (조금 더 산뜻하고 가벼운 네이비)
-    appL = 18; btnL = 28; borderL = 46;
-  } else if (hour >= 12 && hour < 18) {
-    // 12~18시: 낮 (기본 스탠다드 딥블루)
-    appL = 14; btnL = 25; borderL = 42;
-  } else {
-    // 18~24시: 저녁 (노을빛을 살짝 머금은 차분한 네이비)
-    appL = 12; btnL = 22; borderL = 40;
-  }
-
-  // 새로고침 시 이질감 없는 수준에서 랜덤 톤 변화 부여
-  const randH = () => (Math.random() * 6) - 3;   // 색조 ±3% (네이비/레드 범주 이탈 방지)
-  const randS = () => (Math.random() * 10) - 5;  // 채도 ±5%
-  const randL = () => (Math.random() * 6) - 3;   // 밝기 ±3%
+  // 선택된 테마 색상 적용 (메모장 배경과 서브 버튼은 항상 깔끔하게 고정)
+  root.style.setProperty('--dynamic-app-bg', selectedTheme.bg);
+  root.style.setProperty('--dynamic-btn-main', selectedTheme.bg); // 버튼은 배경색과 통일
+  root.style.setProperty('--dynamic-border', selectedTheme.border); // 포인트 테두리 선
   
-  // 최종 HSL 조합 (메모장 배경은 무조건 깨끗한 화이트로 고정)
-  const finalAppBg = `hsl(${appH + randH()}, ${appS + randS()}%, ${appL + randL()}%)`;
-  const finalMemoBg = `#ffffff`; 
-  const finalBtnMain = `hsl(${btnH + randH()}, ${btnS + randS()}%, ${btnL + randL()}%)`;
-  const finalBorder = `hsl(${borderH + randH()}, ${borderS + randS()}%, ${borderL + randL()}%)`;
-  
-  // 서브 버튼(삭제)은 메인 버튼보다 채도를 낮추고 밝기를 올려 자연스럽게
-  const finalBtnSub = `hsl(${btnH + randH()}, ${btnS - 30}%, ${btnL + 25}%)`;
-
-  root.style.setProperty('--dynamic-app-bg', finalAppBg);
-  root.style.setProperty('--dynamic-memo-bg', finalMemoBg);
-  root.style.setProperty('--dynamic-btn-main', finalBtnMain);
-  root.style.setProperty('--dynamic-btn-sub', finalBtnSub);
-  root.style.setProperty('--dynamic-border', finalBorder);
+  root.style.setProperty('--dynamic-memo-bg', '#ffffff'); // 메모장은 순백색 고정
+  root.style.setProperty('--dynamic-btn-sub', '#888888'); // 삭제 버튼은 튀지 않게 회색 고정
 }
 
 function resetCarButtons() {
