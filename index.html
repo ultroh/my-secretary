@@ -199,54 +199,48 @@ button { font-weight:800; color:white; cursor:pointer; }
 .car-rotation-card { grid-column: span 2; padding: 10px 14px; }
 .car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
 
-/* 🔥 차량 버튼 기본 스타일 설정 */
 .car-mark { 
   flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; 
   display: flex; align-items: center; justify-content: center; cursor: pointer; 
-  position: relative; /* 자식(반짝임) 요소의 기준점 */
+  position: relative; 
   overflow: hidden; 
   z-index: 1; 
   border: none !important;
+  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out; /* 배경색 전환을 부드럽게 */
 }
 
-/* 차량 텍스트가 반짝임 배경보다 무조건 위에 오도록 설정 */
 .car-mark .btn-text {
   position: relative;
   z-index: 2;
 }
 
-/* 기본 ON/OFF 배경색 지정 */
+/* 고유 색상 및 비활성화 상태 */
 .hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
 .mini-on { background-color: var(--mini-red) !important; color: white !important; }
-.car-off { background-color: #eee !important; color: #bbb !important; opacity: 0.6; }
+.car-off { background-color: #eee !important; color: #bbb !important; opacity: 1 !important; } /* opacity 조절하여 텍스트 잘 보이게 */
 
-/* 🔥 몽환적 반짝임 효과용 숨겨진 레이어 */
+/* 몽환적 반짝임 효과용 숨겨진 레이어 */
 .car-mark::before {
   content: '';
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  /* 아름다운 홀로그램(파스텔톤) 그라데이션 조합 */
-  background: linear-gradient(124deg, 
-    #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%
-  );
+  background: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%);
   background-size: 300% 300%;
-  opacity: 0; /* 평소엔 투명해서 안 보임 */
-  z-index: 0; /* 버튼 배경과 글자 사이 */
-  /* 애니메이션이 끝난 후 서서히 사라지는 1.5초 트랜지션 (몽환적 효과) */
+  opacity: 0; 
+  z-index: 0; 
   transition: opacity 1.5s ease-out; 
 }
 
 /* 터치 시 반짝임 클래스가 붙었을 때 */
 .car-mark.is-sparkling::before {
-  opacity: 1; /* 스르륵 나타남 */
-  transition: opacity 0.3s ease-in; /* 터치 시엔 즉시 선명하게 */
+  opacity: 1; 
+  transition: opacity 0.3s ease-in; 
   animation: dreamySparkle 1.5s ease-in-out infinite alternate;
 }
 
-/* 반짝이며 색상이 요동치는 애니메이션 */
 @keyframes dreamySparkle {
   0% { background-position: 0% 50%; filter: brightness(1) contrast(1.1); }
-  50% { filter: brightness(1.3) contrast(1.3); } /* 순간적으로 확 밝아지며 반짝임 */
+  50% { filter: brightness(1.3) contrast(1.3); } 
   100% { background-position: 100% 50%; filter: brightness(1) contrast(1.1); }
 }
 </style>
@@ -269,10 +263,10 @@ button { font-weight:800; color:white; cursor:pointer; }
     <div class="card car-rotation-card">
       <div class="card-title">🚦 TODAY'S DRIVE</div>
       <div class="car-btn-container">
-        <div id="mark-hyundai" class="car-mark" onclick="playSparkle(this)">
+        <div id="mark-hyundai" class="car-mark car-off" onclick="handleCarSelect(this, 'hyundai')">
           <span class="btn-text">HYUNDAI</span>
         </div>
-        <div id="mark-mini" class="car-mark" onclick="playSparkle(this)">
+        <div id="mark-mini" class="car-mark car-off" onclick="handleCarSelect(this, 'mini')">
           <span class="btn-text">JCW</span>
         </div>
       </div>
@@ -312,7 +306,14 @@ button { font-weight:800; color:white; cursor:pointer; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
-function loadAll() { loadData(); loadTodos(); updateCarRotation(); checkMedication(); }
+// 🔥 앱 최초 로드 시 차량 버튼을 모두 비활성화로 초기화
+function loadAll() { loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
+
+// 🔥 새로고침/로딩 시 둘 다 car-off로 리셋
+function resetCarButtons() {
+  document.getElementById('mark-hyundai').className = 'car-mark car-off';
+  document.getElementById('mark-mini').className = 'car-mark car-off';
+}
 
 function checkMedication() {
   const today = new Date().toDateString(); 
@@ -332,26 +333,37 @@ function toggleMedication() {
   fetch(`${GAS_URL}?action=toggleMedication&state=${isTaken}`).catch(e => console.error(e));
 }
 
-function updateCarRotation() {
-  const today = new Date().getDate();
-  const h = document.getElementById('mark-hyundai'), m = document.getElementById('mark-mini');
-  h.classList.remove('hyundai-on', 'car-off'); m.classList.remove('mini-on', 'car-off');
-  if (today % 2 === 0) { h.classList.add('hyundai-on'); m.classList.add('car-off'); }
-  else { m.classList.add('mini-on'); h.classList.add('car-off'); }
-}
-
-// 🔥 차량 버튼 터치 시 반짝임(Sparkle) 애니메이션 실행 함수
-function playSparkle(el) {
-  // 이미 타이머가 돌고 있다면 초기화하여 끊김 방지
+// 🔥 차량 선택 애니메이션 & 당첨 로직 함수
+function handleCarSelect(el, carType) {
+  // 이미 진행 중인 타이머가 있다면 리셋
   if(el.sparkleTimeout) clearTimeout(el.sparkleTimeout);
   
-  // 반짝임 효과 시작
+  // 1. 터치 시 즉시 반짝임(Sparkle) 시작
   el.classList.add('is-sparkling');
   
-  // 3.5초 뒤에 클래스를 제거 (제거되면 CSS transition에 의해 1.5초간 몽환적으로 사라짐)
+  // 2. 오늘의 운행 가능 차량 판별 (짝수일: 현대, 홀수일: JCW)
+  const todayNum = new Date().getDate();
+  const allowedCar = (todayNum % 2 === 0) ? 'hyundai' : 'mini';
+
+  // 3. 3.5초간 기대감 부여 후 결과 공개
   el.sparkleTimeout = setTimeout(() => {
+    // 반짝임 클래스 제거 (이때부터 1.5초간 서서히 페이드아웃 되며 아래의 진짜 색상이 드러남)
     el.classList.remove('is-sparkling');
-  }, 3500);
+    
+    // 기존 색상 클래스 초기화
+    el.classList.remove('hyundai-on', 'mini-on', 'car-off');
+    
+    if (carType === allowedCar) {
+      // 당첨! (고유 색상 부여)
+      el.classList.add(carType === 'hyundai' ? 'hyundai-on' : 'mini-on');
+      // 반대쪽 차는 확실히 끄기
+      const otherId = carType === 'hyundai' ? 'mark-mini' : 'mark-hyundai';
+      document.getElementById(otherId).className = 'car-mark car-off';
+    } else {
+      // 꽝! (다시 회색으로)
+      el.classList.add('car-off');
+    }
+  }, 3500); // 3.5초 후 실행
 }
 
 function recordAction(action, btn, txt){
