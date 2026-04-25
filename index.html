@@ -16,8 +16,7 @@
   --text-muted: #666666;
   --line-color: #e0e0e0;
   --hyundai-blue: #002c5f;
-  /* JCW 색상을 추가버튼(accent-red)과 통일 */
-  --mini-red: #C8102E; 
+  --mini-red: #C8102E; /* JCW 색상을 추가버튼과 통일 */
 }
 
 * { box-sizing: border-box; margin:0; padding:0; }
@@ -55,6 +54,7 @@ h2 {
 
 h2:active { transform: scale(0.95); }
 
+/* 약 복용 무지개 애니메이션 */
 .rainbow-theme {
   background: linear-gradient(to right, 
     #FF3B30 0%, #FF3B30 14.28%,
@@ -163,7 +163,6 @@ button { font-weight:800; color:white; cursor:pointer; }
   overflow: visible; 
 }
 
-/* 🔥 추가 및 삭제 버튼 애니메이션 기반 설정 */
 .todo-input-group button, .todo-item button { 
   width: 44px; height: 26px; display: flex; align-items: center; justify-content: center;
   margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0;
@@ -174,7 +173,6 @@ button { font-weight:800; color:white; cursor:pointer; }
 .todo-input-group button { background-color: var(--accent-red); border: 1.5px solid var(--accent-red); }
 .todo-item button { background-color: #888; border: 1.5px solid #888; }
 
-/* 추가 버튼 로딩 애니메이션 */
 .loading-add {
   background-color: transparent !important; color: var(--accent-red) !important;
   background-image: linear-gradient(var(--accent-red), var(--accent-red)) !important;
@@ -186,7 +184,6 @@ button { font-weight:800; color:white; cursor:pointer; }
   100% { background-size: 100% 100%; color: #fff; background-color: var(--accent-red); }
 }
 
-/* 삭제 버튼 로딩 애니메이션 */
 .loading-del {
   background-color: transparent !important; color: #888 !important;
   background-image: linear-gradient(#888, #888) !important;
@@ -204,26 +201,26 @@ button { font-weight:800; color:white; cursor:pointer; }
 .car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
 .car-mark { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; }
 
-/* 🔥 물결무늬(Wave) 애니메이션 키프레임 */
-@keyframes waveGlow {
-  0% { background-position: 200% 50%; }
-  100% { background-position: 0% 50%; }
+/* 🔥 차량 버튼 실시간 물결(Wave) 애니메이션 키프레임 */
+@keyframes continuousWave {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
 
-/* HYUNDAI 물결 애니메이션 */
+/* 🔥 HYUNDAI 활성화 시 흐르는 물결 */
 .hyundai-on { 
-  background: linear-gradient(90deg, #002c5f 0%, #0056b3 50%, #002c5f 100%) !important;
-  background-size: 200% 100% !important;
-  animation: waveGlow 2s linear infinite !important;
+  background: linear-gradient(60deg, #002c5f, #3a7bd5, #002c5f) !important;
+  background-size: 300% 100% !important;
+  animation: continuousWave 2.5s ease-in-out infinite alternate !important;
   color: white !important; 
   border: none !important;
 }
 
-/* JCW 물결 애니메이션 */
+/* 🔥 JCW 활성화 시 흐르는 물결 (accent-red 색상 기반) */
 .mini-on { 
-  background: linear-gradient(90deg, var(--accent-red) 0%, #ff4d4d 50%, var(--accent-red) 100%) !important;
-  background-size: 200% 100% !important;
-  animation: waveGlow 2s linear infinite !important;
+  background: linear-gradient(60deg, var(--accent-red), #ff6b6b, var(--accent-red)) !important;
+  background-size: 300% 100% !important;
+  animation: continuousWave 2.5s ease-in-out infinite alternate !important;
   color: white !important; 
   border: none !important;
 }
@@ -379,24 +376,22 @@ function saveOrder() {
   fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodeURIComponent(JSON.stringify(newOrder))}`);
 }
 
-// 🔥 추가 버튼 터치 시 로딩 애니메이션 발동
 function addTodo(btn){
   const v = document.getElementById('todo-input').value;
   if(!v) return;
   btn.disabled = true;
-  btn.classList.add('loading-add'); // 클래스 추가
+  btn.classList.add('loading-add'); 
   fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => {
     btn.disabled = false; 
-    btn.classList.remove('loading-add'); // 완료 후 원복
+    btn.classList.remove('loading-add'); 
     document.getElementById('todo-input').value = ''; 
     loadTodos();
   });
 }
 
-// 🔥 삭제 버튼 터치 시 로딩 애니메이션 발동
 function deleteTodo(index, btn){
   btn.disabled = true;
-  btn.classList.add('loading-del'); // 클래스 추가
+  btn.classList.add('loading-del'); 
   fetch(`${GAS_URL}?action=deleteTodo&index=${index}`).then(() => loadTodos());
 }
 
