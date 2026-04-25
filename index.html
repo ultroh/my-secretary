@@ -198,32 +198,31 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .car-rotation-card { grid-column: span 2; padding: 10px 14px; }
 .car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
-.car-mark { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; } /* cursor 추가 */
+.car-mark { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
-/* 🔥 차량 버튼 기본 ON 상태 (무늬 없이 단색) */
+/* 차량 버튼 기본 상태 */
 .hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; border: none !important; }
 .mini-on { background-color: var(--mini-red) !important; color: white !important; border: none !important; }
 
-/* 🔥 터치 시 발동하는 1회성 물결 클래스 */
-@keyframes singleWave {
-  0% { background-position: 200% 50%; }
-  100% { background-position: 0% 50%; }
+/* 🔥 좌에서 우로 채워지는 애니메이션 키프레임 */
+@keyframes fillLeftToRight {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0% 0; }
 }
 
+/* 터치 시 발동하는 채우기 클래스 */
 .wave-trigger-hyundai { 
-  background: linear-gradient(60deg, #002c5f, #3a7bd5, #002c5f) !important;
-  background-size: 300% 100% !important;
-  animation: singleWave 0.8s ease-out !important;
+  background: linear-gradient(to right, #3a7bd5 50%, var(--hyundai-blue) 50%) !important;
+  background-size: 200% 100% !important;
+  animation: fillLeftToRight 0.6s ease-out !important;
   color: white !important; 
-  border: none !important;
 }
 
 .wave-trigger-mini { 
-  background: linear-gradient(60deg, var(--accent-red), #ff6b6b, var(--accent-red)) !important;
-  background-size: 300% 100% !important;
-  animation: singleWave 0.8s ease-out !important;
+  background: linear-gradient(to right, #ff6b6b 50%, var(--mini-red) 50%) !important;
+  background-size: 200% 100% !important;
+  animation: fillLeftToRight 0.6s ease-out !important;
   color: white !important; 
-  border: none !important;
 }
 
 .car-off { background-color: #eee !important; color: #bbb !important; opacity: 0.6; }
@@ -299,18 +298,11 @@ function checkMedication() {
 function toggleMedication() {
   const titleEl = document.getElementById('log-it-title');
   const today = new Date().toDateString();
-  
   titleEl.classList.toggle('rainbow-theme');
   const isTaken = titleEl.classList.contains('rainbow-theme');
-  
-  if (isTaken) {
-    localStorage.setItem('medication_taken_date', today);
-  } else {
-    localStorage.removeItem('medication_taken_date');
-  }
-
-  fetch(`${GAS_URL}?action=toggleMedication&state=${isTaken}`)
-    .catch(error => console.error('기록 전송 실패:', error));
+  if (isTaken) localStorage.setItem('medication_taken_date', today);
+  else localStorage.removeItem('medication_taken_date');
+  fetch(`${GAS_URL}?action=toggleMedication&state=${isTaken}`).catch(e => console.error(e));
 }
 
 function updateCarRotation() {
@@ -321,21 +313,12 @@ function updateCarRotation() {
   else { m.classList.add('mini-on'); h.classList.add('car-off'); }
 }
 
-// 🔥 차량 버튼 터치 시 1회성 물결 애니메이션 실행 함수
 function playCarWave(el, carType) {
   const waveClass = carType === 'hyundai' ? 'wave-trigger-hyundai' : 'wave-trigger-mini';
-  
-  // 이미 실행 중이면 멈추고 리셋
   el.classList.remove(waveClass);
-  void el.offsetWidth; // CSS 애니메이션 강제 재시작 (Reflow)
-  
-  // 애니메이션 클래스 부여
+  void el.offsetWidth;
   el.classList.add(waveClass);
-  
-  // 애니메이션 길이(0.8s)가 끝나면 클래스 다시 제거하여 원래 단색으로 복귀
-  setTimeout(() => {
-    el.classList.remove(waveClass);
-  }, 800);
+  setTimeout(() => el.classList.remove(waveClass), 600);
 }
 
 function recordAction(action, btn, txt){
@@ -362,10 +345,8 @@ function loadData() {
     if(res.status === 'success') {
       const d = res.data;
       document.getElementById('fuel-status').innerText = d.fuel + " / 3회";
-      
       const robotDateTxt = d.robotDate ? formatSimpleDate(d.robotDate) : "날짜";
       document.getElementById('robot-status').innerHTML = `${d.robot} / 2회<br><span class="status-sub">(${robotDateTxt})</span>`;
-      
       document.getElementById('carwash-status').innerText = (d.carWash || 0).toLocaleString() + "원";
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
     }
