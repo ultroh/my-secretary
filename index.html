@@ -16,7 +16,7 @@
   --text-muted: #666666;
   --line-color: #e0e0e0;
   --hyundai-blue: #002c5f;
-  --mini-red: #C8102E; /* JCW 색상을 추가버튼과 통일 */
+  --mini-red: #C8102E; 
 }
 
 * { box-sizing: border-box; margin:0; padding:0; }
@@ -54,7 +54,6 @@ h2 {
 
 h2:active { transform: scale(0.95); }
 
-/* 약 복용 무지개 애니메이션 */
 .rainbow-theme {
   background: linear-gradient(to right, 
     #FF3B30 0%, #FF3B30 14.28%,
@@ -199,28 +198,30 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .car-rotation-card { grid-column: span 2; padding: 10px 14px; }
 .car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
-.car-mark { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.car-mark { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; } /* cursor 추가 */
 
-/* 🔥 차량 버튼 실시간 물결(Wave) 애니메이션 키프레임 */
-@keyframes continuousWave {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
+/* 🔥 차량 버튼 기본 ON 상태 (무늬 없이 단색) */
+.hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; border: none !important; }
+.mini-on { background-color: var(--mini-red) !important; color: white !important; border: none !important; }
+
+/* 🔥 터치 시 발동하는 1회성 물결 클래스 */
+@keyframes singleWave {
+  0% { background-position: 200% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-/* 🔥 HYUNDAI 활성화 시 흐르는 물결 */
-.hyundai-on { 
+.wave-trigger-hyundai { 
   background: linear-gradient(60deg, #002c5f, #3a7bd5, #002c5f) !important;
   background-size: 300% 100% !important;
-  animation: continuousWave 2.5s ease-in-out infinite alternate !important;
+  animation: singleWave 0.8s ease-out !important;
   color: white !important; 
   border: none !important;
 }
 
-/* 🔥 JCW 활성화 시 흐르는 물결 (accent-red 색상 기반) */
-.mini-on { 
+.wave-trigger-mini { 
   background: linear-gradient(60deg, var(--accent-red), #ff6b6b, var(--accent-red)) !important;
   background-size: 300% 100% !important;
-  animation: continuousWave 2.5s ease-in-out infinite alternate !important;
+  animation: singleWave 0.8s ease-out !important;
   color: white !important; 
   border: none !important;
 }
@@ -246,8 +247,8 @@ button { font-weight:800; color:white; cursor:pointer; }
     <div class="card car-rotation-card">
       <div class="card-title">🚦 TODAY'S DRIVE</div>
       <div class="car-btn-container">
-        <div id="mark-hyundai" class="car-mark">HYUNDAI</div>
-        <div id="mark-mini" class="car-mark">JCW</div>
+        <div id="mark-hyundai" class="car-mark" onclick="playCarWave(this, 'hyundai')">HYUNDAI</div>
+        <div id="mark-mini" class="car-mark" onclick="playCarWave(this, 'mini')">JCW</div>
       </div>
     </div>
 
@@ -318,6 +319,23 @@ function updateCarRotation() {
   h.classList.remove('hyundai-on', 'car-off'); m.classList.remove('mini-on', 'car-off');
   if (today % 2 === 0) { h.classList.add('hyundai-on'); m.classList.add('car-off'); }
   else { m.classList.add('mini-on'); h.classList.add('car-off'); }
+}
+
+// 🔥 차량 버튼 터치 시 1회성 물결 애니메이션 실행 함수
+function playCarWave(el, carType) {
+  const waveClass = carType === 'hyundai' ? 'wave-trigger-hyundai' : 'wave-trigger-mini';
+  
+  // 이미 실행 중이면 멈추고 리셋
+  el.classList.remove(waveClass);
+  void el.offsetWidth; // CSS 애니메이션 강제 재시작 (Reflow)
+  
+  // 애니메이션 클래스 부여
+  el.classList.add(waveClass);
+  
+  // 애니메이션 길이(0.8s)가 끝나면 클래스 다시 제거하여 원래 단색으로 복귀
+  setTimeout(() => {
+    el.classList.remove(waveClass);
+  }, 800);
 }
 
 function recordAction(action, btn, txt){
