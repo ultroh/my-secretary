@@ -85,7 +85,7 @@ h2:active { transform: scale(0.95); }
   box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 4px solid var(--accent-red);
 }
 
-.stat-card { height: 135px; }
+.stat-card { height: 135px; overflow: hidden; }
 .card-title { font-size: 11px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
 
 .status-value { 
@@ -108,16 +108,33 @@ h2:active { transform: scale(0.95); }
   margin-top: 4px;
 }
 
-input, button { border:none; border-radius:6px; font-size: 13px; outline: none; }
-input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; }
+input, button { border:none; border-radius:6px; outline: none; }
+input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; }
 button { font-weight:800; color:white; cursor:pointer; }
 
-.btn-carwash, .btn-hair { width: 100%; padding: 10px; margin-top: 6px; background: var(--primary); }
+/* 🔥 하단 4개 버튼 크기 및 정렬 완벽 통일 */
+.btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
+  width: 100%; 
+  height: 36px; /* 명시적 높이 고정 */
+  margin-top: 6px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+.btn-carwash, .btn-hair { 
+  background: var(--primary); 
+  border: 1.5px solid transparent; /* 높이 오차 보정용 투명 테두리 */
+}
 
 .btn-fuel, .btn-robot {
-  width: 100%; padding: 10px; margin-top: 6px;
-  background-color: var(--primary); color: #fff; border: 1.5px solid var(--primary);
-  position: relative; overflow: hidden; background-repeat: no-repeat;
+  background-color: var(--primary); 
+  color: #fff; 
+  border: 1.5px solid var(--primary);
+  position: relative; 
+  overflow: hidden; 
+  background-repeat: no-repeat;
   transition: background-color 0.1s;
 }
 
@@ -206,7 +223,7 @@ button { font-weight:800; color:white; cursor:pointer; }
   overflow: hidden; 
   z-index: 1; 
   border: none !important;
-  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out; /* 배경색 전환을 부드럽게 */
+  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out; 
 }
 
 .car-mark .btn-text {
@@ -214,12 +231,10 @@ button { font-weight:800; color:white; cursor:pointer; }
   z-index: 2;
 }
 
-/* 고유 색상 및 비활성화 상태 */
 .hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
 .mini-on { background-color: var(--mini-red) !important; color: white !important; }
-.car-off { background-color: #eee !important; color: #bbb !important; opacity: 1 !important; } /* opacity 조절하여 텍스트 잘 보이게 */
+.car-off { background-color: #eee !important; color: #bbb !important; opacity: 1 !important; } 
 
-/* 몽환적 반짝임 효과용 숨겨진 레이어 */
 .car-mark::before {
   content: '';
   position: absolute;
@@ -231,7 +246,6 @@ button { font-weight:800; color:white; cursor:pointer; }
   transition: opacity 1.5s ease-out; 
 }
 
-/* 터치 시 반짝임 클래스가 붙었을 때 */
 .car-mark.is-sparkling::before {
   opacity: 1; 
   transition: opacity 0.3s ease-in; 
@@ -283,9 +297,9 @@ button { font-weight:800; color:white; cursor:pointer; }
     <div class="card stat-card">
       <div class="card-title">✂️ HAIR CUT</div>
       <div class="status-value" id="hair-status">-</div>
-      <div style="position: relative; width: 100%; margin-top: 6px;">
-        <button class="btn-hair" id="btn-hair" style="width: 100%; pointer-events: none; padding: 10px;">날짜선택</button>
-        <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="recordHairCut(document.getElementById('btn-hair'))">
+      <div style="position: relative; width: 100%; margin-top: 6px; height: 36px;">
+        <button class="btn-hair" id="btn-hair" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; margin: 0; pointer-events: none;">날짜선택</button>
+        <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; margin: 0;" onchange="recordHairCut(document.getElementById('btn-hair'))">
       </div>
     </div>
 
@@ -306,10 +320,8 @@ button { font-weight:800; color:white; cursor:pointer; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
-// 🔥 앱 최초 로드 시 차량 버튼을 모두 비활성화로 초기화
 function loadAll() { loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
 
-// 🔥 새로고침/로딩 시 둘 다 car-off로 리셋
 function resetCarButtons() {
   document.getElementById('mark-hyundai').className = 'car-mark car-off';
   document.getElementById('mark-mini').className = 'car-mark car-off';
@@ -333,37 +345,24 @@ function toggleMedication() {
   fetch(`${GAS_URL}?action=toggleMedication&state=${isTaken}`).catch(e => console.error(e));
 }
 
-// 🔥 차량 선택 애니메이션 & 당첨 로직 함수
 function handleCarSelect(el, carType) {
-  // 이미 진행 중인 타이머가 있다면 리셋
   if(el.sparkleTimeout) clearTimeout(el.sparkleTimeout);
-  
-  // 1. 터치 시 즉시 반짝임(Sparkle) 시작
   el.classList.add('is-sparkling');
-  
-  // 2. 오늘의 운행 가능 차량 판별 (짝수일: 현대, 홀수일: JCW)
   const todayNum = new Date().getDate();
   const allowedCar = (todayNum % 2 === 0) ? 'hyundai' : 'mini';
 
-  // 3. 3.5초간 기대감 부여 후 결과 공개
   el.sparkleTimeout = setTimeout(() => {
-    // 반짝임 클래스 제거 (이때부터 1.5초간 서서히 페이드아웃 되며 아래의 진짜 색상이 드러남)
     el.classList.remove('is-sparkling');
-    
-    // 기존 색상 클래스 초기화
     el.classList.remove('hyundai-on', 'mini-on', 'car-off');
     
     if (carType === allowedCar) {
-      // 당첨! (고유 색상 부여)
       el.classList.add(carType === 'hyundai' ? 'hyundai-on' : 'mini-on');
-      // 반대쪽 차는 확실히 끄기
       const otherId = carType === 'hyundai' ? 'mark-mini' : 'mark-hyundai';
       document.getElementById(otherId).className = 'car-mark car-off';
     } else {
-      // 꽝! (다시 회색으로)
       el.classList.add('car-off');
     }
-  }, 3500); // 3.5초 후 실행
+  }, 3500); 
 }
 
 function recordAction(action, btn, txt){
