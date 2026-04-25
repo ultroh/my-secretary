@@ -8,7 +8,7 @@
 
 <style>
 :root {
-  var(--card-bg): #ffffff;
+  --card-bg: #ffffff;
   --text-main: #1a1a1a;
   --text-muted: #666666;
   --line-color: #e0e0e0;
@@ -59,7 +59,7 @@ h2:active { transform: scale(0.95); }
 #dashboard { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
 .card {
-  background: #ffffff; border-radius: 12px; padding: 12px;
+  background: var(--card-bg); border-radius: 12px; padding: 12px;
   display:flex; flex-direction:column; justify-content: space-between; align-items:center;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 4px solid var(--dynamic-border); transition: border-top 1s ease, background-color 1s ease;
 }
@@ -68,7 +68,6 @@ h2:active { transform: scale(0.95); }
 .stat-card { height: 135px; overflow: hidden; }
 .card-title { font-size: 11px; font-weight: 800; color: var(--dynamic-btn-main); margin-bottom: 4px; transition: color 1s ease; }
 
-/* 🔥 텍스트 정렬을 완벽하게 픽셀 단위로 일치시키기 위한 구조 변경 */
 .status-value { 
   color: var(--text-main); 
   flex: 1; 
@@ -79,20 +78,19 @@ h2:active { transform: scale(0.95); }
   text-align: center;
 }
 
-/* 첫째 줄 (메인 데이터) */
+/* 🔥 line-height를 1로 고정하여 폰트 렌더링에 의한 상하 여백 오차 원천 차단 */
 .status-main {
   font-size: 18px; 
   font-weight: 900; 
-  line-height: 18px; /* 글자 높이만큼 박스 높이 고정 */
+  line-height: 1; 
   display: block;
 }
 
-/* 둘째 줄 (보조 데이터) */
 .status-sub {
   font-size: 11px;
   color: #888;
   font-weight: 600;
-  line-height: 11px; /* 글자 높이만큼 박스 높이 고정 */
+  line-height: 1; 
   margin-top: 4px;
   display: block;
 }
@@ -182,6 +180,7 @@ button { font-weight:800; color:white; cursor:pointer; }
       <div class="card-title">✂️ HAIR CUT</div>
       <div class="status-value" id="hair-status">
         <span class="status-main">-</span>
+        <span class="status-sub" style="visibility: hidden;">-</span>
       </div>
       <div style="position: relative; width: 100%; margin-top: 6px; height: 36px;">
         <button class="btn-hair" id="btn-hair" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; margin: 0; pointer-events: none;">날짜선택</button>
@@ -193,6 +192,7 @@ button { font-weight:800; color:white; cursor:pointer; }
       <div class="card-title">🫧 CAR WASH</div>
       <div class="status-value" id="carwash-status">
         <span class="status-main">-원</span>
+        <span class="status-sub" style="visibility: hidden;">-</span>
       </div>
       <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
     </div>
@@ -201,6 +201,7 @@ button { font-weight:800; color:white; cursor:pointer; }
       <div class="card-title">🚗 FUEL</div>
       <div class="status-value" id="fuel-status">
         <span class="status-main">- / 3회</span>
+        <span class="status-sub" style="visibility: hidden;">-</span>
       </div>
       <button class="btn-fuel" onclick="recordAction('addFuel', this, '주유 기록')">주유 기록</button>
     </div>
@@ -307,17 +308,23 @@ function formatSimpleDate(dateStr) {
   return `${d.getMonth() + 1}/${d.getDate()}`;
 }
 
-// 🔥 JS 데이터 삽입 시 .status-main 과 .status-sub 구조로 통일
+// 🔥 JS 데이터 삽입 시에도 모든 카드에 숨겨진 가짜 요소(visibility: hidden)를 넣어 높이를 완벽하게 강제 일치시킵니다.
 function loadData() {
   fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => {
     if(res.status === 'success') {
       const d = res.data;
-      document.getElementById('fuel-status').innerHTML = `<span class="status-main">${d.fuel} / 3회</span>`;
       
+      // FUEL: 가짜 sub 추가
+      document.getElementById('fuel-status').innerHTML = `<span class="status-main">${d.fuel} / 3회</span><span class="status-sub" style="visibility: hidden;">-</span>`;
+      
+      // ROBOT: 정상 sub
       const robotDateTxt = d.robotDate ? formatSimpleDate(d.robotDate) : "날짜";
       document.getElementById('robot-status').innerHTML = `<span class="status-main">${d.robot} / 2회</span><span class="status-sub">(${robotDateTxt})</span>`;
       
-      document.getElementById('carwash-status').innerHTML = `<span class="status-main">${(d.carWash || 0).toLocaleString()}원</span>`;
+      // CAR WASH: 가짜 sub 추가
+      document.getElementById('carwash-status').innerHTML = `<span class="status-main">${(d.carWash || 0).toLocaleString()}원</span><span class="status-sub" style="visibility: hidden;">-</span>`;
+      
+      // HAIR CUT
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
     }
   });
@@ -344,9 +351,9 @@ function deleteTodo(index, btn){ btn.disabled = true; btn.classList.add('loading
 function recordCarWash(btn){ const amount = prompt("차감할 금액:"); if (!amount) return; fetch(`${GAS_URL}?action=useCarWash&amount=${amount.replace(/[^0-9]/g, '')}`).then(() => loadData()); }
 function recordHairCut(btn){ const v = document.getElementById('hairDateVal').value; if(!v) return; fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData()); }
 
-// 🔥 HAIR CUT JS 구조 변경
 function getHaircutStatus(dateStr) {
-  if (!dateStr) return `<span class="status-main">기록 없음</span>`;
+  // HAIR CUT에 데이터가 없을 때도 가짜 sub 추가
+  if (!dateStr) return `<span class="status-main">기록 없음</span><span class="status-sub" style="visibility: hidden;">-</span>`;
   const targetDate = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
   const today = new Date(); today.setHours(0,0,0,0);
   const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
