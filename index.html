@@ -87,7 +87,28 @@ h2:active { transform: scale(0.95); }
 
 .stat-card { height: 135px; }
 .card-title { font-size: 11px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
-.status-value { font-size:18px; font-weight:900; color: var(--text-main); flex: 1; display: flex; align-items: center; }
+
+/* 🔥 ROBOT & HAIR CUT 통일감을 위한 수직 정렬 속성 추가 */
+.status-value { 
+  font-size:18px; 
+  font-weight:900; 
+  color: var(--text-main); 
+  flex: 1; 
+  display: flex; 
+  flex-direction: column; /* 항목을 위아래로 쌓음 */
+  justify-content: center; 
+  align-items: center; 
+  text-align: center;
+  line-height: 1.1; 
+}
+
+/* 🔥 보조 텍스트 (날짜, 주차) 스타일 클래스 */
+.status-sub {
+  font-size: 11px;
+  color: #888;
+  font-weight: 600;
+  margin-top: 4px;
+}
 
 input, button { border:none; border-radius:6px; font-size: 13px; outline: none; }
 input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; }
@@ -186,7 +207,9 @@ button { font-weight:800; color:white; cursor:pointer; }
 
     <div class="card stat-card">
       <div class="card-title">🤖 ROBOT</div>
-      <div class="status-value" id="robot-status">- / 2회</div>
+      <div class="status-value" id="robot-status">
+        - / 2회<br><span class="status-sub">(날짜)</span>
+      </div>
       <button class="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
     </div>
 
@@ -240,7 +263,6 @@ function toggleMedication() {
     localStorage.removeItem('medication_taken_date');
   }
 
-  // 구글 서버로 상태 전송 (백그라운드)
   fetch(`${GAS_URL}?action=toggleMedication&state=${isTaken}`)
     .catch(error => console.error('기록 전송 실패:', error));
 }
@@ -265,12 +287,24 @@ function recordAction(action, btn, txt){
   });
 }
 
+// 🔥 간단한 날짜 변환기 (ex: "2026-04-25" -> "4/25")
+function formatSimpleDate(dateStr) {
+  if (!dateStr) return '날짜';
+  const d = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
+  if (isNaN(d)) return dateStr;
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+}
+
 function loadData() {
   fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => {
     if(res.status === 'success') {
       const d = res.data;
       document.getElementById('fuel-status').innerText = d.fuel + " / 3회";
-      document.getElementById('robot-status').innerText = d.robot + " / 2회";
+      
+      // 🔥 ROBOT 데이터 세팅 (서버에서 d.robotDate를 보내주어야 날짜가 제대로 표시됩니다)
+      const robotDateTxt = d.robotDate ? formatSimpleDate(d.robotDate) : "날짜";
+      document.getElementById('robot-status').innerHTML = `${d.robot} / 2회<br><span class="status-sub">(${robotDateTxt})</span>`;
+      
       document.getElementById('carwash-status').innerText = (d.carWash || 0).toLocaleString() + "원";
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
     }
@@ -325,12 +359,13 @@ function recordHairCut(btn){
   fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData());
 }
 
+// 🔥 HAIR CUT 데이터 세팅 (ROBOT과 동일한 .status-sub 클래스 적용)
 function getHaircutStatus(dateStr) {
   if (!dateStr) return "기록 없음";
   const targetDate = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
   const today = new Date(); today.setHours(0,0,0,0);
   const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
-  return `D+${diffDays}<br><span style="font-size:11px; color:#888;">(${Math.floor(diffDays/7)+1}주차)</span>`;
+  return `D+${diffDays}<br><span class="status-sub">(${Math.floor(diffDays/7)+1}주차)</span>`;
 }
 
 window.onload = loadAll;
