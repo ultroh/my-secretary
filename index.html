@@ -15,7 +15,7 @@
   --hyundai-blue: #002c5f;
   --mini-red: #C8102E; 
 
-  /* 다이내믹 테마 변수 (초기값) */
+  /* 다이내믹 테마 변수 */
   --dynamic-app-bg: #002147;
   --dynamic-memo-bg: #ffffff;
   --dynamic-btn-main: #002147;
@@ -61,7 +61,7 @@ h2:active { transform: scale(0.95); }
 .card {
   background: var(--card-bg); border-radius: 12px; padding: 12px;
   display:flex; flex-direction:column; justify-content: space-between; align-items:center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 4px solid var(--dynamic-border); transition: border-top 0.8s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 4px solid var(--dynamic-border); transition: border-top 0.8s ease, background-color 0.8s ease;
 }
 
 .reminder-card { grid-column: span 2; border-top: 6px solid var(--dynamic-border); background-color: var(--dynamic-memo-bg); }
@@ -199,29 +199,34 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17
 
 function loadAll() { applyRandomTheme(); loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
 
-// 🔥 새로고침마다 고정된 5가지 산뜻한 테마 중 하나를 랜덤으로 적용
+// 🔥 사진에서 추출한 6가지 프리미엄 팔레트 중 랜덤 적용
 function applyRandomTheme() {
   const themes = [
-    { bg: '#002147', border: '#C8102E' }, // 1. 클래식 네이비 & 크림슨 레드 (기존)
-    { bg: '#1A3622', border: '#E9C46A' }, // 2. 포레스트 그린 & 선 골드 (우아함)
-    { bg: '#2C3E50', border: '#F1C40F' }, // 3. 슬레이트 블루 & 머스타드 (지적임)
-    { bg: '#222831', border: '#2A9D8F' }, // 4. 딥 차콜 & 민트 (도시적임)
-    { bg: '#370617', border: '#E76F51' }  // 5. 다크 플럼 & 코랄 (고급스러움)
+    { bg: '#002147', border: '#C8102E', sub: '#6B7A8F' }, // 1. 오리지널 (네이비 & 크림슨 레드)
+    { bg: '#444783', border: '#DD6943', sub: '#8587AF' }, // 2. 게임 배틀펫 (인디고 & 오렌지)
+    { bg: '#458C98', border: '#A7292D', sub: '#80B5BE' }, // 3. 여행 테마 (오션 틸 & 딥 레드)
+    { bg: '#85212A', border: '#EDB233', sub: '#B45A61' }, // 4. 아이스크림 (버건디 & 옐로우 골드)
+    { bg: '#D56140', border: '#89B9B5', sub: '#E49883' }, // 5. UI/UX 마을 (딥 코랄 & 민트)
+    { bg: '#66762C', border: '#CBE271', sub: '#99A668' }  // 6. 야생 자연 (올리브 그린 & 라임)
   ];
   
-  // 랜덤 인덱스 추출
   const randomIndex = Math.floor(Math.random() * themes.length);
   const selectedTheme = themes[randomIndex];
   
   const root = document.documentElement;
   
-  // 선택된 테마 색상 적용 (메모장 배경과 서브 버튼은 항상 깔끔하게 고정)
+  // 앱 배경색과 메인 버튼 색상은 동일하게 (산뜻함/무게감 유지)
   root.style.setProperty('--dynamic-app-bg', selectedTheme.bg);
-  root.style.setProperty('--dynamic-btn-main', selectedTheme.bg); // 버튼은 배경색과 통일
-  root.style.setProperty('--dynamic-border', selectedTheme.border); // 포인트 테두리 선
+  root.style.setProperty('--dynamic-btn-main', selectedTheme.bg);
   
-  root.style.setProperty('--dynamic-memo-bg', '#ffffff'); // 메모장은 순백색 고정
-  root.style.setProperty('--dynamic-btn-sub', '#888888'); // 삭제 버튼은 튀지 않게 회색 고정
+  // 카드 상단 포인트 스트라이프 선
+  root.style.setProperty('--dynamic-border', selectedTheme.border);
+  
+  // 메모장 배경은 무조건 화이트로 고정 (신뢰감, 가독성)
+  root.style.setProperty('--dynamic-memo-bg', '#ffffff');
+  
+  // 삭제 버튼 등 서브 버튼 색상
+  root.style.setProperty('--dynamic-btn-sub', selectedTheme.sub); 
 }
 
 function resetCarButtons() {
