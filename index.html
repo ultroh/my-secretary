@@ -17,6 +17,11 @@
   --line-color: #e0e0e0;
   --hyundai-blue: #002c5f;
   --mini-red: #C8102E; 
+
+  /* 🔥 날씨/시간대 반영 다이내믹 테마 변수 (기본값) */
+  --dynamic-memo-bg: #ffffff;
+  --dynamic-btn-main: #002147;
+  --dynamic-btn-sub: #888888;
 }
 
 * { box-sizing: border-box; margin:0; padding:0; }
@@ -85,6 +90,14 @@ h2:active { transform: scale(0.95); }
   box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 4px solid var(--accent-red);
 }
 
+/* 🔥 메모장 카드 다이내믹 배경 적용 */
+.reminder-card { 
+  grid-column: span 2; 
+  border-top: 6px solid var(--dynamic-btn-main); 
+  background-color: var(--dynamic-memo-bg);
+  transition: background-color 1s ease, border-color 1s ease;
+}
+
 .stat-card { height: 135px; overflow: hidden; }
 .card-title { font-size: 11px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
 
@@ -112,51 +125,49 @@ input, button { border:none; border-radius:6px; outline: none; }
 input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; }
 button { font-weight:800; color:white; cursor:pointer; }
 
-/* 🔥 하단 4개 버튼 크기 및 정렬 완벽 통일 */
+/* 🔥 하단 4개 액션 버튼 다이내믹 색상 적용 */
 .btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
   width: 100%; 
-  height: 36px; /* 명시적 높이 고정 */
+  height: 36px; 
   margin-top: 6px; 
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 13px;
+  transition: background-color 1s ease, border-color 1s ease, color 1s ease;
 }
 
 .btn-carwash, .btn-hair { 
-  background: var(--primary); 
-  border: 1.5px solid transparent; /* 높이 오차 보정용 투명 테두리 */
+  background: var(--dynamic-btn-main); 
+  border: 1.5px solid transparent; 
 }
 
 .btn-fuel, .btn-robot {
-  background-color: var(--primary); 
+  background-color: var(--dynamic-btn-main); 
   color: #fff; 
-  border: 1.5px solid var(--primary);
+  border: 1.5px solid var(--dynamic-btn-main);
   position: relative; 
   overflow: hidden; 
   background-repeat: no-repeat;
-  transition: background-color 0.1s;
 }
 
 .btn-fuel.loading, .btn-robot.loading {
-  background-color: transparent; color: var(--primary);
-  background-image: linear-gradient(var(--primary), var(--primary));
+  background-color: transparent; color: var(--dynamic-btn-main);
+  background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main));
   background-size: 0% 100%; animation: fillAnimation 1.2s forwards ease-in-out;
 }
 
 @keyframes fillAnimation {
-  0% { background-size: 0% 100%; color: var(--primary); }
+  0% { background-size: 0% 100%; color: var(--dynamic-btn-main); }
   80% { background-size: 100% 100%; color: #fff; }
-  100% { background-size: 100% 100%; color: #fff; background-color: var(--primary); }
+  100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); }
 }
-
-.reminder-card { grid-column: span 2; border-top: 6px solid var(--accent-red); }
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
 .todo-input-group input { 
   flex: 1; 
   text-align: center;
-  background: #fff; 
+  background: rgba(255, 255, 255, 0.6); /* 배경색과 어우러지도록 반투명 화이트 적용 */
   padding: 8px; 
   margin: 0; 
 }
@@ -179,36 +190,37 @@ button { font-weight:800; color:white; cursor:pointer; }
   overflow: visible; 
 }
 
+/* 🔥 추가, 삭제 버튼 다이내믹 색상 적용 */
 .todo-input-group button, .todo-item button { 
   width: 44px; height: 26px; display: flex; align-items: center; justify-content: center;
   margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0;
   position: relative; overflow: hidden; background-repeat: no-repeat;
-  transition: background-color 0.1s;
+  transition: background-color 1s ease, border-color 1s ease;
 }
 
-.todo-input-group button { background-color: var(--accent-red); border: 1.5px solid var(--accent-red); }
-.todo-item button { background-color: #888; border: 1.5px solid #888; }
+.todo-input-group button { background-color: var(--dynamic-btn-main); border: 1.5px solid var(--dynamic-btn-main); }
+.todo-item button { background-color: var(--dynamic-btn-sub); border: 1.5px solid var(--dynamic-btn-sub); }
 
 .loading-add {
-  background-color: transparent !important; color: var(--accent-red) !important;
-  background-image: linear-gradient(var(--accent-red), var(--accent-red)) !important;
+  background-color: transparent !important; color: var(--dynamic-btn-main) !important;
+  background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)) !important;
   background-size: 0% 100% !important; animation: fillAdd 1.2s forwards ease-in-out !important;
 }
 @keyframes fillAdd {
-  0% { background-size: 0% 100%; color: var(--accent-red); }
+  0% { background-size: 0% 100%; color: var(--dynamic-btn-main); }
   80% { background-size: 100% 100%; color: #fff; }
-  100% { background-size: 100% 100%; color: #fff; background-color: var(--accent-red); }
+  100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); }
 }
 
 .loading-del {
-  background-color: transparent !important; color: #888 !important;
-  background-image: linear-gradient(#888, #888) !important;
+  background-color: transparent !important; color: var(--dynamic-btn-sub) !important;
+  background-image: linear-gradient(var(--dynamic-btn-sub), var(--dynamic-btn-sub)) !important;
   background-size: 0% 100% !important; animation: fillDel 1.2s forwards ease-in-out !important;
 }
 @keyframes fillDel {
-  0% { background-size: 0% 100%; color: #888; }
+  0% { background-size: 0% 100%; color: var(--dynamic-btn-sub); }
   80% { background-size: 100% 100%; color: #fff; }
-  100% { background-size: 100% 100%; color: #fff; background-color: #888; }
+  100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-sub); }
 }
 
 .drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; }
@@ -320,7 +332,30 @@ button { font-weight:800; color:white; cursor:pointer; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
-function loadAll() { loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
+function loadAll() { applyTimeBasedTheme(); loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
+
+// 🔥 시간에 따른 날씨/기온 감성 테마 적용 함수
+function applyTimeBasedTheme() {
+  const hour = new Date().getHours();
+  const root = document.documentElement;
+
+  if (hour >= 6 && hour < 12) {
+    // 오전 (상쾌한 아침, 시원한 공기 느낌)
+    root.style.setProperty('--dynamic-memo-bg', '#F0F8FF'); // 앨리스 블루
+    root.style.setProperty('--dynamic-btn-main', '#5C88C4'); // 부드러운 블루
+    root.style.setProperty('--dynamic-btn-sub', '#8AA6C1');  // 서브 블루
+  } else if (hour >= 12 && hour < 18) {
+    // 오후 (따뜻한 햇살, 포근한 기온 느낌)
+    root.style.setProperty('--dynamic-memo-bg', '#FFF9F0'); // 웜 아이보리
+    root.style.setProperty('--dynamic-btn-main', '#E08E6D'); // 테라코타 오렌지
+    root.style.setProperty('--dynamic-btn-sub', '#D4A392');  // 서브 오렌지
+  } else {
+    // 저녁/밤 (차분한 노을, 서늘한 밤 느낌)
+    root.style.setProperty('--dynamic-memo-bg', '#F4F0FA'); // 라이트 라벤더
+    root.style.setProperty('--dynamic-btn-main', '#7D6CA8'); // 뮤트 퍼플
+    root.style.setProperty('--dynamic-btn-sub', '#A399B8');  // 서브 퍼플
+  }
+}
 
 function resetCarButtons() {
   document.getElementById('mark-hyundai').className = 'car-mark car-off';
