@@ -8,7 +8,7 @@
 
 <style>
 :root {
-  var(--card-bg): #ffffff;
+  --card-bg: #ffffff;
   --text-main: #1a1a1a;
   --text-muted: #666666;
   --line-color: #e0e0e0;
@@ -59,7 +59,7 @@ h2:active { transform: scale(0.95); }
 #dashboard { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
 .card {
-  background: #ffffff; border-radius: 12px; padding: 12px;
+  background: var(--card-bg); border-radius: 12px; padding: 12px;
   display:flex; flex-direction:column; justify-content: space-between; align-items:center;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 4px solid var(--dynamic-border); transition: border-top 1s ease, background-color 1s ease;
 }
@@ -68,7 +68,6 @@ h2:active { transform: scale(0.95); }
 .stat-card { height: 135px; overflow: hidden; }
 .card-title { font-size: 11px; font-weight: 800; color: var(--dynamic-btn-main); margin-bottom: 4px; transition: color 1s ease; }
 
-/* 🔥 텍스트 정렬을 완벽하게 픽셀 단위로 일치시키기 위한 구조 변경 */
 .status-value { 
   color: var(--text-main); 
   flex: 1; 
@@ -79,23 +78,8 @@ h2:active { transform: scale(0.95); }
   text-align: center;
 }
 
-/* 첫째 줄 (메인 데이터) */
-.status-main {
-  font-size: 18px; 
-  font-weight: 900; 
-  line-height: 18px; /* 글자 높이만큼 박스 높이 고정 */
-  display: block;
-}
-
-/* 둘째 줄 (보조 데이터) */
-.status-sub {
-  font-size: 11px;
-  color: #888;
-  font-weight: 600;
-  line-height: 11px; /* 글자 높이만큼 박스 높이 고정 */
-  margin-top: 4px;
-  display: block;
-}
+.status-main { font-size: 18px; font-weight: 900; line-height: 1; display: block; }
+.status-sub { font-size: 11px; color: #888; font-weight: 600; line-height: 1; margin-top: 4px; display: block; }
 
 input, button { border:none; border-radius:6px; outline: none; }
 input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; }
@@ -182,6 +166,7 @@ button { font-weight:800; color:white; cursor:pointer; }
       <div class="card-title">✂️ HAIR CUT</div>
       <div class="status-value" id="hair-status">
         <span class="status-main">-</span>
+        <span class="status-sub" style="visibility: hidden;">-</span>
       </div>
       <div style="position: relative; width: 100%; margin-top: 6px; height: 36px;">
         <button class="btn-hair" id="btn-hair" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; margin: 0; pointer-events: none;">날짜선택</button>
@@ -193,6 +178,7 @@ button { font-weight:800; color:white; cursor:pointer; }
       <div class="card-title">🫧 CAR WASH</div>
       <div class="status-value" id="carwash-status">
         <span class="status-main">-원</span>
+        <span class="status-sub" style="visibility: hidden;">-</span>
       </div>
       <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
     </div>
@@ -201,6 +187,7 @@ button { font-weight:800; color:white; cursor:pointer; }
       <div class="card-title">🚗 FUEL</div>
       <div class="status-value" id="fuel-status">
         <span class="status-main">- / 3회</span>
+        <span class="status-sub" style="visibility: hidden;">-</span>
       </div>
       <button class="btn-fuel" onclick="recordAction('addFuel', this, '주유 기록')">주유 기록</button>
     </div>
@@ -212,41 +199,50 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17
 
 function loadAll() { applyTimeBasedTheme(); loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
 
+// 🔥 깔끔한 딥블루-레드 톤을 베이스로 한 시간대/랜덤 미세 변형 로직
 function applyTimeBasedTheme() {
   const hour = new Date().getHours();
   const root = document.documentElement;
-  let appH, appS, appL, memoH, memoS, memoL, btnH, btnS, btnL, borderH, borderS, borderL;
+  
+  // 기본 스탠다드 색상 (딥블루, 레드) 고정
+  let appH = 212, appS = 100, appL = 14;
+  let btnH = 212, btnS = 100, btnL = 25;
+  let borderH = 351, borderS = 85, borderL = 42;
 
+  // 시간대별 밝기(L)만 미세하게 조정하여 톤앤매너 유지
   if (hour >= 0 && hour < 6) {
-    appH = 260; appS = 40; appL = 15; memoH = 260; memoS = 30; memoL = 95; btnH = 260; btnS = 40; btnL = 50; borderH = btnH; borderS = btnS; borderL = btnL;
+    // 0~6시: 새벽 (더 깊고 차분한 다크 네이비)
+    appL = 10; btnL = 20; borderL = 38;
   } else if (hour >= 6 && hour < 12) {
-    appH = 210; appS = 50; appL = 25; memoH = 210; memoS = 40; memoL = 96; btnH = 210; btnS = 50; btnL = 55; borderH = btnH; borderS = btnS; borderL = btnL;
+    // 6~12시: 오전 (조금 더 산뜻하고 가벼운 네이비)
+    appL = 18; btnL = 28; borderL = 46;
   } else if (hour >= 12 && hour < 18) {
-    appH = 212; appS = 100; appL = 14; memoH = 212; memoS = 10; memoL = 98; btnH = 212; btnS = 100; btnL = 25; borderH = 351; borderS = 85; borderL = 42;
+    // 12~18시: 낮 (기본 스탠다드 딥블루)
+    appL = 14; btnL = 25; borderL = 42;
   } else {
-    appH = 18; appS = 50; appL = 20; memoH = 18; memoS = 40; memoL = 96; btnH = 18; btnS = 65; btnL = 55; borderH = btnH; borderS = btnS; borderL = btnL;
+    // 18~24시: 저녁 (노을빛을 살짝 머금은 차분한 네이비)
+    appL = 12; btnL = 22; borderL = 40;
   }
 
-  const randH = () => (Math.random() * 16) - 8;
-  const randS = () => (Math.random() * 20) - 10;
-  const randL = () => (Math.random() * 10) - 5;
+  // 새로고침 시 이질감 없는 수준에서 랜덤 톤 변화 부여
+  const randH = () => (Math.random() * 6) - 3;   // 색조 ±3% (네이비/레드 범주 이탈 방지)
+  const randS = () => (Math.random() * 10) - 5;  // 채도 ±5%
+  const randL = () => (Math.random() * 6) - 3;   // 밝기 ±3%
   
+  // 최종 HSL 조합 (메모장 배경은 무조건 깨끗한 화이트로 고정)
   const finalAppBg = `hsl(${appH + randH()}, ${appS + randS()}%, ${appL + randL()}%)`;
-  const finalMemoBg = `hsl(${memoH + randH()}, ${memoS + randS()}%, ${Math.min(100, memoL + randL())}%)`;
+  const finalMemoBg = `#ffffff`; 
   const finalBtnMain = `hsl(${btnH + randH()}, ${btnS + randS()}%, ${btnL + randL()}%)`;
   const finalBorder = `hsl(${borderH + randH()}, ${borderS + randS()}%, ${borderL + randL()}%)`;
-  const finalBtnSub = `hsl(${btnH + randH()}, ${Math.max(0, btnS - 20 + randS())}%, ${Math.min(100, btnL + 15 + randL())}%)`;
+  
+  // 서브 버튼(삭제)은 메인 버튼보다 채도를 낮추고 밝기를 올려 자연스럽게
+  const finalBtnSub = `hsl(${btnH + randH()}, ${btnS - 30}%, ${btnL + 25}%)`;
 
   root.style.setProperty('--dynamic-app-bg', finalAppBg);
   root.style.setProperty('--dynamic-memo-bg', finalMemoBg);
   root.style.setProperty('--dynamic-btn-main', finalBtnMain);
   root.style.setProperty('--dynamic-btn-sub', finalBtnSub);
-  
-  if (hour >= 12 && hour < 18) {
-    root.style.setProperty('--dynamic-border', "#C8102E");
-  } else {
-    root.style.setProperty('--dynamic-border', finalBorder);
-  }
+  root.style.setProperty('--dynamic-border', finalBorder);
 }
 
 function resetCarButtons() {
@@ -307,17 +303,14 @@ function formatSimpleDate(dateStr) {
   return `${d.getMonth() + 1}/${d.getDate()}`;
 }
 
-// 🔥 JS 데이터 삽입 시 .status-main 과 .status-sub 구조로 통일
 function loadData() {
   fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => {
     if(res.status === 'success') {
       const d = res.data;
-      document.getElementById('fuel-status').innerHTML = `<span class="status-main">${d.fuel} / 3회</span>`;
-      
+      document.getElementById('fuel-status').innerHTML = `<span class="status-main">${d.fuel} / 3회</span><span class="status-sub" style="visibility: hidden;">-</span>`;
       const robotDateTxt = d.robotDate ? formatSimpleDate(d.robotDate) : "날짜";
       document.getElementById('robot-status').innerHTML = `<span class="status-main">${d.robot} / 2회</span><span class="status-sub">(${robotDateTxt})</span>`;
-      
-      document.getElementById('carwash-status').innerHTML = `<span class="status-main">${(d.carWash || 0).toLocaleString()}원</span>`;
+      document.getElementById('carwash-status').innerHTML = `<span class="status-main">${(d.carWash || 0).toLocaleString()}원</span><span class="status-sub" style="visibility: hidden;">-</span>`;
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
     }
   });
@@ -344,9 +337,8 @@ function deleteTodo(index, btn){ btn.disabled = true; btn.classList.add('loading
 function recordCarWash(btn){ const amount = prompt("차감할 금액:"); if (!amount) return; fetch(`${GAS_URL}?action=useCarWash&amount=${amount.replace(/[^0-9]/g, '')}`).then(() => loadData()); }
 function recordHairCut(btn){ const v = document.getElementById('hairDateVal').value; if(!v) return; fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData()); }
 
-// 🔥 HAIR CUT JS 구조 변경
 function getHaircutStatus(dateStr) {
-  if (!dateStr) return `<span class="status-main">기록 없음</span>`;
+  if (!dateStr) return `<span class="status-main">기록 없음</span><span class="status-sub" style="visibility: hidden;">-</span>`;
   const targetDate = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
   const today = new Date(); today.setHours(0,0,0,0);
   const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
