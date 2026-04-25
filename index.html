@@ -16,7 +16,8 @@
   --text-muted: #666666;
   --line-color: #e0e0e0;
   --hyundai-blue: #002c5f;
-  --mini-red: #E20112;
+  /* JCW 색상을 추가버튼(accent-red)과 통일 */
+  --mini-red: #C8102E; 
 }
 
 * { box-sizing: border-box; margin:0; padding:0; }
@@ -88,21 +89,19 @@ h2:active { transform: scale(0.95); }
 .stat-card { height: 135px; }
 .card-title { font-size: 11px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
 
-/* 🔥 ROBOT & HAIR CUT 통일감을 위한 수직 정렬 속성 추가 */
 .status-value { 
   font-size:18px; 
   font-weight:900; 
   color: var(--text-main); 
   flex: 1; 
   display: flex; 
-  flex-direction: column; /* 항목을 위아래로 쌓음 */
+  flex-direction: column;
   justify-content: center; 
   align-items: center; 
   text-align: center;
   line-height: 1.1; 
 }
 
-/* 🔥 보조 텍스트 (날짜, 주차) 스타일 클래스 */
 .status-sub {
   font-size: 11px;
   color: #888;
@@ -164,12 +163,40 @@ button { font-weight:800; color:white; cursor:pointer; }
   overflow: visible; 
 }
 
+/* 🔥 추가 및 삭제 버튼 애니메이션 기반 설정 */
 .todo-input-group button, .todo-item button { 
   width: 44px; height: 26px; display: flex; align-items: center; justify-content: center;
   margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0;
+  position: relative; overflow: hidden; background-repeat: no-repeat;
+  transition: background-color 0.1s;
 }
-.todo-input-group button { background-color: var(--accent-red); }
-.todo-item button { background-color: #888; }
+
+.todo-input-group button { background-color: var(--accent-red); border: 1.5px solid var(--accent-red); }
+.todo-item button { background-color: #888; border: 1.5px solid #888; }
+
+/* 추가 버튼 로딩 애니메이션 */
+.loading-add {
+  background-color: transparent !important; color: var(--accent-red) !important;
+  background-image: linear-gradient(var(--accent-red), var(--accent-red)) !important;
+  background-size: 0% 100% !important; animation: fillAdd 1.2s forwards ease-in-out !important;
+}
+@keyframes fillAdd {
+  0% { background-size: 0% 100%; color: var(--accent-red); }
+  80% { background-size: 100% 100%; color: #fff; }
+  100% { background-size: 100% 100%; color: #fff; background-color: var(--accent-red); }
+}
+
+/* 삭제 버튼 로딩 애니메이션 */
+.loading-del {
+  background-color: transparent !important; color: #888 !important;
+  background-image: linear-gradient(#888, #888) !important;
+  background-size: 0% 100% !important; animation: fillDel 1.2s forwards ease-in-out !important;
+}
+@keyframes fillDel {
+  0% { background-size: 0% 100%; color: #888; }
+  80% { background-size: 100% 100%; color: #fff; }
+  100% { background-size: 100% 100%; color: #fff; background-color: #888; }
+}
 
 .drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; }
 
@@ -177,8 +204,30 @@ button { font-weight:800; color:white; cursor:pointer; }
 .car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
 .car-mark { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; }
 
-.hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
-.mini-on { background-color: var(--mini-red) !important; color: white !important; }
+/* 🔥 물결무늬(Wave) 애니메이션 키프레임 */
+@keyframes waveGlow {
+  0% { background-position: 200% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* HYUNDAI 물결 애니메이션 */
+.hyundai-on { 
+  background: linear-gradient(90deg, #002c5f 0%, #0056b3 50%, #002c5f 100%) !important;
+  background-size: 200% 100% !important;
+  animation: waveGlow 2s linear infinite !important;
+  color: white !important; 
+  border: none !important;
+}
+
+/* JCW 물결 애니메이션 */
+.mini-on { 
+  background: linear-gradient(90deg, var(--accent-red) 0%, #ff4d4d 50%, var(--accent-red) 100%) !important;
+  background-size: 200% 100% !important;
+  animation: waveGlow 2s linear infinite !important;
+  color: white !important; 
+  border: none !important;
+}
+
 .car-off { background-color: #eee !important; color: #bbb !important; opacity: 0.6; }
 </style>
 </head>
@@ -233,7 +282,6 @@ button { font-weight:800; color:white; cursor:pointer; }
       <div class="status-value" id="fuel-status">- / 3회</div>
       <button class="btn-fuel" onclick="recordAction('addFuel', this, '주유 기록')">주유 기록</button>
     </div>
-
   </div>
 </div>
 
@@ -287,7 +335,6 @@ function recordAction(action, btn, txt){
   });
 }
 
-// 🔥 간단한 날짜 변환기 (ex: "2026-04-25" -> "4/25")
 function formatSimpleDate(dateStr) {
   if (!dateStr) return '날짜';
   const d = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
@@ -301,7 +348,6 @@ function loadData() {
       const d = res.data;
       document.getElementById('fuel-status').innerText = d.fuel + " / 3회";
       
-      // 🔥 ROBOT 데이터 세팅 (서버에서 d.robotDate를 보내주어야 날짜가 제대로 표시됩니다)
       const robotDateTxt = d.robotDate ? formatSimpleDate(d.robotDate) : "날짜";
       document.getElementById('robot-status').innerHTML = `${d.robot} / 2회<br><span class="status-sub">(${robotDateTxt})</span>`;
       
@@ -333,17 +379,24 @@ function saveOrder() {
   fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodeURIComponent(JSON.stringify(newOrder))}`);
 }
 
+// 🔥 추가 버튼 터치 시 로딩 애니메이션 발동
 function addTodo(btn){
   const v = document.getElementById('todo-input').value;
   if(!v) return;
   btn.disabled = true;
+  btn.classList.add('loading-add'); // 클래스 추가
   fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => {
-    btn.disabled = false; document.getElementById('todo-input').value = ''; loadTodos();
+    btn.disabled = false; 
+    btn.classList.remove('loading-add'); // 완료 후 원복
+    document.getElementById('todo-input').value = ''; 
+    loadTodos();
   });
 }
 
+// 🔥 삭제 버튼 터치 시 로딩 애니메이션 발동
 function deleteTodo(index, btn){
   btn.disabled = true;
+  btn.classList.add('loading-del'); // 클래스 추가
   fetch(`${GAS_URL}?action=deleteTodo&index=${index}`).then(() => loadTodos());
 }
 
@@ -359,7 +412,6 @@ function recordHairCut(btn){
   fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData());
 }
 
-// 🔥 HAIR CUT 데이터 세팅 (ROBOT과 동일한 .status-sub 클래스 적용)
 function getHaircutStatus(dateStr) {
   if (!dateStr) return "기록 없음";
   const targetDate = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
