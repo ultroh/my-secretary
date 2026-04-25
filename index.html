@@ -15,14 +15,12 @@
   --hyundai-blue: #002c5f;
   --mini-red: #C8102E; 
 
-  /* 다이내믹 테마 변수 */
+  /* 다이내믹 테마 변수 (초기값) */
   --dynamic-app-bg: #002147;
   --dynamic-memo-bg: #ffffff;
   --dynamic-btn-main: #002147;
   --dynamic-btn-sub: #888888;
   --dynamic-border: #C8102E;
-  
-  /* 🔥 다이내믹 타이틀 텍스트 색상 변수 추가 (기본 흰색) */
   --dynamic-text-color: #ffffff; 
 }
 
@@ -47,7 +45,6 @@ body, html {
   position: relative;
 }
 
-/* 🔥 h2(LOG IT 제목) 색상을 다이내믹 변수로 연동 */
 h2 { 
   color: var(--dynamic-text-color); 
   text-align:center; margin: 12px 0; font-size: 1.2rem; font-weight: 900; 
@@ -203,25 +200,32 @@ button { font-weight:800; color:white; cursor:pointer; }
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
-function loadAll() { applyRandomTheme(); loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
+function loadAll() { applyTimeBasedThemeFixed(); loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
 
-// 🔥 사진에서 추출한 프리미엄 팔레트 적용 (밝은 배경 고려 텍스트 색상 변경 포함)
-function applyRandomTheme() {
-  const themes = [
-    { bg: '#002147', border: '#C8102E', sub: '#6B7A8F' }, // 1. 오리지널 (네이비 & 크림슨 레드)
-    { bg: '#458C98', border: '#A7292D', sub: '#80B5BE' }, // 3. 여행 테마 (오션 틸 & 딥 레드)
-    { bg: '#F0F1F2', border: '#A63333', sub: '#6B7A8F' }, // 5. 화이트 & 스트로베리 (밝은 테마)
-  ];
-  
-  const randomIndex = Math.floor(Math.random() * themes.length);
-  const selectedTheme = themes[randomIndex];
-  
+// 🔥 시간대별 고정 테마 적용 함수 (새로고침 시 변경 안 됨)
+function applyTimeBasedThemeFixed() {
+  const hour = new Date().getHours();
   const root = document.documentElement;
   
-  // 앱 배경색과 메인 버튼 색상은 동일하게 (산뜻함/무게감 유지)
+  let selectedTheme;
+
+  // 1. 06시 ~ 14시 전 (06:00 ~ 13:59) : 오리지널 테마
+  if (hour >= 6 && hour < 14) {
+    selectedTheme = { bg: '#002147', border: '#C8102E', sub: '#6B7A8F' };
+  } 
+  // 2. 14시 ~ 22시 전 (14:00 ~ 21:59) : 화이트 & 스트로베리 테마
+  else if (hour >= 14 && hour < 22) {
+    selectedTheme = { bg: '#F0F1F2', border: '#A63333', sub: '#6B7A8F' };
+  } 
+  // 3. 22시 ~ 다음날 06시 전 (22:00 ~ 05:59) : 오션 틸 & 딥 레드 테마
+  else {
+    selectedTheme = { bg: '#458C98', border: '#A7292D', sub: '#80B5BE' };
+  }
+  
+  // 앱 배경색 적용
   root.style.setProperty('--dynamic-app-bg', selectedTheme.bg);
   
-  // 🔥 5번 테마(밝은 회색 배경)일 경우 메인 버튼과 타이틀 텍스트를 다크 슬레이트 네이비(#2C3E50)로 지정
+  // 밝은 배경(화이트&스트로베리)일 경우 텍스트/메인버튼 색상 조정
   if (selectedTheme.bg === '#F0F1F2') {
     root.style.setProperty('--dynamic-text-color', '#2C3E50');
     root.style.setProperty('--dynamic-btn-main', '#2C3E50'); 
@@ -230,13 +234,9 @@ function applyRandomTheme() {
     root.style.setProperty('--dynamic-btn-main', selectedTheme.bg);
   }
   
-  // 카드 상단 포인트 스트라이프 선
+  // 테두리, 메모장, 서브버튼 색상 적용
   root.style.setProperty('--dynamic-border', selectedTheme.border);
-  
-  // 메모장 배경은 무조건 화이트로 고정 (신뢰감, 가독성)
   root.style.setProperty('--dynamic-memo-bg', '#ffffff');
-  
-  // 삭제 버튼 등 서브 버튼 색상
   root.style.setProperty('--dynamic-btn-sub', selectedTheme.sub); 
 }
 
