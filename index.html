@@ -79,6 +79,8 @@ h2:active { transform: scale(0.95); }
   justify-content: center; 
   align-items: center; 
   text-align: center;
+  /* 🔥 제목과 하단 버튼 사이의 여백 불균형을 잡기 위해 6px을 살짝 내려 시각적 정중앙을 맞춤 */
+  padding-top: 6px; 
 }
 
 .status-main { font-size: 18px; font-weight: 900; line-height: 1; display: block; }
@@ -202,7 +204,7 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17
 
 function loadAll() { applyTimeBasedThemeFixed(); loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
 
-// 🔥 시간대별 고정 테마 적용 함수 (새로고침 시 변경 안 됨)
+// 🔥 시간대별 고정 테마 적용 함수
 function applyTimeBasedThemeFixed() {
   const hour = new Date().getHours();
   const root = document.documentElement;
