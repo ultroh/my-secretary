@@ -18,10 +18,11 @@
   --hyundai-blue: #002c5f;
   --mini-red: #C8102E; 
 
-  /* 🔥 날씨/시간대 반영 다이내믹 테마 변수 (기본값) */
+  /* 다이내믹 테마 변수 */
   --dynamic-memo-bg: #ffffff;
   --dynamic-btn-main: #002147;
   --dynamic-btn-sub: #888888;
+  --dynamic-border: #C8102E; /* 상단 라인 색상 변수 추가 */
 }
 
 * { box-sizing: border-box; margin:0; padding:0; }
@@ -45,110 +46,49 @@ body, html {
 }
 
 h2 { 
-  color:white; 
-  text-align:center; 
-  margin: 12px 0; 
-  font-size: 1.2rem; 
-  font-weight: 900; 
-  letter-spacing: 1px; 
-  text-transform: uppercase; 
-  cursor: pointer;
-  transition: transform 0.1s ease-in-out;
-  user-select: none;
+  color:white; text-align:center; margin: 12px 0; font-size: 1.2rem; font-weight: 900; 
+  letter-spacing: 1px; text-transform: uppercase; cursor: pointer;
+  transition: transform 0.1s ease-in-out; user-select: none;
 }
-
 h2:active { transform: scale(0.95); }
 
 .rainbow-theme {
-  background: linear-gradient(to right, 
-    #FF3B30 0%, #FF3B30 14.28%,
-    #FF9500 14.28%, #FF9500 28.57%,
-    #FFCC00 28.57%, #FFCC00 42.85%,
-    #4CD964 42.85%, #4CD964 57.14%,
-    #5AC8FA 57.14%, #5AC8FA 71.42%,
-    #007AFF 71.42%, #007AFF 85.71%,
-    #5856D6 85.71%, #5856D6 100%,
-    #ffffff 100%, #ffffff 200%
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  animation: sweepRainbow 2s ease-in-out forwards;
+  background: linear-gradient(to right, #FF3B30 0%, #FF3B30 14.28%, #FF9500 14.28%, #FF9500 28.57%, #FFCC00 28.57%, #FFCC00 42.85%, #4CD964 42.85%, #4CD964 57.14%, #5AC8FA 57.14%, #5AC8FA 71.42%, #007AFF 71.42%, #007AFF 85.71%, #5856D6 85.71%, #5856D6 100%, #ffffff 100%, #ffffff 200%);
+  background-size: 200% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  color: transparent; animation: sweepRainbow 2s ease-in-out forwards;
 }
-
-@keyframes sweepRainbow {
-  0% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
+@keyframes sweepRainbow { 0% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
 #dashboard { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 
 .card {
   background: var(--card-bg); border-radius: 12px; padding: 12px;
   display:flex; flex-direction:column; justify-content: space-between; align-items:center;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 4px solid var(--accent-red);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  /* 🔥 모든 카드의 상단 라인을 다이내믹 변수로 변경 */
+  border-top: 4px solid var(--dynamic-border);
+  transition: border-top 1s ease, background-color 1s ease;
 }
 
-/* 🔥 메모장 카드 다이내믹 배경 적용 */
 .reminder-card { 
   grid-column: span 2; 
-  border-top: 6px solid var(--dynamic-btn-main); 
+  border-top: 6px solid var(--dynamic-border); 
   background-color: var(--dynamic-memo-bg);
-  transition: background-color 1s ease, border-color 1s ease;
 }
 
 .stat-card { height: 135px; overflow: hidden; }
 .card-title { font-size: 11px; font-weight: 800; color: var(--primary); margin-bottom: 4px; }
-
-.status-value { 
-  font-size:18px; 
-  font-weight:900; 
-  color: var(--text-main); 
-  flex: 1; 
-  display: flex; 
-  flex-direction: column;
-  justify-content: center; 
-  align-items: center; 
-  text-align: center;
-  line-height: 1.1; 
-}
-
-.status-sub {
-  font-size: 11px;
-  color: #888;
-  font-weight: 600;
-  margin-top: 4px;
-}
+.status-value { font-size:18px; font-weight:900; color: var(--text-main); flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; line-height: 1.1; }
+.status-sub { font-size: 11px; color: #888; font-weight: 600; margin-top: 4px; }
 
 input, button { border:none; border-radius:6px; outline: none; }
 input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; }
 button { font-weight:800; color:white; cursor:pointer; }
 
-/* 🔥 하단 4개 액션 버튼 다이내믹 색상 적용 */
 .btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
-  width: 100%; 
-  height: 36px; 
-  margin-top: 6px; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
+  width: 100%; height: 36px; margin-top: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px;
+  background-color: var(--dynamic-btn-main); border: 1.5px solid var(--dynamic-btn-main);
   transition: background-color 1s ease, border-color 1s ease, color 1s ease;
-}
-
-.btn-carwash, .btn-hair { 
-  background: var(--dynamic-btn-main); 
-  border: 1.5px solid transparent; 
-}
-
-.btn-fuel, .btn-robot {
-  background-color: var(--dynamic-btn-main); 
-  color: #fff; 
-  border: 1.5px solid var(--dynamic-btn-main);
-  position: relative; 
-  overflow: hidden; 
-  background-repeat: no-repeat;
 }
 
 .btn-fuel.loading, .btn-robot.loading {
@@ -156,126 +96,41 @@ button { font-weight:800; color:white; cursor:pointer; }
   background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main));
   background-size: 0% 100%; animation: fillAnimation 1.2s forwards ease-in-out;
 }
-
-@keyframes fillAnimation {
-  0% { background-size: 0% 100%; color: var(--dynamic-btn-main); }
-  80% { background-size: 100% 100%; color: #fff; }
-  100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); }
-}
+@keyframes fillAnimation { 0% { background-size: 0% 100%; color: var(--dynamic-btn-main); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); } }
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
-.todo-input-group input { 
-  flex: 1; 
-  text-align: center;
-  background: rgba(255, 255, 255, 0.6); /* 배경색과 어우러지도록 반투명 화이트 적용 */
-  padding: 8px; 
-  margin: 0; 
-}
-
+.todo-input-group input { flex: 1; text-align: center; background: rgba(255, 255, 255, 0.6); padding: 8px; margin: 0; }
 .todo-list { margin-top: 6px; max-height: 105px; overflow-y: auto; width: 100%; }
+.todo-item { display:flex; justify-content:space-between; align-items:center; padding: 4px 0px; border-bottom: 1px solid var(--line-color); }
+.todo-item span.text { flex:1; text-align:left; color: var(--text-main); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; line-height: 1.2; }
+.todo-item.expanded span.text { white-space: normal; overflow: visible; }
 
-.todo-item {
-  display:flex; justify-content:space-between; align-items:center;
-  padding: 4px 0px; border-bottom: 1px solid var(--line-color);
-}
-
-.todo-item span.text { 
-  flex:1; text-align:left; color: var(--text-main); font-size: 13px;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
-  line-height: 1.2;
-}
-
-.todo-item.expanded span.text { 
-  white-space: normal; 
-  overflow: visible; 
-}
-
-/* 🔥 추가, 삭제 버튼 다이내믹 색상 적용 */
 .todo-input-group button, .todo-item button { 
-  width: 44px; height: 26px; display: flex; align-items: center; justify-content: center;
-  margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0;
-  position: relative; overflow: hidden; background-repeat: no-repeat;
+  width: 44px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0;
+  background-color: var(--dynamic-btn-main); border: 1.5px solid var(--dynamic-btn-main);
   transition: background-color 1s ease, border-color 1s ease;
 }
-
-.todo-input-group button { background-color: var(--dynamic-btn-main); border: 1.5px solid var(--dynamic-btn-main); }
 .todo-item button { background-color: var(--dynamic-btn-sub); border: 1.5px solid var(--dynamic-btn-sub); }
 
-.loading-add {
-  background-color: transparent !important; color: var(--dynamic-btn-main) !important;
-  background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)) !important;
-  background-size: 0% 100% !important; animation: fillAdd 1.2s forwards ease-in-out !important;
-}
-@keyframes fillAdd {
-  0% { background-size: 0% 100%; color: var(--dynamic-btn-main); }
-  80% { background-size: 100% 100%; color: #fff; }
-  100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); }
-}
+.loading-add { background-color: transparent !important; color: var(--dynamic-btn-main) !important; background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)) !important; background-size: 0% 100% !important; animation: fillAdd 1.2s forwards ease-in-out !important; }
+@keyframes fillAdd { 0% { background-size: 0% 100%; color: var(--dynamic-btn-main); } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); } }
 
-.loading-del {
-  background-color: transparent !important; color: var(--dynamic-btn-sub) !important;
-  background-image: linear-gradient(var(--dynamic-btn-sub), var(--dynamic-btn-sub)) !important;
-  background-size: 0% 100% !important; animation: fillDel 1.2s forwards ease-in-out !important;
-}
-@keyframes fillDel {
-  0% { background-size: 0% 100%; color: var(--dynamic-btn-sub); }
-  80% { background-size: 100% 100%; color: #fff; }
-  100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-sub); }
-}
+.loading-del { background-color: transparent !important; color: var(--dynamic-btn-sub) !important; background-image: linear-gradient(var(--dynamic-btn-sub), var(--dynamic-btn-sub)) !important; background-size: 0% 100% !important; animation: fillDel 1.2s forwards ease-in-out !important; }
+@keyframes fillDel { 0% { background-size: 0% 100%; color: var(--dynamic-btn-sub); } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-sub); } }
 
-.drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; }
-
-.car-rotation-card { grid-column: span 2; padding: 10px 14px; }
-.car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
-
-.car-mark { 
-  flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; 
-  display: flex; align-items: center; justify-content: center; cursor: pointer; 
-  position: relative; 
-  overflow: hidden; 
-  z-index: 1; 
-  border: none !important;
-  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out; 
-}
-
-.car-mark .btn-text {
-  position: relative;
-  z-index: 2;
-}
-
+.car-mark { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; font-size: 13px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; z-index: 1; border: none !important; transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out; }
+.car-mark::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%); background-size: 300% 300%; opacity: 0; z-index: 0; transition: opacity 1.5s ease-out; }
+.car-mark.is-sparkling::before { opacity: 1; transition: opacity 0.3s ease-in; animation: dreamySparkle 1.5s ease-in-out infinite alternate; }
+@keyframes dreamySparkle { 0% { background-position: 0% 50%; filter: brightness(1) contrast(1.1); } 50% { filter: brightness(1.3) contrast(1.3); } 100% { background-position: 100% 50%; filter: brightness(1) contrast(1.1); } }
 .hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
 .mini-on { background-color: var(--mini-red) !important; color: white !important; }
 .car-off { background-color: #eee !important; color: #bbb !important; opacity: 1 !important; } 
-
-.car-mark::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%);
-  background-size: 300% 300%;
-  opacity: 0; 
-  z-index: 0; 
-  transition: opacity 1.5s ease-out; 
-}
-
-.car-mark.is-sparkling::before {
-  opacity: 1; 
-  transition: opacity 0.3s ease-in; 
-  animation: dreamySparkle 1.5s ease-in-out infinite alternate;
-}
-
-@keyframes dreamySparkle {
-  0% { background-position: 0% 50%; filter: brightness(1) contrast(1.1); }
-  50% { filter: brightness(1.3) contrast(1.3); } 
-  100% { background-position: 100% 50%; filter: brightness(1) contrast(1.1); }
-}
 </style>
 </head>
 
 <body>
 <div class="app-container">
   <h2 id="log-it-title" onclick="toggleMedication()">LOG IT</h2>
-
   <div id="dashboard">
     <div class="card reminder-card">
       <div class="card-title">📌 REMINDERS</div>
@@ -285,27 +140,18 @@ button { font-weight:800; color:white; cursor:pointer; }
       </div>
       <div id="todo-list" class="todo-list"></div>
     </div>
-
     <div class="card car-rotation-card">
       <div class="card-title">🚦 TODAY'S DRIVE</div>
-      <div class="car-btn-container">
-        <div id="mark-hyundai" class="car-mark car-off" onclick="handleCarSelect(this, 'hyundai')">
-          <span class="btn-text">HYUNDAI</span>
-        </div>
-        <div id="mark-mini" class="car-mark car-off" onclick="handleCarSelect(this, 'mini')">
-          <span class="btn-text">JCW</span>
-        </div>
+      <div class="car-btn-container" style="display:flex; width:100%; gap:8px; margin-top:6px;">
+        <div id="mark-hyundai" class="car-mark car-off" onclick="handleCarSelect(this, 'hyundai')"><span style="position:relative;z-index:2">HYUNDAI</span></div>
+        <div id="mark-mini" class="car-mark car-off" onclick="handleCarSelect(this, 'mini')"><span style="position:relative;z-index:2">JCW</span></div>
       </div>
     </div>
-
     <div class="card stat-card">
       <div class="card-title">🤖 ROBOT</div>
-      <div class="status-value" id="robot-status">
-        - / 2회<br><span class="status-sub">(날짜)</span>
-      </div>
+      <div class="status-value" id="robot-status">- / 2회<br><span class="status-sub">(날짜)</span></div>
       <button class="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
     </div>
-
     <div class="card stat-card">
       <div class="card-title">✂️ HAIR CUT</div>
       <div class="status-value" id="hair-status">-</div>
@@ -314,13 +160,11 @@ button { font-weight:800; color:white; cursor:pointer; }
         <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; margin: 0;" onchange="recordHairCut(document.getElementById('btn-hair'))">
       </div>
     </div>
-
     <div class="card stat-card">
       <div class="card-title">🫧 CAR WASH</div>
       <div class="status-value" id="carwash-status">-원</div>
       <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
     </div>
-
     <div class="card stat-card">
       <div class="card-title">🚗 FUEL</div>
       <div class="status-value" id="fuel-status">- / 3회</div>
@@ -334,165 +178,62 @@ const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17
 
 function loadAll() { applyTimeBasedTheme(); loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
 
-// 🔥 시간에 따른 날씨/기온 감성 테마 적용 함수
+// 🔥 시간대별 4회 변경 및 새로고침 시 톤 변화 로직
 function applyTimeBasedTheme() {
   const hour = new Date().getHours();
   const root = document.documentElement;
+  let baseColor, bgColor, subColor, borderColor;
 
-  if (hour >= 6 && hour < 12) {
-    // 오전 (상쾌한 아침, 시원한 공기 느낌)
-    root.style.setProperty('--dynamic-memo-bg', '#F0F8FF'); // 앨리스 블루
-    root.style.setProperty('--dynamic-btn-main', '#5C88C4'); // 부드러운 블루
-    root.style.setProperty('--dynamic-btn-sub', '#8AA6C1');  // 서브 블루
-  } else if (hour >= 12 && hour < 18) {
-    // 오후 (따뜻한 햇살, 포근한 기온 느낌)
-    root.style.setProperty('--dynamic-memo-bg', '#FFF9F0'); // 웜 아이보리
-    root.style.setProperty('--dynamic-btn-main', '#E08E6D'); // 테라코타 오렌지
-    root.style.setProperty('--dynamic-btn-sub', '#D4A392');  // 서브 오렌지
+  // 1. 시간대 판별 (4분할)
+  if (hour >= 6 && hour < 10) { // 아침 (06~10)
+    baseColor = { h: 210, s: 50, l: 55 }; // 파스텔 블루
+    bgColor = "#F0F8FF"; borderColor = "hsl(210, 50%, 55%)";
+  } else if (hour >= 10 && hour < 16) { // 낮 (10~16) - 기존 기본값 유지
+    baseColor = { h: 215, s: 100, l: 14 }; // 네이비
+    bgColor = "#ffffff"; borderColor = "#C8102E"; // 빨간 스트라이프 고정
+  } else if (hour >= 16 && hour < 20) { // 오후 (16~20)
+    baseColor = { h: 18, s: 65, l: 65 }; // 따뜻한 오렌지
+    bgColor = "#FFF9F0"; borderColor = "hsl(18, 65%, 65%)";
+  } else { // 밤 (20~06)
+    baseColor = { h: 260, s: 30, l: 55 }; // 차분한 퍼플
+    bgColor = "#F4F0FA"; borderColor = "hsl(260, 30%, 55%)";
+  }
+
+  // 2. 새로고침 시 톤 변화 (채도와 밝기에 랜덤값 부여)
+  // 낮 시간(Default)은 톤 변화를 아주 미세하게, 나머지는 좀 더 다채롭게
+  const sVar = (Math.random() * 20) - 10; // -10% ~ +10%
+  const lVar = (Math.random() * 10) - 5;  // -5% ~ +5%
+  
+  const finalMain = `hsl(${baseColor.h}, ${baseColor.s + sVar}%, ${baseColor.l + lVar}%)`;
+  const finalSub = `hsl(${baseColor.h}, ${baseColor.s + sVar - 10}%, ${baseColor.l + lVar + 10}%)`;
+
+  root.style.setProperty('--dynamic-memo-bg', bgColor);
+  root.style.setProperty('--dynamic-btn-main', finalMain);
+  root.style.setProperty('--dynamic-btn-sub', finalSub);
+  
+  // 낮 시간은 보더 색상을 고정하고, 나머지는 메인색과 동기화
+  if (hour >= 10 && hour < 16) {
+    root.style.setProperty('--dynamic-border', "#C8102E");
   } else {
-    // 저녁/밤 (차분한 노을, 서늘한 밤 느낌)
-    root.style.setProperty('--dynamic-memo-bg', '#F4F0FA'); // 라이트 라벤더
-    root.style.setProperty('--dynamic-btn-main', '#7D6CA8'); // 뮤트 퍼플
-    root.style.setProperty('--dynamic-btn-sub', '#A399B8');  // 서브 퍼플
+    root.style.setProperty('--dynamic-border', finalMain);
   }
 }
 
-function resetCarButtons() {
-  document.getElementById('mark-hyundai').className = 'car-mark car-off';
-  document.getElementById('mark-mini').className = 'car-mark car-off';
-}
-
-function checkMedication() {
-  const today = new Date().toDateString(); 
-  const savedDate = localStorage.getItem('medication_taken_date');
-  const titleEl = document.getElementById('log-it-title');
-  if (savedDate === today) titleEl.classList.add('rainbow-theme');
-  else titleEl.classList.remove('rainbow-theme');
-}
-
-function toggleMedication() {
-  const titleEl = document.getElementById('log-it-title');
-  const today = new Date().toDateString();
-  titleEl.classList.toggle('rainbow-theme');
-  const isTaken = titleEl.classList.contains('rainbow-theme');
-  if (isTaken) localStorage.setItem('medication_taken_date', today);
-  else localStorage.removeItem('medication_taken_date');
-  fetch(`${GAS_URL}?action=toggleMedication&state=${isTaken}`).catch(e => console.error(e));
-}
-
-function handleCarSelect(el, carType) {
-  if(el.sparkleTimeout) clearTimeout(el.sparkleTimeout);
-  el.classList.add('is-sparkling');
-  const todayNum = new Date().getDate();
-  const allowedCar = (todayNum % 2 === 0) ? 'hyundai' : 'mini';
-
-  el.sparkleTimeout = setTimeout(() => {
-    el.classList.remove('is-sparkling');
-    el.classList.remove('hyundai-on', 'mini-on', 'car-off');
-    
-    if (carType === allowedCar) {
-      el.classList.add(carType === 'hyundai' ? 'hyundai-on' : 'mini-on');
-      const otherId = carType === 'hyundai' ? 'mark-mini' : 'mark-hyundai';
-      document.getElementById(otherId).className = 'car-mark car-off';
-    } else {
-      el.classList.add('car-off');
-    }
-  }, 3500); 
-}
-
-function recordAction(action, btn, txt){
-  btn.disabled = true;
-  if(action === 'addRobot' || action === 'addFuel') btn.classList.add('loading');
-  fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
-    btn.disabled = false;
-    if(action === 'addRobot' || action === 'addFuel') btn.classList.remove('loading');
-    if(action === 'addRobot' && data.message && data.message.includes('2회')) alert("2회 청소하였습니다. 오늘 저녁에 알림 메일을 예약하였습니다.");
-    else if(data.message) alert(data.message);
-    loadData();
-  });
-}
-
-function formatSimpleDate(dateStr) {
-  if (!dateStr) return '날짜';
-  const d = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
-  if (isNaN(d)) return dateStr;
-  return `${d.getMonth() + 1}/${d.getDate()}`;
-}
-
-function loadData() {
-  fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => {
-    if(res.status === 'success') {
-      const d = res.data;
-      document.getElementById('fuel-status').innerText = d.fuel + " / 3회";
-      const robotDateTxt = d.robotDate ? formatSimpleDate(d.robotDate) : "날짜";
-      document.getElementById('robot-status').innerHTML = `${d.robot} / 2회<br><span class="status-sub">(${robotDateTxt})</span>`;
-      document.getElementById('carwash-status').innerText = (d.carWash || 0).toLocaleString() + "원";
-      document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
-    }
-  });
-}
-
-function loadTodos(){
-  fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`).then(res => res.json()).then(data => {
-    const list = document.getElementById('todo-list');
-    list.innerHTML = '';
-    const reversedTodos = [...data.todos].map((text, i) => ({ text, originalIndex: i })).reverse();
-    reversedTodos.forEach((todo) => {
-      const div = document.createElement('div');
-      div.className = 'todo-item';
-      div.dataset.text = todo.text;
-      div.innerHTML = `<span class="drag-handle">☰</span><span class="text" onclick="this.parentElement.classList.toggle('expanded')">${todo.text}</span><button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
-      list.appendChild(div);
-    });
-    new Sortable(list, { handle: '.drag-handle', animation: 150, onEnd: saveOrder });
-  });
-}
-
-function saveOrder() {
-  const listItems = document.querySelectorAll('.todo-item');
-  const newOrder = Array.from(listItems).map(item => item.dataset.text).reverse(); 
-  fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodeURIComponent(JSON.stringify(newOrder))}`);
-}
-
-function addTodo(btn){
-  const v = document.getElementById('todo-input').value;
-  if(!v) return;
-  btn.disabled = true;
-  btn.classList.add('loading-add'); 
-  fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => {
-    btn.disabled = false; 
-    btn.classList.remove('loading-add'); 
-    document.getElementById('todo-input').value = ''; 
-    loadTodos();
-  });
-}
-
-function deleteTodo(index, btn){
-  btn.disabled = true;
-  btn.classList.add('loading-del'); 
-  fetch(`${GAS_URL}?action=deleteTodo&index=${index}`).then(() => loadTodos());
-}
-
-function recordCarWash(btn){
-  const amount = prompt("차감할 금액:");
-  if (!amount) return;
-  fetch(`${GAS_URL}?action=useCarWash&amount=${amount.replace(/[^0-9]/g, '')}`).then(() => loadData());
-}
-
-function recordHairCut(btn){
-  const v = document.getElementById('hairDateVal').value;
-  if(!v) return;
-  fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData());
-}
-
-function getHaircutStatus(dateStr) {
-  if (!dateStr) return "기록 없음";
-  const targetDate = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
-  const today = new Date(); today.setHours(0,0,0,0);
-  const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
-  return `D+${diffDays}<br><span class="status-sub">(${Math.floor(diffDays/7)+1}주차)</span>`;
-}
-
+// (기존 함수들 동일 유지...)
+function resetCarButtons() { document.getElementById('mark-hyundai').className = 'car-mark car-off'; document.getElementById('mark-mini').className = 'car-mark car-off'; }
+function checkMedication() { const today = new Date().toDateString(); const savedDate = localStorage.getItem('medication_taken_date'); const titleEl = document.getElementById('log-it-title'); if (savedDate === today) titleEl.classList.add('rainbow-theme'); else titleEl.classList.remove('rainbow-theme'); }
+function toggleMedication() { const titleEl = document.getElementById('log-it-title'); const today = new Date().toDateString(); titleEl.classList.toggle('rainbow-theme'); const isTaken = titleEl.classList.contains('rainbow-theme'); if (isTaken) localStorage.setItem('medication_taken_date', today); else localStorage.removeItem('medication_taken_date'); fetch(`${GAS_URL}?action=toggleMedication&state=${isTaken}`).catch(e => console.error(e)); }
+function handleCarSelect(el, carType) { if(el.sparkleTimeout) clearTimeout(el.sparkleTimeout); el.classList.add('is-sparkling'); const todayNum = new Date().getDate(); const allowedCar = (todayNum % 2 === 0) ? 'hyundai' : 'mini'; el.sparkleTimeout = setTimeout(() => { el.classList.remove('is-sparkling'); el.classList.remove('hyundai-on', 'mini-on', 'car-off'); if (carType === allowedCar) { el.classList.add(carType === 'hyundai' ? 'hyundai-on' : 'mini-on'); const otherId = carType === 'hyundai' ? 'mark-mini' : 'mark-hyundai'; document.getElementById(otherId).className = 'car-mark car-off'; } else { el.classList.add('car-off'); } }, 3500); }
+function recordAction(action, btn, txt){ btn.disabled = true; if(action === 'addRobot' || action === 'addFuel') btn.classList.add('loading'); fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => { btn.disabled = false; if(action === 'addRobot' || action === 'addFuel') btn.classList.remove('loading'); if(action === 'addRobot' && data.message && data.message.includes('2회')) alert("2회 청소하였습니다. 오늘 저녁에 알림 메일을 예약하였습니다."); else if(data.message) alert(data.message); loadData(); }); }
+function formatSimpleDate(dateStr) { if (!dateStr) return '날짜'; const d = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, '')); if (isNaN(d)) return dateStr; return `${d.getMonth() + 1}/${d.getDate()}`; }
+function loadData() { fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => { if(res.status === 'success') { const d = res.data; document.getElementById('fuel-status').innerText = d.fuel + " / 3회"; const robotDateTxt = d.robotDate ? formatSimpleDate(d.robotDate) : "날짜"; document.getElementById('robot-status').innerHTML = `${d.robot} / 2회<br><span class="status-sub">(${robotDateTxt})</span>`; document.getElementById('carwash-status').innerText = (d.carWash || 0).toLocaleString() + "원"; document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate); } }); }
+function loadTodos(){ fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`).then(res => res.json()).then(data => { const list = document.getElementById('todo-list'); list.innerHTML = ''; const reversedTodos = [...data.todos].map((text, i) => ({ text, originalIndex: i })).reverse(); reversedTodos.forEach((todo) => { const div = document.createElement('div'); div.className = 'todo-item'; div.dataset.text = todo.text; div.innerHTML = `<span class="drag-handle">☰</span><span class="text" onclick="this.parentElement.classList.toggle('expanded')">${todo.text}</span><button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`; list.appendChild(div); }); new Sortable(list, { handle: '.drag-handle', animation: 150, onEnd: saveOrder }); }); }
+function saveOrder() { const listItems = document.querySelectorAll('.todo-item'); const newOrder = Array.from(listItems).map(item => item.dataset.text).reverse(); fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodeURIComponent(JSON.stringify(newOrder))}`); }
+function addTodo(btn){ const v = document.getElementById('todo-input').value; if(!v) return; btn.disabled = true; btn.classList.add('loading-add'); fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => { btn.disabled = false; btn.classList.remove('loading-add'); document.getElementById('todo-input').value = ''; loadTodos(); }); }
+function deleteTodo(index, btn){ btn.disabled = true; btn.classList.add('loading-del'); fetch(`${GAS_URL}?action=deleteTodo&index=${index}`).then(() => loadTodos()); }
+function recordCarWash(btn){ const amount = prompt("차감할 금액:"); if (!amount) return; fetch(`${GAS_URL}?action=useCarWash&amount=${amount.replace(/[^0-9]/g, '')}`).then(() => loadData()); }
+function recordHairCut(btn){ const v = document.getElementById('hairDateVal').value; if(!v) return; fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData()); }
+function getHaircutStatus(dateStr) { if (!dateStr) return "기록 없음"; const targetDate = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, '')); const today = new Date(); today.setHours(0,0,0,0); const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24)); return `D+${diffDays}<br><span class="status-sub">(${Math.floor(diffDays/7)+1}주차)</span>`; }
 window.onload = loadAll;
 </script>
 </body>
