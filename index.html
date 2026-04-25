@@ -79,7 +79,6 @@ h2:active { transform: scale(0.95); }
   justify-content: center; 
   align-items: center; 
   text-align: center;
-  /* 🔥 제목과 하단 버튼 사이의 여백 불균형을 잡기 위해 6px을 살짝 내려 시각적 정중앙을 맞춤 */
   padding-top: 6px; 
 }
 
@@ -183,7 +182,6 @@ button { font-weight:800; color:white; cursor:pointer; }
       <div class="card-title">🫧 CAR WASH</div>
       <div class="status-value" id="carwash-status">
         <span class="status-main">-원</span>
-        <span class="status-sub" style="visibility: hidden;">-</span>
       </div>
       <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
     </div>
@@ -192,7 +190,6 @@ button { font-weight:800; color:white; cursor:pointer; }
       <div class="card-title">🚗 FUEL</div>
       <div class="status-value" id="fuel-status">
         <span class="status-main">- / 3회</span>
-        <span class="status-sub" style="visibility: hidden;">-</span>
       </div>
       <button class="btn-fuel" onclick="recordAction('addFuel', this, '주유 기록')">주유 기록</button>
     </div>
@@ -304,10 +301,15 @@ function loadData() {
   fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => {
     if(res.status === 'success') {
       const d = res.data;
-      document.getElementById('fuel-status').innerHTML = `<span class="status-main">${d.fuel} / 3회</span><span class="status-sub" style="visibility: hidden;">-</span>`;
+      // 🔥 FUEL 데이터 삽입 시 불필요한 투명 sub 영역 제거
+      document.getElementById('fuel-status').innerHTML = `<span class="status-main">${d.fuel} / 3회</span>`;
+      
       const robotDateTxt = d.robotDate ? formatSimpleDate(d.robotDate) : "날짜";
       document.getElementById('robot-status').innerHTML = `<span class="status-main">${d.robot} / 2회</span><span class="status-sub">(${robotDateTxt})</span>`;
-      document.getElementById('carwash-status').innerHTML = `<span class="status-main">${(d.carWash || 0).toLocaleString()}원</span><span class="status-sub" style="visibility: hidden;">-</span>`;
+      
+      // 🔥 CAR WASH 데이터 삽입 시 불필요한 투명 sub 영역 제거
+      document.getElementById('carwash-status').innerHTML = `<span class="status-main">${(d.carWash || 0).toLocaleString()}원</span>`;
+      
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
     }
   });
