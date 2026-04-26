@@ -112,10 +112,9 @@ button { font-weight:800; color:white; cursor:pointer; }
   user-select: none;
 }
 
-/* 🔥 꾹 눌러서 상태가 유지될 때 글자색상만 주황색으로 변경 */
 .todo-item.highlighted span.text { 
   color: #FF9500 !important; 
-  font-weight: 800 !important; /* 조금 더 강조되도록 굵기 추가 */
+  font-weight: 800 !important; 
 }
 .todo-item.highlighted .drag-handle { 
   color: #FF9500 !important; 
@@ -326,12 +325,21 @@ function loadTodos(){
   fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`).then(res => res.json()).then(data => {
     const list = document.getElementById('todo-list');
     list.innerHTML = '';
+    
+    // 🔥 로컬 스토리지에서 저장된 하이라이트 항목 목록을 불러오기
+    let hlList = JSON.parse(localStorage.getItem('highlightedTodos') || '[]');
+
     const reversedTodos = [...data.todos].map((text, i) => ({ text, originalIndex: i })).reverse();
     reversedTodos.forEach((todo) => {
       const div = document.createElement('div');
       div.className = 'todo-item';
-      div.dataset.text = todo.text;
       
+      // 🔥 현재 아이템의 텍스트가 저장된 목록에 있다면 렌더링할 때부터 클래스 부여
+      if (hlList.includes(todo.text)) {
+        div.classList.add('highlighted');
+      }
+
+      div.dataset.text = todo.text;
       div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${todo.text}</span><button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
       
       let pressTimer;
@@ -342,8 +350,21 @@ function loadTodos(){
         isLongPress = false;
         pressTimer = setTimeout(() => {
           isLongPress = true;
-          div.classList.toggle('highlighted');
+          
+          // 🔥 클래스 토글 후 바뀐 상태를 로컬 스토리지에 즉시 동기화
+          const isNowHighlighted = div.classList.toggle('highlighted');
           if(navigator.vibrate) navigator.vibrate(50); 
+          
+          let currentHlList = JSON.parse(localStorage.getItem('highlightedTodos') || '[]');
+          if (isNowHighlighted) {
+            // 주황색으로 켜졌다면 배열에 추가
+            if (!currentHlList.includes(todo.text)) currentHlList.push(todo.text);
+          } else {
+            // 꺼졌다면 배열에서 제거
+            currentHlList = currentHlList.filter(t => t !== todo.text);
+          }
+          localStorage.setItem('highlightedTodos', JSON.stringify(currentHlList));
+          
         }, 400); 
       };
       
