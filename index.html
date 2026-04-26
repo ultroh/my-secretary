@@ -38,7 +38,6 @@ body, html {
   background-size: 24px 24px;
   font-family: 'Pretendard', -apple-system, sans-serif;
   transition: background-color 0.8s ease;
-  /* 🔥 수정2: 홈화면Standalone 모드에서도 아래로 당겨 새로고침이 가능하도록 설정 */
   overscroll-behavior-y: auto; 
 }
 
@@ -86,7 +85,7 @@ h2:active { transform: scale(0.95); }
 .status-sub { font-size: 11px; color: #888; font-weight: 600; line-height: 1; margin-top: 4px; display: block; }
 
 input, button { border:none; border-radius:6px; outline: none; }
-input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; text-align: center; } /* 수정3: 중앙정렬 */
+input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; text-align: center; }
 button { font-weight:800; color:white; cursor:pointer; }
 
 .btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
@@ -96,7 +95,7 @@ button { font-weight:800; color:white; cursor:pointer; }
 .btn-carwash, .btn-hair { border: 1.5px solid transparent; }
 .btn-fuel, .btn-robot { color: #fff; border: 1.5px solid var(--dynamic-btn-main); position: relative; overflow: hidden; background-repeat: no-repeat; }
 
-/* 🔥 수정1: 기존 디자인 및 애니메이션 효과 복구 */
+/* 추가/삭제 애니메이션 효과 */
 .loading-add { background-color: transparent !important; color: var(--dynamic-btn-main) !important; background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)) !important; background-size: 0% 100% !important; animation: fillAdd 1.2s forwards ease-in-out !important; }
 @keyframes fillAdd { 0% { background-size: 0% 100%; color: var(--dynamic-btn-main); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); } }
 .loading-del { background-color: transparent !important; color: var(--dynamic-btn-sub) !important; background-image: linear-gradient(var(--dynamic-btn-sub), var(--dynamic-btn-sub)) !important; background-size: 0% 100% !important; animation: fillDel 1.2s forwards ease-in-out !important; }
@@ -105,18 +104,36 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
 .todo-list { margin-top: 6px; max-height: 105px; overflow-y: auto; width: 100%; }
+
+/* 🔥 수정: 리스트 간격 축소 (padding 6px -> 2px) */
 .todo-item { 
-  display:flex; justify-content:space-between; align-items:center; padding: 6px 0px; border-bottom: 1px solid var(--line-color); 
-  border-radius: 8px; transition: background-color 0.3s ease; -webkit-tap-highlight-color: transparent; user-select: none;
+  display:flex; justify-content:space-between; align-items:center; 
+  padding: 2px 0px; 
+  border-bottom: 1px solid var(--line-color); 
+  border-radius: 8px; transition: background-color 0.3s ease; 
+  -webkit-tap-highlight-color: transparent; user-select: none;
 }
 .todo-item.highlighted span.text, .todo-item.highlighted .drag-handle { color: #FF9500 !important; font-weight: 800 !important; }
-.todo-item span.text { flex:1; text-align:left; color: var(--text-main); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; line-height: 1.2; transition: color 0.2s ease;}
+
+/* 🔥 수정: 내부 텍스트 패딩 축소 (5px -> 2px) */
+.todo-item span.text { 
+  flex:1; text-align:left; color: var(--text-main); font-size: 13px; 
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+  cursor: pointer; line-height: 1.2; transition: color 0.2s ease;
+  padding: 2px 0; 
+}
+
+.todo-item.expanded span.text { 
+  white-space: normal !important; 
+  overflow: visible !important; 
+  text-overflow: clip !important;
+}
 
 .todo-input-group button, .todo-item button { width: 44px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0; position: relative; overflow: hidden; background-repeat: no-repeat; transition: background-color 0.8s ease, border-color 0.8s ease; }
 .todo-input-group button { background-color: var(--dynamic-btn-main); border: 1.5px solid var(--dynamic-btn-main); }
 .todo-item button { background-color: var(--dynamic-btn-sub); border: 1.5px solid var(--dynamic-btn-sub); }
 
-.drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; transition: color 0.2s ease; padding: 5px 8px 5px 0; }
+.drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; transition: color 0.2s ease; padding: 2px 12px 2px 0; }
 
 .car-rotation-wrapper { grid-column: span 2; display: flex; flex-direction: column; }
 .car-rotation-title { font-size: 11px; font-weight: 800; color: var(--dynamic-text-color); margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.9; text-align: center; }
@@ -226,19 +243,22 @@ function loadTodos(){
       div.className = 'todo-item' + (highlighted.includes(text) ? ' highlighted' : '');
       div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${text}</span><button onclick="deleteTodo(${todos.length - 1 - i}, this)">삭제</button>`;
       
-      // 🔥 수정3: 세 줄(☰) 아이콘 짧게 터치 시 즉시 변색
       const handle = div.querySelector('.drag-handle');
       handle.onclick = (e) => {
-        e.stopPropagation(); // 드래그 이벤트 간섭 방지
+        e.stopPropagation();
         div.classList.toggle('highlighted');
         if(navigator.vibrate) navigator.vibrate(50);
         fetch(`${GAS_URL}?action=toggleHighlight&text=${encodeURIComponent(text)}`);
       };
 
-      div.querySelector('.text').onclick = () => div.classList.toggle('expanded');
+      const textField = div.querySelector('.text');
+      textField.onclick = (e) => {
+        e.stopPropagation();
+        div.classList.toggle('expanded');
+      };
+
       list.appendChild(div);
     });
-    // Sortable은 드래그 핸들 꾹 눌렀을 때만 작동하게 설정됨
     new Sortable(list, { handle: '.drag-handle', animation: 150, onEnd: saveOrder });
   });
 }
@@ -277,7 +297,7 @@ function addTodo(btn){
   const v = document.getElementById('todo-input').value; 
   if(!v) return; 
   btn.disabled=true; 
-  btn.classList.add('loading-add'); // 오리지널 애니메이션 적용
+  btn.classList.add('loading-add');
   fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => { 
     btn.disabled=false; 
     btn.classList.remove('loading-add'); 
@@ -288,7 +308,7 @@ function addTodo(btn){
 
 function deleteTodo(idx, btn){ 
   btn.disabled=true; 
-  btn.classList.add('loading-del'); // 오리지널 애니메이션 적용
+  btn.classList.add('loading-del');
   fetch(`${GAS_URL}?action=deleteTodo&index=${idx}`).then(() => loadTodos()); 
 }
 
