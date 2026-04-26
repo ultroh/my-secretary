@@ -72,16 +72,9 @@ h2:active { transform: scale(0.95); }
 .card-title { font-size: 11px; font-weight: 800; color: var(--dynamic-btn-main); margin-bottom: 4px; transition: color 0.8s ease; }
 
 .status-value { 
-  color: var(--text-main); 
-  flex: 1; 
-  display: flex; 
-  flex-direction: column;
-  justify-content: center; 
-  align-items: center; 
-  text-align: center;
-  padding-top: 6px; 
+  color: var(--text-main); flex: 1; display: flex; flex-direction: column;
+  justify-content: center; align-items: center; text-align: center; padding-top: 6px; 
 }
-
 .status-main { font-size: 18px; font-weight: 900; line-height: 1; display: block; }
 .status-sub { font-size: 11px; color: #888; font-weight: 600; line-height: 1; margin-top: 4px; display: block; }
 
@@ -96,104 +89,50 @@ button { font-weight:800; color:white; cursor:pointer; }
 .btn-carwash, .btn-hair { border: 1.5px solid transparent; }
 .btn-fuel, .btn-robot { color: #fff; border: 1.5px solid var(--dynamic-btn-main); position: relative; overflow: hidden; background-repeat: no-repeat; }
 
-.btn-fuel.loading, .btn-robot.loading { background-color: transparent; color: var(--dynamic-btn-main); background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)); background-size: 0% 100%; animation: fillAnimation 1.2s forwards ease-in-out; }
-@keyframes fillAnimation { 0% { background-size: 0% 100%; color: var(--dynamic-btn-main); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); } }
-
-.todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
-.todo-input-group input { flex: 1; text-align: center; background: rgba(255, 255, 255, 0.6); padding: 8px; margin: 0; }
 .todo-list { margin-top: 6px; max-height: 105px; overflow-y: auto; width: 100%; }
-
 .todo-item { 
-  display:flex; justify-content:space-between; align-items:center; 
-  padding: 6px 0px; border-bottom: 1px solid var(--line-color); 
-  border-radius: 8px; transition: background-color 0.3s ease; 
-  -webkit-tap-highlight-color: transparent; 
-  -webkit-user-select: none; 
-  user-select: none;
+  display:flex; justify-content:space-between; align-items:center; padding: 6px 0px; border-bottom: 1px solid var(--line-color); 
+  border-radius: 8px; transition: background-color 0.3s ease; -webkit-tap-highlight-color: transparent; user-select: none;
 }
-
-.todo-item.highlighted span.text { 
-  color: #FF9500 !important; 
-  font-weight: 800 !important; 
-}
-.todo-item.highlighted .drag-handle { 
-  color: #FF9500 !important; 
-}
-
-.todo-item span.text { flex:1; text-align:left; color: var(--text-main); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; line-height: 1.2; transition: color 0.2s ease, font-weight 0.2s ease;}
+.todo-item.highlighted span.text, .todo-item.highlighted .drag-handle { color: #FF9500 !important; font-weight: 800 !important; }
+.todo-item span.text { flex:1; text-align:left; color: var(--text-main); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; line-height: 1.2; transition: color 0.2s ease;}
 .todo-item.expanded span.text { white-space: normal; overflow: visible; }
 
-.todo-input-group button, .todo-item button { width: 44px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0; position: relative; overflow: hidden; background-repeat: no-repeat; transition: background-color 0.8s ease, border-color 0.8s ease; }
-.todo-input-group button { background-color: var(--dynamic-btn-main); border: 1.5px solid var(--dynamic-btn-main); }
-.todo-item button { background-color: var(--dynamic-btn-sub); border: 1.5px solid var(--dynamic-btn-sub); }
-
-.loading-add { background-color: transparent !important; color: var(--dynamic-btn-main) !important; background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)) !important; background-size: 0% 100% !important; animation: fillAdd 1.2s forwards ease-in-out !important; }
-@keyframes fillAdd { 0% { background-size: 0% 100%; color: var(--dynamic-btn-main); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); } }
-.loading-del { background-color: transparent !important; color: var(--dynamic-btn-sub) !important; background-image: linear-gradient(var(--dynamic-btn-sub), var(--dynamic-btn-sub)) !important; background-size: 0% 100% !important; animation: fillDel 1.2s forwards ease-in-out !important; }
-@keyframes fillDel { 0% { background-size: 0% 100%; color: var(--dynamic-btn-sub); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-sub); } }
-
-.drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; transition: color 0.2s ease; }
-
 .car-rotation-wrapper { grid-column: span 2; display: flex; flex-direction: column; }
-
-/* 🔥 TODAY'S DRIVE 텍스트 중앙 정렬 */
-.car-rotation-title { 
-  font-size: 11px; font-weight: 800; color: var(--dynamic-text-color); 
-  margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.9; 
-  text-align: center; /* 추가된 속성 */
-}
-
+.car-rotation-title { font-size: 11px; font-weight: 800; color: var(--dynamic-text-color); margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.9; text-align: center; }
 .car-btn-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; }
-
 .car-mark { 
-  background: var(--card-bg);
-  border-radius: 12px; 
-  padding: 16px 10px; 
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-  border-top: 6px solid var(--dynamic-border) !important;
-  font-weight: 900; font-size: 14px; 
-  display: flex; align-items: center; justify-content: center; 
-  cursor: pointer; position: relative; overflow: hidden; z-index: 1; 
-  transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out; 
+  background: var(--card-bg); border-radius: 12px; padding: 16px 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 6px solid var(--dynamic-border) !important;
+  font-weight: 900; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; z-index: 1; transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out; 
 }
-.car-mark .btn-text { position: relative; z-index: 2; }
 .hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
 .mini-on { background-color: var(--mini-red) !important; color: white !important; }
 .car-off { background-color: var(--card-bg) !important; color: #bbb !important; opacity: 1 !important; } 
 
-.car-mark::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%); background-size: 300% 300%; opacity: 0; z-index: 0; transition: opacity 1.5s ease-out; }
-.car-mark.is-sparkling::before { opacity: 1; transition: opacity 0.3s ease-in; animation: dreamySparkle 1.5s ease-in-out infinite alternate; }
-@keyframes dreamySparkle { 0% { background-position: 0% 50%; filter: brightness(1) contrast(1.1); } 50% { filter: brightness(1.3) contrast(1.3); } 100% { background-position: 100% 50%; filter: brightness(1) contrast(1.1); } }
+.car-mark.is-sparkling::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%); background-size: 300% 300%; opacity: 1; animation: dreamySparkle 1.5s ease-in-out infinite alternate; }
+@keyframes dreamySparkle { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 </style>
 
 <script>
 function applyTimeBasedThemeFixed() {
   const hour = new Date().getHours();
   const root = document.documentElement;
+  let s;
+  if (hour >= 6 && hour < 14) s = { bg: '#002147', border: '#C8102E', sub: '#6B7A8F' };
+  else if (hour >= 14 && hour < 22) s = { bg: '#F0F1F2', border: '#A63333', sub: '#6B7A8F' };
+  else s = { bg: '#458C98', border: '#A7292D', sub: '#80B5BE' };
   
-  let selectedTheme;
-
-  if (hour >= 6 && hour < 14) {
-    selectedTheme = { bg: '#002147', border: '#C8102E', sub: '#6B7A8F' };
-  } else if (hour >= 14 && hour < 22) {
-    selectedTheme = { bg: '#F0F1F2', border: '#A63333', sub: '#6B7A8F' };
-  } else {
-    selectedTheme = { bg: '#458C98', border: '#A7292D', sub: '#80B5BE' };
-  }
-  
-  root.style.setProperty('--dynamic-app-bg', selectedTheme.bg);
-  
-  if (selectedTheme.bg === '#F0F1F2') {
+  root.style.setProperty('--dynamic-app-bg', s.bg);
+  if (s.bg === '#F0F1F2') {
     root.style.setProperty('--dynamic-text-color', '#2C3E50');
     root.style.setProperty('--dynamic-btn-main', '#2C3E50'); 
   } else {
     root.style.setProperty('--dynamic-text-color', '#ffffff');
-    root.style.setProperty('--dynamic-btn-main', selectedTheme.bg);
+    root.style.setProperty('--dynamic-btn-main', s.bg);
   }
-  
-  root.style.setProperty('--dynamic-border', selectedTheme.border);
+  root.style.setProperty('--dynamic-border', s.border);
   root.style.setProperty('--dynamic-memo-bg', '#ffffff');
-  root.style.setProperty('--dynamic-btn-sub', selectedTheme.sub); 
+  root.style.setProperty('--dynamic-btn-sub', s.sub); 
 }
 applyTimeBasedThemeFixed();
 </script>
@@ -202,7 +141,6 @@ applyTimeBasedThemeFixed();
 <body>
 <div class="app-container">
   <h2 id="log-it-title" onclick="toggleMedication()">LOG IT</h2>
-
   <div id="dashboard">
     <div class="card reminder-card">
       <div class="card-title">📌 REMINDERS</div>
@@ -212,128 +150,46 @@ applyTimeBasedThemeFixed();
       </div>
       <div id="todo-list" class="todo-list"></div>
     </div>
-
     <div class="car-rotation-wrapper">
       <div class="car-rotation-title">🚦 TODAY'S DRIVE</div>
       <div class="car-btn-container">
-        <div id="mark-hyundai" class="car-mark car-off" onclick="handleCarSelect(this, 'hyundai')">
-          <span class="btn-text">HYUNDAI</span>
-        </div>
-        <div id="mark-mini" class="car-mark car-off" onclick="handleCarSelect(this, 'mini')">
-          <span class="btn-text">JCW</span>
-        </div>
+        <div id="mark-hyundai" class="car-mark car-off" onclick="handleCarSelect(this, 'hyundai')"><span class="btn-text">HYUNDAI</span></div>
+        <div id="mark-mini" class="car-mark car-off" onclick="handleCarSelect(this, 'mini')"><span class="btn-text">JCW</span></div>
       </div>
     </div>
-
-    <div class="card stat-card">
-      <div class="card-title">🤖 ROBOT</div>
-      <div class="status-value" id="robot-status">
-        <span class="status-main">- / 2회</span>
-        <span class="status-sub">(날짜)</span>
-      </div>
-      <button class="btn-robot" onclick="recordAction('addRobot', this, '청소 기록')">청소 기록</button>
+    <div class="card stat-card"><div class="card-title">🤖 ROBOT</div><div class="status-value" id="robot-status"></div><button class="btn-robot" onclick="recordAction('addRobot', this)">청소 기록</button></div>
+    <div class="card stat-card"><div class="card-title">✂️ HAIR CUT</div><div class="status-value" id="hair-status"></div>
+      <div style="position: relative; width: 100%; margin-top: 6px; height: 36px;"><button class="btn-hair" id="btn-hair" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; pointer-events: none;">날짜선택</button><input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="recordHairCut()"></div>
     </div>
-
-    <div class="card stat-card">
-      <div class="card-title">✂️ HAIR CUT</div>
-      <div class="status-value" id="hair-status">
-        <span class="status-main">-</span>
-        <span class="status-sub" style="visibility: hidden;">-</span>
-      </div>
-      <div style="position: relative; width: 100%; margin-top: 6px; height: 36px;">
-        <button class="btn-hair" id="btn-hair" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; margin: 0; pointer-events: none;">날짜선택</button>
-        <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; margin: 0;" onchange="recordHairCut(document.getElementById('btn-hair'))">
-      </div>
-    </div>
-
-    <div class="card stat-card">
-      <div class="card-title">🫧 CAR WASH</div>
-      <div class="status-value" id="carwash-status">
-        <span class="status-main">-원</span>
-      </div>
-      <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
-    </div>
-
-    <div class="card stat-card">
-      <div class="card-title">🚗 FUEL</div>
-      <div class="status-value" id="fuel-status">
-        <span class="status-main">- / 3회</span>
-      </div>
-      <button class="btn-fuel" onclick="recordAction('addFuel', this, '주유 기록')">주유 기록</button>
-    </div>
+    <div class="card stat-card"><div class="card-title">🫧 CAR WASH</div><div class="status-value" id="carwash-status"></div><button class="btn-carwash" onclick="recordCarWash(this)">차감</button></div>
+    <div class="card stat-card"><div class="card-title">🚗 FUEL</div><div class="status-value" id="fuel-status"></div><button class="btn-fuel" onclick="recordAction('addFuel', this)">주유 기록</button></div>
   </div>
 </div>
 
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
-function loadAll() { loadData(); loadTodos(); resetCarButtons(); checkMedication(); }
+function loadAll() { loadData(); loadTodos(); resetCarButtons(); }
 
-function resetCarButtons() {
-  document.getElementById('mark-hyundai').className = 'car-mark car-off';
-  document.getElementById('mark-mini').className = 'car-mark car-off';
-}
-function checkMedication() {
-  const today = new Date().toDateString(); 
-  const savedDate = localStorage.getItem('medication_taken_date');
-  const titleEl = document.getElementById('log-it-title');
-  if (savedDate === today) titleEl.classList.add('rainbow-theme');
-  else titleEl.classList.remove('rainbow-theme');
-}
 function toggleMedication() {
   const titleEl = document.getElementById('log-it-title');
-  const today = new Date().toDateString();
-  titleEl.classList.toggle('rainbow-theme');
-  const isTaken = titleEl.classList.contains('rainbow-theme');
-  if (isTaken) localStorage.setItem('medication_taken_date', today);
-  else localStorage.removeItem('medication_taken_date');
-  fetch(`${GAS_URL}?action=toggleMedication&state=${isTaken}`).catch(e => console.error(e));
-}
-
-function handleCarSelect(el, carType) {
-  if(el.sparkleTimeout) clearTimeout(el.sparkleTimeout);
-  el.classList.add('is-sparkling');
-  const todayNum = new Date().getDate();
-  const allowedCar = (todayNum % 2 === 0) ? 'hyundai' : 'mini';
-
-  el.sparkleTimeout = setTimeout(() => {
-    el.classList.remove('is-sparkling');
-    el.classList.remove('hyundai-on', 'mini-on', 'car-off');
-    if (carType === allowedCar) {
-      el.classList.add(carType === 'hyundai' ? 'hyundai-on' : 'mini-on');
-      const otherId = carType === 'hyundai' ? 'mark-mini' : 'mark-hyundai';
-      document.getElementById(otherId).className = 'car-mark car-off';
-    } else {
-      el.classList.add('car-off');
-    }
-  }, 3500); 
-}
-
-function recordAction(action, btn, txt){
-  btn.disabled = true;
-  if(action === 'addRobot' || action === 'addFuel') btn.classList.add('loading');
-  fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
-    btn.disabled = false;
-    if(action === 'addRobot' || action === 'addFuel') btn.classList.remove('loading');
-    if(action === 'addRobot' && data.message && data.message.includes('2회')) alert("2회 청소하였습니다. 오늘 저녁에 알림 메일을 예약하였습니다.");
-    else if(data.message) alert(data.message);
-    loadData();
-  });
-}
-function formatSimpleDate(dateStr) {
-  if (!dateStr) return '날짜';
-  const d = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
-  if (isNaN(d)) return dateStr;
-  return `${d.getMonth() + 1}/${d.getDate()}`;
+  const nextState = !titleEl.classList.contains('rainbow-theme');
+  titleEl.classList.toggle('rainbow-theme'); // 즉시 반영(낙관적 업데이트)
+  fetch(`${GAS_URL}?action=toggleMedication&state=${nextState}`).then(() => loadData());
 }
 
 function loadData() {
   fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => {
     if(res.status === 'success') {
       const d = res.data;
+      // 서버에서 온 약 복용 상태로 무지개색 동기화
+      const titleEl = document.getElementById('log-it-title');
+      if (d.isMedicationTaken) titleEl.classList.add('rainbow-theme');
+      else titleEl.classList.remove('rainbow-theme');
+
       document.getElementById('fuel-status').innerHTML = `<span class="status-main">${d.fuel} / 3회</span>`;
-      const robotDateTxt = d.robotDate ? formatSimpleDate(d.robotDate) : "날짜";
-      document.getElementById('robot-status').innerHTML = `<span class="status-main">${d.robot} / 2회</span><span class="status-sub">(${robotDateTxt})</span>`;
+      const rDate = d.robotDate ? d.robotDate.substring(5).replace('-','/') : "날짜";
+      document.getElementById('robot-status').innerHTML = `<span class="status-main">${d.robot} / 2회</span><span class="status-sub">(${rDate})</span>`;
       document.getElementById('carwash-status').innerHTML = `<span class="status-main">${(d.carWash || 0).toLocaleString()}원</span>`;
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
     }
@@ -341,82 +197,60 @@ function loadData() {
 }
 
 function loadTodos(){
-  fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`).then(res => res.json()).then(data => {
-    const list = document.getElementById('todo-list');
-    list.innerHTML = '';
+  fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`).then(res => res.json()).then(res => {
+    const list = document.getElementById('todo-list'); list.innerHTML = '';
+    const todos = res.todos.list;
+    const highlighted = res.todos.highlighted;
     
-    let hlList = JSON.parse(localStorage.getItem('highlightedTodos') || '[]');
-
-    const reversedTodos = [...data.todos].map((text, i) => ({ text, originalIndex: i })).reverse();
-    reversedTodos.forEach((todo) => {
+    [...todos].reverse().forEach((text, i) => {
       const div = document.createElement('div');
-      div.className = 'todo-item';
-      
-      if (hlList.includes(todo.text)) {
-        div.classList.add('highlighted');
-      }
-
-      div.dataset.text = todo.text;
-      div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${todo.text}</span><button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
+      div.className = 'todo-item' + (highlighted.includes(text) ? ' highlighted' : '');
+      div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${text}</span><button onclick="deleteTodo(${todos.length - 1 - i}, this)">삭제</button>`;
       
       let pressTimer;
-      let isLongPress = false;
+      const start = () => { pressTimer = setTimeout(() => { 
+        div.classList.toggle('highlighted');
+        if(navigator.vibrate) navigator.vibrate(50);
+        fetch(`${GAS_URL}?action=toggleHighlight&text=${encodeURIComponent(text)}`); // 서버에 하이라이트 상태 저장
+      }, 400); };
+      const end = () => clearTimeout(pressTimer);
       
-      const startPress = (e) => {
-        if(e.target.tagName === 'BUTTON' || e.target.classList.contains('drag-handle')) return;
-        isLongPress = false;
-        pressTimer = setTimeout(() => {
-          isLongPress = true;
-          
-          const isNowHighlighted = div.classList.toggle('highlighted');
-          if(navigator.vibrate) navigator.vibrate(50); 
-          
-          let currentHlList = JSON.parse(localStorage.getItem('highlightedTodos') || '[]');
-          if (isNowHighlighted) {
-            if (!currentHlList.includes(todo.text)) currentHlList.push(todo.text);
-          } else {
-            currentHlList = currentHlList.filter(t => t !== todo.text);
-          }
-          localStorage.setItem('highlightedTodos', JSON.stringify(currentHlList));
-          
-        }, 400); 
-      };
-      
-      const cancelPress = () => clearTimeout(pressTimer);
-      
-      div.addEventListener('touchstart', startPress, {passive: true});
-      div.addEventListener('touchend', cancelPress);
-      div.addEventListener('touchmove', cancelPress, {passive: true});
-      div.addEventListener('mousedown', startPress);
-      div.addEventListener('mouseup', cancelPress);
-      div.addEventListener('mouseleave', cancelPress);
-      
-      div.addEventListener('contextmenu', e => e.preventDefault());
-
-      div.querySelector('.text').addEventListener('click', (e) => {
-        if(!isLongPress) div.classList.toggle('expanded');
-      });
-
+      div.addEventListener('touchstart', start, {passive:true}); div.addEventListener('touchend', end);
+      div.addEventListener('mousedown', start); div.addEventListener('mouseup', end);
+      div.querySelector('.text').onclick = () => div.classList.toggle('expanded');
       list.appendChild(div);
     });
     new Sortable(list, { handle: '.drag-handle', animation: 150, onEnd: saveOrder });
   });
 }
 
-function saveOrder() { const listItems = document.querySelectorAll('.todo-item'); const newOrder = Array.from(listItems).map(item => item.dataset.text).reverse(); fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodeURIComponent(JSON.stringify(newOrder))}`); }
-function addTodo(btn){ const v = document.getElementById('todo-input').value; if(!v) return; btn.disabled = true; btn.classList.add('loading-add'); fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => { btn.disabled = false; btn.classList.remove('loading-add'); document.getElementById('todo-input').value = ''; loadTodos(); }); }
-function deleteTodo(index, btn){ btn.disabled = true; btn.classList.add('loading-del'); fetch(`${GAS_URL}?action=deleteTodo&index=${index}`).then(() => loadTodos()); }
-function recordCarWash(btn){ const amount = prompt("차감할 금액:"); if (!amount) return; fetch(`${GAS_URL}?action=useCarWash&amount=${amount.replace(/[^0-9]/g, '')}`).then(() => loadData()); }
-function recordHairCut(btn){ const v = document.getElementById('hairDateVal').value; if(!v) return; fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData()); }
-
-function getHaircutStatus(dateStr) {
-  if (!dateStr) return `<span class="status-main">기록 없음</span><span class="status-sub" style="visibility: hidden;">-</span>`;
-  const targetDate = new Date(dateStr.replace(/[.\s]+/g, '-').replace(/-$/, ''));
-  const today = new Date(); today.setHours(0,0,0,0);
-  const diffDays = Math.floor((today - targetDate) / (1000 * 60 * 60 * 24));
-  return `<span class="status-main">D+${diffDays}</span><span class="status-sub">(${Math.floor(diffDays/7)+1}주차)</span>`;
+// 나머지 편의 기능들
+function resetCarButtons() { document.getElementById('mark-hyundai').className = 'car-mark car-off'; document.getElementById('mark-mini').className = 'car-mark car-off'; }
+function handleCarSelect(el, type) { 
+  el.classList.add('is-sparkling');
+  setTimeout(() => {
+    el.classList.remove('is-sparkling');
+    const allowed = (new Date().getDate() % 2 === 0) ? 'hyundai' : 'mini';
+    if (type === allowed) {
+      el.className = `car-mark ${type}-on`;
+      document.getElementById(type === 'hyundai' ? 'mark-mini' : 'mark-hyundai').className = 'car-mark car-off';
+    } else { alert("오늘은 이 차가 아닙니다!"); el.className = 'car-mark car-off'; }
+  }, 2000);
 }
-
+function recordAction(action, btn){ btn.disabled = true; fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => { btn.disabled = false; if(data.message) alert(data.message); loadData(); }); }
+function recordHairCut(){ const v = document.getElementById('hairDateVal').value; if(!v) return; fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData()); }
+function recordCarWash(){ const a = prompt("차감할 금액:"); if (a) fetch(`${GAS_URL}?action=useCarWash&amount=${a.replace(/[^0-9]/g, '')}`).then(() => loadData()); }
+function addTodo(btn){ const v = document.getElementById('todo-input').value; if(!v) return; btn.disabled=true; fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => { btn.disabled=false; document.getElementById('todo-input').value=''; loadTodos(); }); }
+function deleteTodo(idx, btn){ btn.disabled=true; fetch(`${GAS_URL}?action=deleteTodo&index=${idx}`).then(() => loadTodos()); }
+function saveOrder() { 
+  const items = Array.from(document.querySelectorAll('.todo-item span.text')).map(s => s.innerText).reverse();
+  fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodeURIComponent(JSON.stringify(items))}`);
+}
+function getHaircutStatus(dStr) {
+  if (!dStr) return `<span class="status-main">기록 없음</span>`;
+  const diff = Math.floor((new Date() - new Date(dStr.replace(/[.\s]+/g, '-'))) / 86400000);
+  return `<span class="status-main">D+${diff}</span><span class="status-sub">(${Math.floor(diff/7)+1}주차)</span>`;
+}
 window.onload = loadAll;
 </script>
 </body>
