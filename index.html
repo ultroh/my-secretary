@@ -103,25 +103,25 @@ button { font-weight:800; color:white; cursor:pointer; }
 .todo-input-group input { flex: 1; text-align: center; background: rgba(255, 255, 255, 0.6); padding: 8px; margin: 0; }
 .todo-list { margin-top: 6px; max-height: 105px; overflow-y: auto; width: 100%; }
 
-/* 🔥 꾹 눌렀을 때의 CSS 추가 및 기존 active CSS 삭제 */
 .todo-item { 
   display:flex; justify-content:space-between; align-items:center; 
   padding: 6px 8px; border-bottom: 1px solid var(--line-color); 
   border-radius: 8px; transition: background-color 0.3s ease; 
   -webkit-tap-highlight-color: transparent; 
-  -webkit-user-select: none; /* 길게 누를 때 글자 드래그 방지 */
+  -webkit-user-select: none; 
   user-select: none;
 }
 
-/* 꾹 눌러서 상태가 유지될 때 (JS로 클래스 부여) */
-.todo-item.highlighted {
-  background-color: #FF9500 !important;
-  border-color: transparent !important;
+/* 🔥 꾹 눌러서 상태가 유지될 때 글자색상만 주황색으로 변경 */
+.todo-item.highlighted span.text { 
+  color: #FF9500 !important; 
+  font-weight: 800 !important; /* 조금 더 강조되도록 굵기 추가 */
 }
-.todo-item.highlighted span.text { color: #ffffff !important; }
-.todo-item.highlighted .drag-handle { color: rgba(255, 255, 255, 0.8) !important; }
+.todo-item.highlighted .drag-handle { 
+  color: #FF9500 !important; 
+}
 
-.todo-item span.text { flex:1; text-align:left; color: var(--text-main); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; line-height: 1.2; transition: color 0.2s ease;}
+.todo-item span.text { flex:1; text-align:left; color: var(--text-main); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; line-height: 1.2; transition: color 0.2s ease, font-weight 0.2s ease;}
 .todo-item.expanded span.text { white-space: normal; overflow: visible; }
 
 .todo-input-group button, .todo-item button { width: 44px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0; position: relative; overflow: hidden; background-repeat: no-repeat; transition: background-color 0.8s ease, border-color 0.8s ease; }
@@ -133,7 +133,7 @@ button { font-weight:800; color:white; cursor:pointer; }
 .loading-del { background-color: transparent !important; color: var(--dynamic-btn-sub) !important; background-image: linear-gradient(var(--dynamic-btn-sub), var(--dynamic-btn-sub)) !important; background-size: 0% 100% !important; animation: fillDel 1.2s forwards ease-in-out !important; }
 @keyframes fillDel { 0% { background-size: 0% 100%; color: var(--dynamic-btn-sub); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-sub); } }
 
-.drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; }
+.drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; transition: color 0.2s ease; }
 .car-rotation-card { grid-column: span 2; padding: 10px 14px; }
 .car-btn-container { display: flex; width: 100%; gap: 8px; margin-top: 6px; }
 
@@ -332,20 +332,18 @@ function loadTodos(){
       div.className = 'todo-item';
       div.dataset.text = todo.text;
       
-      // 🔥 인라인 onclick을 삭제하고 리스너로 분리
       div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${todo.text}</span><button onclick="deleteTodo(${todo.originalIndex}, this)">삭제</button>`;
       
       let pressTimer;
       let isLongPress = false;
       
-      // 0.4초 꾹 누르면 발동하는 로직
       const startPress = (e) => {
         if(e.target.tagName === 'BUTTON' || e.target.classList.contains('drag-handle')) return;
         isLongPress = false;
         pressTimer = setTimeout(() => {
           isLongPress = true;
           div.classList.toggle('highlighted');
-          if(navigator.vibrate) navigator.vibrate(50); // 모바일 진동 피드백
+          if(navigator.vibrate) navigator.vibrate(50); 
         }, 400); 
       };
       
@@ -358,10 +356,8 @@ function loadTodos(){
       div.addEventListener('mouseup', cancelPress);
       div.addEventListener('mouseleave', cancelPress);
       
-      // 모바일에서 꾹 누를 때 기본 메뉴(복사 등) 뜨는 현상 방지
       div.addEventListener('contextmenu', e => e.preventDefault());
 
-      // 짧게 클릭했을 때만 텍스트 확장
       div.querySelector('.text').addEventListener('click', (e) => {
         if(!isLongPress) div.classList.toggle('expanded');
       });
