@@ -79,7 +79,7 @@ h2:active { transform: scale(0.95); }
 .status-sub { font-size: 11px; color: #888; font-weight: 600; line-height: 1; margin-top: 4px; display: block; }
 
 input, button { border:none; border-radius:6px; outline: none; }
-input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; }
+input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; text-align: center; } /* 입력창 중앙정렬 */
 button { font-weight:800; color:white; cursor:pointer; }
 
 .btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
@@ -89,7 +89,16 @@ button { font-weight:800; color:white; cursor:pointer; }
 .btn-carwash, .btn-hair { border: 1.5px solid transparent; }
 .btn-fuel, .btn-robot { color: #fff; border: 1.5px solid var(--dynamic-btn-main); position: relative; overflow: hidden; background-repeat: no-repeat; }
 
+/* 추가/삭제 애니메이션 CSS 복구 */
+.loading-add { background-color: transparent !important; color: var(--dynamic-btn-main) !important; background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)) !important; background-size: 0% 100% !important; animation: fillAdd 1.2s forwards ease-in-out !important; }
+@keyframes fillAdd { 0% { background-size: 0% 100%; color: var(--dynamic-btn-main); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); } }
+.loading-del { background-color: transparent !important; color: var(--dynamic-btn-sub) !important; background-image: linear-gradient(var(--dynamic-btn-sub), var(--dynamic-btn-sub)) !important; background-size: 0% 100% !important; animation: fillDel 1.2s forwards ease-in-out !important; }
+@keyframes fillDel { 0% { background-size: 0% 100%; color: var(--dynamic-btn-sub); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-sub); } }
+
+.todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
+.todo-input-group input { flex: 1; text-align: center; background: rgba(255, 255, 255, 0.6); padding: 8px; margin: 0; }
 .todo-list { margin-top: 6px; max-height: 105px; overflow-y: auto; width: 100%; }
+
 .todo-item { 
   display:flex; justify-content:space-between; align-items:center; padding: 6px 0px; border-bottom: 1px solid var(--line-color); 
   border-radius: 8px; transition: background-color 0.3s ease; -webkit-tap-highlight-color: transparent; user-select: none;
@@ -97,6 +106,12 @@ button { font-weight:800; color:white; cursor:pointer; }
 .todo-item.highlighted span.text, .todo-item.highlighted .drag-handle { color: #FF9500 !important; font-weight: 800 !important; }
 .todo-item span.text { flex:1; text-align:left; color: var(--text-main); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; line-height: 1.2; transition: color 0.2s ease;}
 .todo-item.expanded span.text { white-space: normal; overflow: visible; }
+
+.todo-input-group button, .todo-item button { width: 44px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0; position: relative; overflow: hidden; background-repeat: no-repeat; transition: background-color 0.8s ease, border-color 0.8s ease; }
+.todo-input-group button { background-color: var(--dynamic-btn-main); border: 1.5px solid var(--dynamic-btn-main); }
+.todo-item button { background-color: var(--dynamic-btn-sub); border: 1.5px solid var(--dynamic-btn-sub); }
+
+.drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; transition: color 0.2s ease; }
 
 .car-rotation-wrapper { grid-column: span 2; display: flex; flex-direction: column; }
 .car-rotation-title { font-size: 11px; font-weight: 800; color: var(--dynamic-text-color); margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.9; text-align: center; }
@@ -174,7 +189,7 @@ function loadAll() { loadData(); loadTodos(); resetCarButtons(); }
 function toggleMedication() {
   const titleEl = document.getElementById('log-it-title');
   const nextState = !titleEl.classList.contains('rainbow-theme');
-  titleEl.classList.toggle('rainbow-theme'); // 즉시 반영(낙관적 업데이트)
+  titleEl.classList.toggle('rainbow-theme');
   fetch(`${GAS_URL}?action=toggleMedication&state=${nextState}`).then(() => loadData());
 }
 
@@ -182,7 +197,6 @@ function loadData() {
   fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => {
     if(res.status === 'success') {
       const d = res.data;
-      // 서버에서 온 약 복용 상태로 무지개색 동기화
       const titleEl = document.getElementById('log-it-title');
       if (d.isMedicationTaken) titleEl.classList.add('rainbow-theme');
       else titleEl.classList.remove('rainbow-theme');
@@ -211,7 +225,7 @@ function loadTodos(){
       const start = () => { pressTimer = setTimeout(() => { 
         div.classList.toggle('highlighted');
         if(navigator.vibrate) navigator.vibrate(50);
-        fetch(`${GAS_URL}?action=toggleHighlight&text=${encodeURIComponent(text)}`); // 서버에 하이라이트 상태 저장
+        fetch(`${GAS_URL}?action=toggleHighlight&text=${encodeURIComponent(text)}`);
       }, 400); };
       const end = () => clearTimeout(pressTimer);
       
@@ -224,8 +238,8 @@ function loadTodos(){
   });
 }
 
-// 나머지 편의 기능들
 function resetCarButtons() { document.getElementById('mark-hyundai').className = 'car-mark car-off'; document.getElementById('mark-mini').className = 'car-mark car-off'; }
+
 function handleCarSelect(el, type) { 
   el.classList.add('is-sparkling');
   setTimeout(() => {
@@ -234,18 +248,56 @@ function handleCarSelect(el, type) {
     if (type === allowed) {
       el.className = `car-mark ${type}-on`;
       document.getElementById(type === 'hyundai' ? 'mark-mini' : 'mark-hyundai').className = 'car-mark car-off';
-    } else { alert("오늘은 이 차가 아닙니다!"); el.className = 'car-mark car-off'; }
+    } else { 
+      // 🔥 알람 삭제
+      el.className = 'car-mark car-off'; 
+    }
   }, 2000);
 }
-function recordAction(action, btn){ btn.disabled = true; fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => { btn.disabled = false; if(data.message) alert(data.message); loadData(); }); }
+
+function recordAction(action, btn){ 
+  btn.disabled = true; 
+  // 애니메이션용 클래스 추가
+  if(action === 'addFuel' || action === 'addRobot') btn.classList.add('loading');
+  fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    if(data.message) alert(data.message); 
+    loadData(); 
+  }); 
+}
+
 function recordHairCut(){ const v = document.getElementById('hairDateVal').value; if(!v) return; fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData()); }
 function recordCarWash(){ const a = prompt("차감할 금액:"); if (a) fetch(`${GAS_URL}?action=useCarWash&amount=${a.replace(/[^0-9]/g, '')}`).then(() => loadData()); }
-function addTodo(btn){ const v = document.getElementById('todo-input').value; if(!v) return; btn.disabled=true; fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => { btn.disabled=false; document.getElementById('todo-input').value=''; loadTodos(); }); }
-function deleteTodo(idx, btn){ btn.disabled=true; fetch(`${GAS_URL}?action=deleteTodo&index=${idx}`).then(() => loadTodos()); }
+
+// 🔥 애니메이션이 작동하도록 addTodo 수정
+function addTodo(btn){ 
+  const v = document.getElementById('todo-input').value; 
+  if(!v) return; 
+  btn.disabled=true; 
+  btn.classList.add('loading-add'); // 애니메이션 시작
+  fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => { 
+    btn.disabled=false; 
+    btn.classList.remove('loading-add'); 
+    document.getElementById('todo-input').value=''; 
+    loadTodos(); 
+  }); 
+}
+
+// 🔥 애니메이션이 작동하도록 deleteTodo 수정
+function deleteTodo(idx, btn){ 
+  btn.disabled=true; 
+  btn.classList.add('loading-del'); // 애니메이션 시작
+  fetch(`${GAS_URL}?action=deleteTodo&index=${idx}`).then(() => {
+    loadTodos(); 
+  }); 
+}
+
 function saveOrder() { 
   const items = Array.from(document.querySelectorAll('.todo-item span.text')).map(s => s.innerText).reverse();
   fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodeURIComponent(JSON.stringify(items))}`);
 }
+
 function getHaircutStatus(dStr) {
   if (!dStr) return `<span class="status-main">기록 없음</span>`;
   const diff = Math.floor((new Date() - new Date(dStr.replace(/[.\s]+/g, '-'))) / 86400000);
