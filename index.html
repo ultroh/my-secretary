@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Archive</title>
+
+<link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<meta name="apple-mobile-web-app-title" content="Log It">
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <style>
@@ -15,7 +23,6 @@
   --hyundai-blue: #002c5f;
   --mini-red: #C8102E; 
 
-  /* 다이내믹 테마 변수 (초기값) */
   --dynamic-app-bg: #002147;
   --dynamic-memo-bg: #ffffff;
   --dynamic-btn-main: #002147;
@@ -33,13 +40,16 @@ body, html {
   background-size: 24px 24px;
   font-family: 'Pretendard', -apple-system, sans-serif;
   transition: background-color 0.8s ease;
+  /* iOS 앱 모드에서 스크롤 튕김 방지 */
+  overscroll-behavior-y: none;
 }
 
 .app-container {
   max-width:480px;
   margin:auto;
   min-height: 100dvh;
-  padding: 8px 12px calc(50px + env(safe-area-inset-bottom));
+  /* viewport-fit=cover 대응을 위해 상단 여백 확보 */
+  padding: calc(20px + env(safe-area-inset-top)) 12px calc(50px + env(safe-area-inset-bottom));
   display:flex;
   flex-direction:column;
   position: relative;
@@ -79,7 +89,7 @@ h2:active { transform: scale(0.95); }
 .status-sub { font-size: 11px; color: #888; font-weight: 600; line-height: 1; margin-top: 4px; display: block; }
 
 input, button { border:none; border-radius:6px; outline: none; }
-input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; text-align: center; } /* 입력창 중앙정렬 */
+input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; text-align: center; }
 button { font-weight:800; color:white; cursor:pointer; }
 
 .btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
@@ -89,29 +99,20 @@ button { font-weight:800; color:white; cursor:pointer; }
 .btn-carwash, .btn-hair { border: 1.5px solid transparent; }
 .btn-fuel, .btn-robot { color: #fff; border: 1.5px solid var(--dynamic-btn-main); position: relative; overflow: hidden; background-repeat: no-repeat; }
 
-/* 추가/삭제 애니메이션 CSS 복구 */
 .loading-add { background-color: transparent !important; color: var(--dynamic-btn-main) !important; background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)) !important; background-size: 0% 100% !important; animation: fillAdd 1.2s forwards ease-in-out !important; }
 @keyframes fillAdd { 0% { background-size: 0% 100%; color: var(--dynamic-btn-main); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); } }
 .loading-del { background-color: transparent !important; color: var(--dynamic-btn-sub) !important; background-image: linear-gradient(var(--dynamic-btn-sub), var(--dynamic-btn-sub)) !important; background-size: 0% 100% !important; animation: fillDel 1.2s forwards ease-in-out !important; }
 @keyframes fillDel { 0% { background-size: 0% 100%; color: var(--dynamic-btn-sub); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-sub); } }
+.loading { background-color: transparent !important; color: var(--dynamic-btn-main) !important; background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)) !important; background-size: 0% 100% !important; animation: fillAdd 1.2s forwards ease-in-out !important; }
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
-.todo-input-group input { flex: 1; text-align: center; background: rgba(255, 255, 255, 0.6); padding: 8px; margin: 0; }
 .todo-list { margin-top: 6px; max-height: 105px; overflow-y: auto; width: 100%; }
-
 .todo-item { 
   display:flex; justify-content:space-between; align-items:center; padding: 6px 0px; border-bottom: 1px solid var(--line-color); 
   border-radius: 8px; transition: background-color 0.3s ease; -webkit-tap-highlight-color: transparent; user-select: none;
 }
 .todo-item.highlighted span.text, .todo-item.highlighted .drag-handle { color: #FF9500 !important; font-weight: 800 !important; }
 .todo-item span.text { flex:1; text-align:left; color: var(--text-main); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; line-height: 1.2; transition: color 0.2s ease;}
-.todo-item.expanded span.text { white-space: normal; overflow: visible; }
-
-.todo-input-group button, .todo-item button { width: 44px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0; position: relative; overflow: hidden; background-repeat: no-repeat; transition: background-color 0.8s ease, border-color 0.8s ease; }
-.todo-input-group button { background-color: var(--dynamic-btn-main); border: 1.5px solid var(--dynamic-btn-main); }
-.todo-item button { background-color: var(--dynamic-btn-sub); border: 1.5px solid var(--dynamic-btn-sub); }
-
-.drag-handle { color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; transition: color 0.2s ease; }
 
 .car-rotation-wrapper { grid-column: span 2; display: flex; flex-direction: column; }
 .car-rotation-title { font-size: 11px; font-weight: 800; color: var(--dynamic-text-color); margin-bottom: 6px; letter-spacing: 0.5px; opacity: 0.9; text-align: center; }
@@ -248,17 +249,13 @@ function handleCarSelect(el, type) {
     if (type === allowed) {
       el.className = `car-mark ${type}-on`;
       document.getElementById(type === 'hyundai' ? 'mark-mini' : 'mark-hyundai').className = 'car-mark car-off';
-    } else { 
-      // 🔥 알람 삭제
-      el.className = 'car-mark car-off'; 
-    }
+    } else { el.className = 'car-mark car-off'; }
   }, 2000);
 }
 
 function recordAction(action, btn){ 
   btn.disabled = true; 
-  // 애니메이션용 클래스 추가
-  if(action === 'addFuel' || action === 'addRobot') btn.classList.add('loading');
+  btn.classList.add('loading');
   fetch(`${GAS_URL}?action=${action}`).then(res => res.json()).then(data => {
     btn.disabled = false;
     btn.classList.remove('loading');
@@ -270,27 +267,18 @@ function recordAction(action, btn){
 function recordHairCut(){ const v = document.getElementById('hairDateVal').value; if(!v) return; fetch(`${GAS_URL}?action=setHairCut&dateVal=${v}`).then(() => loadData()); }
 function recordCarWash(){ const a = prompt("차감할 금액:"); if (a) fetch(`${GAS_URL}?action=useCarWash&amount=${a.replace(/[^0-9]/g, '')}`).then(() => loadData()); }
 
-// 🔥 애니메이션이 작동하도록 addTodo 수정
 function addTodo(btn){ 
   const v = document.getElementById('todo-input').value; 
   if(!v) return; 
-  btn.disabled=true; 
-  btn.classList.add('loading-add'); // 애니메이션 시작
+  btn.disabled=true; btn.classList.add('loading-add');
   fetch(`${GAS_URL}?action=addTodo&text=${encodeURIComponent(v)}`).then(() => { 
-    btn.disabled=false; 
-    btn.classList.remove('loading-add'); 
-    document.getElementById('todo-input').value=''; 
-    loadTodos(); 
+    btn.disabled=false; btn.classList.remove('loading-add'); document.getElementById('todo-input').value=''; loadTodos(); 
   }); 
 }
 
-// 🔥 애니메이션이 작동하도록 deleteTodo 수정
 function deleteTodo(idx, btn){ 
-  btn.disabled=true; 
-  btn.classList.add('loading-del'); // 애니메이션 시작
-  fetch(`${GAS_URL}?action=deleteTodo&index=${idx}`).then(() => {
-    loadTodos(); 
-  }); 
+  btn.disabled=true; btn.classList.add('loading-del');
+  fetch(`${GAS_URL}?action=deleteTodo&index=${idx}`).then(() => loadTodos()); 
 }
 
 function saveOrder() { 
