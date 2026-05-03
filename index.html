@@ -226,7 +226,7 @@ function loadData() {
       document.getElementById('fuel-status').innerHTML = `<span class="status-main">${d.fuel} / 3회</span>`;
       const rDate = d.robotDate ? d.robotDate.substring(5).replace('-','/') : "날짜";
       document.getElementById('robot-status').innerHTML = `<span class="status-main">${d.robot} / 2회</span><span class="status-sub">(${rDate})</span>`;
-      document.getElementById('carwash-status').innerHTML = `<span class="status-main">${(d.carWash || 0).toLocaleString()}원</span>`;
+      document.getElementById('carwash-status').innerHTML = `<span class="status-main">${(d.carWash || 0).toLocaleString()}원 / 12,000웡</span>`;
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
     }
   });
