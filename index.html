@@ -195,9 +195,17 @@ applyTimeBasedThemeFixed();
       </div>
     </div>
     <div class="card stat-card"><div class="card-title">🤖 ROBOT</div><div class="status-value" id="robot-status"></div><button class="btn-robot" onclick="recordAction('addRobot', this)">청소 기록</button></div>
-    <div class="card stat-card"><div class="card-title">✂️ HAIR CUT</div><div class="status-value" id="hair-status"></div>
-      <div style="position: relative; width: 100%; margin-top: 6px; height: 36px;"><button class="btn-hair" id="btn-hair" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; pointer-events: none;">날짜선택</button><input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="recordHairCut()"></div>
+    
+    <!-- HAIR CUT 영역: 버튼 중복 여백 제거 -->
+    <div class="card stat-card">
+      <div class="card-title">✂️ HAIR CUT</div>
+      <div class="status-value" id="hair-status"></div>
+      <div style="position: relative; width: 100%; margin-top: 6px; height: 36px;">
+        <button class="btn-hair" id="btn-hair" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; pointer-events: none; margin-top: 0;">날짜선택</button>
+        <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="recordHairCut()">
+      </div>
     </div>
+
     <div class="card stat-card"><div class="card-title">🫧 CAR WASH</div><div class="status-value" id="carwash-status"></div><button class="btn-carwash" onclick="recordCarWash(this)">차감</button></div>
     <div class="card stat-card"><div class="card-title">🚗 FUEL</div><div class="status-value" id="fuel-status"></div><button class="btn-fuel" onclick="recordAction('addFuel', this)">주유 기록</button></div>
   </div>
@@ -317,8 +325,9 @@ function saveOrder() {
   fetch(`${GAS_URL}?action=updateTodoOrder&data=${encodeURIComponent(JSON.stringify(items))}`);
 }
 
+// 🔥 수정: HAIR CUT도 ROBOT처럼 항상 2줄이 나오도록 하여 정렬 맞춤
 function getHaircutStatus(dStr) {
-  if (!dStr) return `<span class="status-main">기록 없음</span>`;
+  if (!dStr) return `<span class="status-main">기록 없음</span><span class="status-sub">(날짜 미지정)</span>`;
   const diff = Math.floor((new Date() - new Date(dStr.replace(/[.\s]+/g, '-'))) / 86400000);
   return `<span class="status-main">D+${diff}</span><span class="status-sub">(${Math.floor(diff/7)+1}주차)</span>`;
 }
