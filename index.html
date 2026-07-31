@@ -180,7 +180,11 @@ applyTimeBasedThemeFixed();
   <h2 id="log-it-title" onclick="toggleMedication()">My Day Log</h2>
   <div id="dashboard">
     <div class="card reminder-card">
-      <div class="card-title" onclick="toggleReminders()" style="cursor: pointer; user-select: none;">📌 REMINDERS</div>
+      <!-- 수정: 타이틀 래퍼를 추가하여 REMINDERS 위치를 고정하고 우측에 점 5개를 배치 -->
+      <div style="position: relative; width: 100%; text-align: center; margin-bottom: 4px;">
+        <div class="card-title" onclick="toggleReminders()" style="cursor: pointer; user-select: none; margin-bottom: 0; display: inline-block;">📌 REMINDERS</div>
+        <div id="week-dots" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; gap: 4px;"></div>
+      </div>
       <div class="todo-input-group">
         <input type="text" id="todo-input" placeholder="아이디어를 기록하세요.">
         <button id="btn-add-todo" onclick="addTodo(this)">추가</button>
@@ -213,7 +217,34 @@ applyTimeBasedThemeFixed();
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
-function loadAll() { loadData(); loadTodos(); resetCarButtons(); }
+// 수정: 로드 시 주차(Week) 점 계산 함수도 함께 실행
+function loadAll() { loadData(); loadTodos(); resetCarButtons(); renderWeekDots(); }
+
+// 추가: 이번 주 일요일이 이달의 몇 번째 주인지 계산하고 점 5개를 그리는 함수
+function renderWeekDots() {
+  const now = new Date();
+  const dayOfWeek = now.getDay();
+  const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;
+  const sunday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilSunday);
+  
+  // 일요일 날짜를 7로 나누어 올림하면 몇 번째 일요일인지 알 수 있음
+  const nthWeek = Math.ceil(sunday.getDate() / 7);
+  
+  const dotsContainer = document.getElementById('week-dots');
+  if (!dotsContainer) return;
+  
+  let dotsHtml = '';
+  for (let i = 1; i <= 5; i++) {
+    // 1,3,5는 푸른 바다색 / 2,4는 붉은 태양색
+    const color = (i % 2 !== 0) ? '#0077B6' : '#FF4500';
+    // 해당 주차만 불투명하게(1) 키우고, 나머지는 반투명하게(0.2)
+    const opacity = (i === nthWeek) ? '1' : '0.2';
+    const scale = (i === nthWeek) ? 'scale(1.2)' : 'scale(1)';
+    
+    dotsHtml += `<div style="width: 6px; height: 6px; border-radius: 50%; background-color: ${color}; opacity: ${opacity}; transform: ${scale}; transition: all 0.3s ease;"></div>`;
+  }
+  dotsContainer.innerHTML = dotsHtml;
+}
 
 function toggleMedication() {
   const titleEl = document.getElementById('log-it-title');
@@ -240,7 +271,6 @@ function loadData() {
       const rDate = d.robotDate ? d.robotDate.substring(5).replace('-','/') : "날짜";
       document.getElementById('robot-status').innerHTML = `<span class="status-main">${d.robot} / 2회</span><span class="status-sub">(${rDate})</span>`;
       
-      // 🔥 수정: 세차 금액을 한 줄로 표시하며, 카드가 깨지지 않게 폰트 크기를 약간 조정하고 줄바꿈을 방지함
       document.getElementById('carwash-status').innerHTML = `<span class="status-main" style="white-space: nowrap; font-size: 15px; letter-spacing: -0.5px;">${(d.carWash || 0).toLocaleString()}원/12,000원</span>`;
       
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
