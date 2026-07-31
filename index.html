@@ -103,7 +103,7 @@ button { font-weight:800; color:white; cursor:pointer; }
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
 
-/* 🔥 수정: 리마인더 리스트 확장 애니메이션 추가 */
+/* 리마인더 리스트 확장 애니메이션 */
 .todo-list { margin-top: 6px; max-height: 105px; overflow-y: auto; width: 100%; transition: max-height 0.4s ease-in-out; }
 .todo-list.expanded-view { max-height: 2000px; overflow-y: hidden; }
 
@@ -180,7 +180,6 @@ applyTimeBasedThemeFixed();
   <h2 id="log-it-title" onclick="toggleMedication()">My Day Log</h2>
   <div id="dashboard">
     <div class="card reminder-card">
-      <!-- 🔥 수정: 클릭 이벤트를 추가하여 리스트 확장 함수 실행 -->
       <div class="card-title" onclick="toggleReminders()" style="cursor: pointer; user-select: none;">📌 REMINDERS</div>
       <div class="todo-input-group">
         <input type="text" id="todo-input" placeholder="아이디어를 기록하세요.">
@@ -223,7 +222,7 @@ function toggleMedication() {
   fetch(`${GAS_URL}?action=toggleMedication&state=${nextState}`).then(() => loadData());
 }
 
-// 🔥 수정: 리마인더 확장/축소 토글 함수 추가
+// 리마인더 확장/축소 토글 함수
 function toggleReminders() {
   const list = document.getElementById('todo-list');
   list.classList.toggle('expanded-view');
@@ -240,7 +239,10 @@ function loadData() {
       document.getElementById('fuel-status').innerHTML = `<span class="status-main">${d.fuel} / 3회</span>`;
       const rDate = d.robotDate ? d.robotDate.substring(5).replace('-','/') : "날짜";
       document.getElementById('robot-status').innerHTML = `<span class="status-main">${d.robot} / 2회</span><span class="status-sub">(${rDate})</span>`;
-      document.getElementById('carwash-status').innerHTML = `<span class="status-main">${(d.carWash || 0).toLocaleString()}원</span>`;
+      
+      // 🔥 수정: 세차 금액을 한 줄로 표시하며, 카드가 깨지지 않게 폰트 크기를 약간 조정하고 줄바꿈을 방지함
+      document.getElementById('carwash-status').innerHTML = `<span class="status-main" style="white-space: nowrap; font-size: 15px; letter-spacing: -0.5px;">${(d.carWash || 0).toLocaleString()}원/13,000원</span>`;
+      
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
     }
   });
