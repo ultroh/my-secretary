@@ -241,7 +241,7 @@ function loadData() {
       document.getElementById('robot-status').innerHTML = `<span class="status-main">${d.robot} / 2회</span><span class="status-sub">(${rDate})</span>`;
       
       // 🔥 수정: 세차 금액을 한 줄로 표시하며, 카드가 깨지지 않게 폰트 크기를 약간 조정하고 줄바꿈을 방지함
-      document.getElementById('carwash-status').innerHTML = `<span class="status-main" style="white-space: nowrap; font-size: 15px; letter-spacing: -0.5px;">${(d.carWash || 0).toLocaleString()}원/13,000원</span>`;
+      document.getElementById('carwash-status').innerHTML = `<span class="status-main" style="white-space: nowrap; font-size: 15px; letter-spacing: -0.5px;">${(d.carWash || 0).toLocaleString()}원/12,000원</span>`;
       
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
     }
