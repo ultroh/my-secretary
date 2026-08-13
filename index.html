@@ -10,8 +10,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="My Day Log">
 
-<!-- 렌더링 블로킹 방지를 위해 defer 속성 추가 -->
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 
 <style>
 :root {
@@ -181,6 +180,7 @@ applyTimeBasedThemeFixed();
   <h2 id="log-it-title" onclick="toggleMedication()">My Day Log</h2>
   <div id="dashboard">
     <div class="card reminder-card">
+      <!-- 수정: 타이틀 래퍼를 추가하여 REMINDERS 위치를 고정하고 우측에 점 5개를 배치 -->
       <div style="position: relative; width: 100%; text-align: center; margin-bottom: 4px;">
         <div class="card-title" onclick="toggleReminders()" style="cursor: pointer; user-select: none; margin-bottom: 0; display: inline-block;">📌 REMINDERS</div>
         <div id="week-dots" style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); display: flex; gap: 4px;"></div>
@@ -217,67 +217,17 @@ applyTimeBasedThemeFixed();
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
-// 통합된 초기 데이터 로딩 함수 추가
-function loadInitialData() {
-  fetch(`${GAS_URL}?action=getInitialData&_t=${Date.now()}`)
-    .then(res => res.json())
-    .then(res => {
-      if (res.status === 'success') {
-        const d = res.data;
-        const titleEl = document.getElementById('log-it-title');
-        if (d.isMedicationTaken) titleEl.classList.add('rainbow-theme');
-        else titleEl.classList.remove('rainbow-theme');
+// 수정: 로드 시 주차(Week) 점 계산 함수도 함께 실행
+function loadAll() { loadData(); loadTodos(); resetCarButtons(); renderWeekDots(); }
 
-        document.getElementById('fuel-status').innerHTML = `<span class="status-main">${d.fuel} / 3회</span>`;
-        const rDate = d.robotDate ? d.robotDate.substring(5).replace('-','/') : "날짜";
-        document.getElementById('robot-status').innerHTML = `<span class="status-main">${d.robot} / 2회</span><span class="status-sub">(${rDate})</span>`;
-        document.getElementById('carwash-status').innerHTML = `<span class="status-main" style="white-space: nowrap; font-size: 15px; letter-spacing: -0.5px;">${(d.carWash || 0).toLocaleString()}원/12,000원</span>`;
-        document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
-
-        const list = document.getElementById('todo-list'); 
-        list.innerHTML = '';
-        const todos = res.todos.list;
-        const highlighted = res.todos.highlighted;
-        
-        [...todos].reverse().forEach((text, i) => {
-          const div = document.createElement('div');
-          div.className = 'todo-item' + (highlighted.includes(text) ? ' highlighted' : '');
-          div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${text}</span><button onclick="deleteTodo(${todos.length - 1 - i}, this)">삭제</button>`;
-          
-          const handle = div.querySelector('.drag-handle');
-          handle.onclick = (e) => {
-            e.stopPropagation();
-            div.classList.toggle('highlighted');
-            if(navigator.vibrate) navigator.vibrate(50);
-            fetch(`${GAS_URL}?action=toggleHighlight&text=${encodeURIComponent(text)}`);
-          };
-
-          const textField = div.querySelector('.text');
-          textField.onclick = (e) => {
-            e.stopPropagation();
-            div.classList.toggle('expanded');
-          };
-
-          list.appendChild(div);
-        });
-        new Sortable(list, { handle: '.drag-handle', animation: 150, onEnd: saveOrder });
-      }
-    });
-}
-
-// 수정된 loadAll (한 번의 통신으로 병합된 데이터를 불러옴)
-function loadAll() { 
-  loadInitialData(); 
-  resetCarButtons(); 
-  renderWeekDots(); 
-}
-
+// 추가: 이번 주 일요일이 이달의 몇 번째 주인지 계산하고 점 5개를 그리는 함수
 function renderWeekDots() {
   const now = new Date();
   const dayOfWeek = now.getDay();
   const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;
   const sunday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilSunday);
   
+  // 일요일 날짜를 7로 나누어 올림하면 몇 번째 일요일인지 알 수 있음
   const nthWeek = Math.ceil(sunday.getDate() / 7);
   
   const dotsContainer = document.getElementById('week-dots');
@@ -285,7 +235,9 @@ function renderWeekDots() {
   
   let dotsHtml = '';
   for (let i = 1; i <= 5; i++) {
+    // 1,3,5는 푸른 바다색 / 2,4는 붉은 태양색
     const color = (i % 2 !== 0) ? '#0077B6' : '#FF4500';
+    // 해당 주차만 불투명하게(1) 키우고, 나머지는 반투명하게(0.2)
     const opacity = (i === nthWeek) ? '1' : '0.2';
     const scale = (i === nthWeek) ? 'scale(1.2)' : 'scale(1)';
     
@@ -301,12 +253,12 @@ function toggleMedication() {
   fetch(`${GAS_URL}?action=toggleMedication&state=${nextState}`).then(() => loadData());
 }
 
+// 리마인더 확장/축소 토글 함수
 function toggleReminders() {
   const list = document.getElementById('todo-list');
   list.classList.toggle('expanded-view');
 }
 
-// 각 버튼 클릭 이후의 개별 갱신을 위해 유지
 function loadData() {
   fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => {
     if(res.status === 'success') {
@@ -318,13 +270,14 @@ function loadData() {
       document.getElementById('fuel-status').innerHTML = `<span class="status-main">${d.fuel} / 3회</span>`;
       const rDate = d.robotDate ? d.robotDate.substring(5).replace('-','/') : "날짜";
       document.getElementById('robot-status').innerHTML = `<span class="status-main">${d.robot} / 2회</span><span class="status-sub">(${rDate})</span>`;
+      
       document.getElementById('carwash-status').innerHTML = `<span class="status-main" style="white-space: nowrap; font-size: 15px; letter-spacing: -0.5px;">${(d.carWash || 0).toLocaleString()}원/12,000원</span>`;
+      
       document.getElementById('hair-status').innerHTML = getHaircutStatus(d.hairCutDate);
     }
   });
 }
 
-// 할 일 추가/삭제 이후의 개별 갱신을 위해 유지
 function loadTodos(){
   fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`).then(res => res.json()).then(res => {
     const list = document.getElementById('todo-list'); list.innerHTML = '';
