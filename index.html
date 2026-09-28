@@ -56,9 +56,12 @@ h2 {
   color: var(--dynamic-text-color); 
   text-align:center; margin: 2px 0; font-size: 1.2rem; font-weight: 900; 
   letter-spacing: 1px; text-transform: uppercase; cursor: pointer; 
-  transition: transform 0.1s ease-in-out, color 0.8s ease; user-select: none;
+  transition: transform 0.1s ease-in-out; 
+  user-select: none;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
-h2:active { transform: scale(0.95); }
+h2:active { transform: scale(0.95) translateZ(0); }
 
 .rainbow-theme {
   background: linear-gradient(to right, #FF3B30 0%, #FF3B30 14.28%, #FF9500 14.28%, #FF9500 28.57%, #FFCC00 28.57%, #FFCC00 42.85%, #4CD964 42.85%, #5AC8FA 57.14%, #5AC8FA 71.42%, #007AFF 71.42%, #007AFF 85.71%, #5856D6 85.71%, #5856D6 100%, #ffffff 100%, #ffffff 200%);
@@ -96,11 +99,37 @@ button { font-weight:800; color:white; cursor:pointer; }
 .btn-carwash, .btn-hair { border: 1.5px solid transparent; }
 .btn-fuel, .btn-robot { color: #fff; border: 1.5px solid var(--dynamic-btn-main); position: relative; overflow: hidden; background-repeat: no-repeat; }
 
-.loading-add { background-color: transparent !important; color: var(--dynamic-btn-main) !important; background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)) !important; background-size: 0% 100% !important; animation: fillAdd 1.2s forwards ease-in-out !important; }
-@keyframes fillAdd { 0% { background-size: 0% 100%; color: var(--dynamic-btn-main); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-main); } }
-.loading-del { background-color: transparent !important; color: var(--dynamic-btn-sub) !important; background-image: linear-gradient(var(--dynamic-btn-sub), var(--dynamic-btn-sub)) !important; background-size: 0% 100% !important; animation: fillDel 1.2s forwards ease-in-out !important; }
-@keyframes fillDel { 0% { background-size: 0% 100%; color: var(--dynamic-btn-sub); } 80% { background-size: 100% 100%; color: #fff; } 100% { background-size: 100% 100%; color: #fff; background-color: var(--dynamic-btn-sub); } }
-.loading { background-color: transparent !important; color: var(--dynamic-btn-main) !important; background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)) !important; background-size: 0% 100% !important; animation: fillAdd 1.2s forwards ease-in-out !important; }
+.loading-add, .loading-del, .loading {
+  background-color: transparent !important;
+  background-repeat: no-repeat !important;
+  background-position: left center !important;
+}
+
+.loading-add, .loading { 
+  color: var(--dynamic-btn-main) !important;
+  background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)) !important; 
+  background-size: 0% 100% !important; 
+  animation: fillAdd 1.2s forwards ease-in-out !important; 
+}
+
+.loading-del { 
+  color: var(--dynamic-btn-sub) !important;
+  background-image: linear-gradient(var(--dynamic-btn-sub), var(--dynamic-btn-sub)) !important; 
+  background-size: 0% 100% !important; 
+  animation: fillDel 1.2s forwards ease-in-out !important; 
+}
+
+@keyframes fillAdd { 
+  0% { background-size: 0% 100%; color: var(--dynamic-btn-main); } 
+  40% { color: #fff; } 
+  100% { background-size: 100% 100%; color: #fff; } 
+}
+
+@keyframes fillDel { 
+  0% { background-size: 0% 100%; color: var(--dynamic-btn-sub); } 
+  40% { color: #fff; } 
+  100% { background-size: 100% 100%; color: #fff; } 
+}
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
 
