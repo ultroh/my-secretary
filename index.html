@@ -33,28 +33,30 @@
 * { box-sizing: border-box; margin:0; padding:0; }
 
 body, html {
-  width:100%;
+  width: 100%;
+  height: 100%; /* 전체 화면 채우기 */
   background-color: var(--dynamic-app-bg);
   background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
   background-size: 24px 24px;
   font-family: 'Pretendard', -apple-system, sans-serif;
   transition: background-color 0.8s ease;
-  overscroll-behavior-y: auto; 
+  overscroll-behavior-y: none; /* 당겨서 새로고침 등 스크롤 바운스 방지 */
 }
 
 .app-container {
-  max-width:480px;
-  margin:auto;
-  min-height: 100dvh;
-  padding: calc(15px + env(safe-area-inset-top)) 12px calc(50px + env(safe-area-inset-bottom));
-  display:flex;
-  flex-direction:column;
+  max-width: 480px;
+  margin: 0 auto; /* 상단 여백 고정 버그 해결 */
+  height: 100dvh; /* 한 페이지에 꽉 차도록 고정 */
+  padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom); /* 불필요한 패딩 제거 */
+  display: flex;
+  flex-direction: column;
   position: relative;
+  overflow-y: auto;
 }
 
 h2 { 
   color: var(--dynamic-text-color); 
-  text-align:center; margin: 2px 0; font-size: 1.2rem; font-weight: 900; 
+  text-align: center; margin: 4px 0 8px 0; font-size: 1.2rem; font-weight: 900; 
   letter-spacing: 1px; text-transform: uppercase; cursor: pointer; 
   transition: transform 0.1s ease-in-out; 
   user-select: none;
@@ -69,11 +71,11 @@ h2:active { transform: scale(0.95) translateZ(0); }
 }
 @keyframes sweepRainbow { 0% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-#dashboard { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+#dashboard { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; flex: 1; align-content: start; }
 
 .card {
   background: var(--card-bg); border-radius: 12px; padding: 12px;
-  display:flex; flex-direction:column; justify-content: space-between; align-items:center;
+  display: flex; flex-direction: column; justify-content: space-between; align-items: center;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 6px solid var(--dynamic-border); transition: border-top 0.8s ease, background-color 0.8s ease;
 }
 
@@ -88,9 +90,27 @@ h2:active { transform: scale(0.95) translateZ(0); }
 .status-main { font-size: 18px; font-weight: 900; line-height: 1; display: block; }
 .status-sub { font-size: 11px; color: #888; font-weight: 600; line-height: 1; margin-top: 4px; display: block; }
 
-input, button { border:none; border-radius:6px; outline: none; }
-input { width:100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; text-align: center; }
-button { font-weight:800; color:white; cursor:pointer; }
+input, button { border: none; border-radius: 6px; outline: none; }
+input { width: 100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; text-align: center; }
+
+/* 물결 애니메이션을 위해 position 및 overflow 추가 */
+button { font-weight: 800; color: white; cursor: pointer; position: relative; overflow: hidden; }
+
+/* 버튼 클릭 시 물결 효과 디자인 */
+.wave-ripple {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: waveSweep 0.5s ease-out;
+  pointer-events: none;
+}
+@keyframes waveSweep {
+  0% { left: -100%; opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
 
 .btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
   width: 100%; height: 36px; margin-top: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px;
@@ -138,7 +158,7 @@ button { font-weight:800; color:white; cursor:pointer; }
 .todo-list.expanded-view { max-height: 2000px; overflow-y: hidden; }
 
 .todo-item { 
-  display:flex; justify-content:space-between; align-items:center; 
+  display: flex; justify-content: space-between; align-items: center; 
   padding: 4px 0px; 
   border-bottom: 1px solid var(--line-color); 
   border-radius: 8px; transition: background-color 0.3s ease; 
@@ -147,7 +167,7 @@ button { font-weight:800; color:white; cursor:pointer; }
 .todo-item.highlighted span.text, .todo-item.highlighted .drag-handle { color: #FF9500 !important; font-weight: 800 !important; }
 
 .todo-item span.text { 
-  flex:1; text-align:left; color: var(--text-main); font-size: 13px; 
+  flex: 1; text-align: left; color: var(--text-main); font-size: 13px; 
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
   cursor: pointer; line-height: 1.2; transition: color 0.2s ease;
   padding: 4px 0; 
@@ -202,6 +222,25 @@ function applyTimeBasedThemeFixed() {
   root.style.setProperty('--dynamic-btn-sub', s.sub); 
 }
 applyTimeBasedThemeFixed();
+
+// 전역 물결(Wave) 애니메이션 리스너
+document.addEventListener('pointerdown', function(e) {
+  let target = e.target.closest('button');
+  
+  if (e.target.id === 'hairDateVal') {
+    target = document.getElementById('btn-hair');
+  }
+
+  if (target) {
+    const wave = document.createElement('span');
+    wave.className = 'wave-ripple';
+    target.appendChild(wave);
+    
+    setTimeout(() => {
+      wave.remove();
+    }, 500);
+  }
+});
 </script>
 </head>
 
@@ -246,7 +285,6 @@ applyTimeBasedThemeFixed();
 <script>
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbzLWAe2d1nzDkIHC0sofc17vqREcy3hQxHewu0dTkhSlDAYYICv-twP1RiDwFux5xiinA/exec'; 
 
-// 통합된 초기 데이터 로딩 함수 추가
 function loadInitialData() {
   fetch(`${GAS_URL}?action=getInitialData&_t=${Date.now()}`)
     .then(res => res.json())
@@ -294,7 +332,6 @@ function loadInitialData() {
     });
 }
 
-// 수정된 loadAll (한 번의 통신으로 병합된 데이터를 불러옴)
 function loadAll() { 
   loadInitialData(); 
   resetCarButtons(); 
@@ -335,7 +372,6 @@ function toggleReminders() {
   list.classList.toggle('expanded-view');
 }
 
-// 각 버튼 클릭 이후의 개별 갱신을 위해 유지
 function loadData() {
   fetch(`${GAS_URL}?action=getData&_t=${Date.now()}`).then(res => res.json()).then(res => {
     if(res.status === 'success') {
@@ -353,7 +389,6 @@ function loadData() {
   });
 }
 
-// 할 일 추가/삭제 이후의 개별 갱신을 위해 유지
 function loadTodos(){
   fetch(`${GAS_URL}?action=getTodos&_t=${Date.now()}`).then(res => res.json()).then(res => {
     const list = document.getElementById('todo-list'); list.innerHTML = '';
