@@ -40,7 +40,7 @@ body, html {
   font-family: 'Pretendard', -apple-system, sans-serif;
   transition: background-color 0.8s ease;
   overscroll-behavior-y: none;
-  overflow: hidden; /* 한 페이지 핏을 위해 전체 스크롤 방지 */
+  overflow: hidden; 
 }
 
 .app-container {
@@ -51,7 +51,7 @@ body, html {
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-y: hidden; /* 내부 스크롤 방지 */
+  overflow-y: hidden; 
 }
 
 h2 { 
@@ -73,7 +73,7 @@ h2:active { transform: scale(0.95) translateZ(0); }
 
 #dashboard { 
   display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; 
-  flex: 1; align-content: space-evenly; /* 여백을 균등 분배하여 꽉 차게 정렬 */
+  flex: 1; align-content: space-evenly; 
 }
 
 .card {
@@ -84,7 +84,7 @@ h2:active { transform: scale(0.95) translateZ(0); }
 
 .reminder-card { grid-column: span 2; border-top: 6px solid var(--dynamic-border); background-color: var(--dynamic-memo-bg); }
 .stat-card { 
-  aspect-ratio: 1 / 1; /* 정사각형 비율 강제 지정 */
+  aspect-ratio: 1 / 1; 
   height: auto; 
   overflow: hidden; 
 }
@@ -117,14 +117,19 @@ button { font-weight: 800; color: white; cursor: pointer; position: relative; ov
   100% { left: 100%; opacity: 0; }
 }
 
-/* 일반 버튼을 위한 무지개 효과 클래스 */
-.is-sparkling-btn::before { 
-  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-  background: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%); 
-  background-size: 300% 300%; opacity: 1; 
-  animation: dreamySparkle 1.5s ease-in-out infinite alternate; 
-  z-index: -1; pointer-events: none; 
+/* 무지개 반짝임 효과 (모든 버튼 및 자동차 타일 통일 적용) */
+.loading, .loading-add, .loading-del, .is-sparkling-btn, .car-mark.is-sparkling {
+  background-color: transparent !important;
+  background-image: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%) !important;
+  background-size: 300% 300% !important;
+  color: transparent !important; /* 텍스트를 숨겨서 빛만 보이게 함 */
+  border-color: transparent !important;
+  animation: dreamySparkle 1.5s ease-in-out infinite alternate !important;
 }
+.car-mark.is-sparkling .btn-text {
+  color: transparent !important;
+}
+@keyframes dreamySparkle { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
 .btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
   width: 100%; height: 36px; margin-top: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px;
@@ -133,41 +138,8 @@ button { font-weight: 800; color: white; cursor: pointer; position: relative; ov
 .btn-carwash, .btn-hair { border: 1.5px solid transparent; }
 .btn-fuel, .btn-robot { color: #fff; border: 1.5px solid var(--dynamic-btn-main); position: relative; overflow: hidden; background-repeat: no-repeat; }
 
-.loading-add, .loading-del, .loading {
-  background-color: transparent !important;
-  background-repeat: no-repeat !important;
-  background-position: left center !important;
-}
-
-.loading-add, .loading { 
-  color: var(--dynamic-btn-main) !important;
-  background-image: linear-gradient(var(--dynamic-btn-main), var(--dynamic-btn-main)) !important; 
-  background-size: 0% 100% !important; 
-  animation: fillAdd 1.2s forwards ease-in-out !important; 
-}
-
-.loading-del { 
-  color: var(--dynamic-btn-sub) !important;
-  background-image: linear-gradient(var(--dynamic-btn-sub), var(--dynamic-btn-sub)) !important; 
-  background-size: 0% 100% !important; 
-  animation: fillDel 1.2s forwards ease-in-out !important; 
-}
-
-@keyframes fillAdd { 
-  0% { background-size: 0% 100%; color: var(--dynamic-btn-main); } 
-  40% { color: #fff; } 
-  100% { background-size: 100% 100%; color: #fff; } 
-}
-
-@keyframes fillDel { 
-  0% { background-size: 0% 100%; color: var(--dynamic-btn-sub); } 
-  40% { color: #fff; } 
-  100% { background-size: 100% 100%; color: #fff; } 
-}
-
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
 
-/* 리마인더 영역이 남는 공간 안에서 유동적으로 스크롤되도록 수정 */
 .todo-list { margin-top: 6px; flex: 1; overflow-y: auto; min-height: 50px; max-height: 120px; width: 100%; transition: max-height 0.4s ease-in-out; }
 .todo-list.expanded-view { max-height: 200px; }
 
@@ -209,9 +181,6 @@ button { font-weight: 800; color: white; cursor: pointer; position: relative; ov
 .hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
 .mini-on { background-color: var(--mini-red) !important; color: white !important; }
 .car-off { background-color: var(--card-bg) !important; color: #bbb !important; opacity: 1 !important; } 
-
-.car-mark.is-sparkling::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%); background-size: 300% 300%; opacity: 1; animation: dreamySparkle 1.5s ease-in-out infinite alternate; z-index: -1;}
-@keyframes dreamySparkle { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 </style>
 
 <script>
@@ -237,23 +206,23 @@ function applyTimeBasedThemeFixed() {
 }
 applyTimeBasedThemeFixed();
 
-// 버튼 클릭 시 무지개 반짝임 및 물결(Wave) 애니메이션 리스너
+// 버튼 클릭 시 무지개 반짝임 및 물결(Wave) 애니메이션
 document.addEventListener('pointerdown', function(e) {
   let target = e.target.closest('button');
   
+  // 날짜 선택 인풋 터치 시에도 하단 버튼에 동일하게 효과 적용
   if (e.target.id === 'hairDateVal') {
     target = document.getElementById('btn-hair');
   }
 
   if (target) {
-    // 무지개 이펙트 추가
     target.classList.add('is-sparkling-btn');
     
-    // 물결 이펙트 추가
     const wave = document.createElement('span');
     wave.className = 'wave-ripple';
     target.appendChild(wave);
     
+    // 1.5초 후 반짝임 클래스 제거
     setTimeout(() => {
       target.classList.remove('is-sparkling-btn');
     }, 1500);
