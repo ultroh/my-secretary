@@ -10,7 +10,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="My Day Log">
 
-<!-- 렌더링 블로킹 방지를 위해 defer 속성 추가 -->
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js" defer></script>
 
 <style>
@@ -34,24 +33,25 @@
 
 body, html {
   width: 100%;
-  height: 100%; /* 전체 화면 채우기 */
+  height: 100%; 
   background-color: var(--dynamic-app-bg);
   background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
   background-size: 24px 24px;
   font-family: 'Pretendard', -apple-system, sans-serif;
   transition: background-color 0.8s ease;
-  overscroll-behavior-y: none; /* 당겨서 새로고침 등 스크롤 바운스 방지 */
+  overscroll-behavior-y: none;
+  overflow: hidden; /* 한 페이지 핏을 위해 전체 스크롤 방지 */
 }
 
 .app-container {
   max-width: 480px;
-  margin: 0 auto; /* 상단 여백 고정 버그 해결 */
-  height: 100dvh; /* 한 페이지에 꽉 차도록 고정 */
-  padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom); /* 불필요한 패딩 제거 */
+  margin: 0 auto; 
+  height: 100dvh; 
+  padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom); 
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-y: auto;
+  overflow-y: hidden; /* 내부 스크롤 방지 */
 }
 
 h2 { 
@@ -71,7 +71,10 @@ h2:active { transform: scale(0.95) translateZ(0); }
 }
 @keyframes sweepRainbow { 0% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-#dashboard { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; flex: 1; align-content: start; }
+#dashboard { 
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; 
+  flex: 1; align-content: space-evenly; /* 여백을 균등 분배하여 꽉 차게 정렬 */
+}
 
 .card {
   background: var(--card-bg); border-radius: 12px; padding: 12px;
@@ -80,7 +83,11 @@ h2:active { transform: scale(0.95) translateZ(0); }
 }
 
 .reminder-card { grid-column: span 2; border-top: 6px solid var(--dynamic-border); background-color: var(--dynamic-memo-bg); }
-.stat-card { height: 135px; overflow: hidden; }
+.stat-card { 
+  aspect-ratio: 1 / 1; /* 정사각형 비율 강제 지정 */
+  height: auto; 
+  overflow: hidden; 
+}
 .card-title { font-size: 11px; font-weight: 800; color: var(--dynamic-btn-main); margin-bottom: 4px; transition: color 0.8s ease; }
 
 .status-value { 
@@ -93,10 +100,8 @@ h2:active { transform: scale(0.95) translateZ(0); }
 input, button { border: none; border-radius: 6px; outline: none; }
 input { width: 100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 10px; margin-top: 6px; font-size: 13px; text-align: center; }
 
-/* 물결 애니메이션을 위해 position 및 overflow 추가 */
-button { font-weight: 800; color: white; cursor: pointer; position: relative; overflow: hidden; }
+button { font-weight: 800; color: white; cursor: pointer; position: relative; overflow: hidden; z-index: 1; }
 
-/* 버튼 클릭 시 물결 효과 디자인 */
 .wave-ripple {
   position: absolute;
   top: 0;
@@ -110,6 +115,15 @@ button { font-weight: 800; color: white; cursor: pointer; position: relative; ov
 @keyframes waveSweep {
   0% { left: -100%; opacity: 1; }
   100% { left: 100%; opacity: 0; }
+}
+
+/* 일반 버튼을 위한 무지개 효과 클래스 */
+.is-sparkling-btn::before { 
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+  background: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%); 
+  background-size: 300% 300%; opacity: 1; 
+  animation: dreamySparkle 1.5s ease-in-out infinite alternate; 
+  z-index: -1; pointer-events: none; 
 }
 
 .btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
@@ -153,9 +167,9 @@ button { font-weight: 800; color: white; cursor: pointer; position: relative; ov
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 6px; align-items: center; }
 
-/* 리마인더 리스트 확장 애니메이션 */
-.todo-list { margin-top: 6px; max-height: 105px; overflow-y: auto; width: 100%; transition: max-height 0.4s ease-in-out; }
-.todo-list.expanded-view { max-height: 2000px; overflow-y: hidden; }
+/* 리마인더 영역이 남는 공간 안에서 유동적으로 스크롤되도록 수정 */
+.todo-list { margin-top: 6px; flex: 1; overflow-y: auto; min-height: 50px; max-height: 120px; width: 100%; transition: max-height 0.4s ease-in-out; }
+.todo-list.expanded-view { max-height: 200px; }
 
 .todo-item { 
   display: flex; justify-content: space-between; align-items: center; 
@@ -196,7 +210,7 @@ button { font-weight: 800; color: white; cursor: pointer; position: relative; ov
 .mini-on { background-color: var(--mini-red) !important; color: white !important; }
 .car-off { background-color: var(--card-bg) !important; color: #bbb !important; opacity: 1 !important; } 
 
-.car-mark.is-sparkling::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%); background-size: 300% 300%; opacity: 1; animation: dreamySparkle 1.5s ease-in-out infinite alternate; }
+.car-mark.is-sparkling::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%); background-size: 300% 300%; opacity: 1; animation: dreamySparkle 1.5s ease-in-out infinite alternate; z-index: -1;}
 @keyframes dreamySparkle { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 </style>
 
@@ -223,7 +237,7 @@ function applyTimeBasedThemeFixed() {
 }
 applyTimeBasedThemeFixed();
 
-// 전역 물결(Wave) 애니메이션 리스너
+// 버튼 클릭 시 무지개 반짝임 및 물결(Wave) 애니메이션 리스너
 document.addEventListener('pointerdown', function(e) {
   let target = e.target.closest('button');
   
@@ -232,10 +246,18 @@ document.addEventListener('pointerdown', function(e) {
   }
 
   if (target) {
+    // 무지개 이펙트 추가
+    target.classList.add('is-sparkling-btn');
+    
+    // 물결 이펙트 추가
     const wave = document.createElement('span');
     wave.className = 'wave-ripple';
     target.appendChild(wave);
     
+    setTimeout(() => {
+      target.classList.remove('is-sparkling-btn');
+    }, 1500);
+
     setTimeout(() => {
       wave.remove();
     }, 500);
