@@ -33,25 +33,24 @@
 
 body, html {
   width: 100%;
-  min-height: 100%; /* 고정 height 100% 대신 min-height 사용 */
+  min-height: 100%; 
   background-color: var(--dynamic-app-bg);
   background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
   background-size: 24px 24px;
   font-family: 'Pretendard', -apple-system, sans-serif;
   transition: background-color 0.8s ease;
-  /* 스크롤 금지 속성(overscroll-behavior-y, overflow) 삭제 */
+  -webkit-tap-highlight-color: transparent; /* 모바일 터치 시 기본으로 생기는 회색 음영 제거 */
 }
 
 .app-container {
   width: 100%;
-  max-width: 600px; /* 모바일 및 태블릿에 유연하게 대응하기 위해 너비 상한 조정 */
+  max-width: 600px; 
   margin: 0 auto; 
-  min-height: 100dvh; /* 요소들이 자연스럽게 100dvh를 채우되 넘치면 스크롤 허용 */
+  min-height: 100dvh; 
   padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom); 
   display: flex;
   flex-direction: column;
   position: relative;
-  /* overflow-y: hidden 삭제 */
 }
 
 h2 { 
@@ -72,12 +71,12 @@ h2:active { transform: scale(0.95) translateZ(0); }
 @keyframes sweepRainbow { 0% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
 #dashboard { 
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; /* 한 페이지에 들어오도록 gap 감소 */
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; 
   flex: 1; align-content: space-evenly; 
 }
 
 .card {
-  background: var(--card-bg); border-radius: 12px; padding: 10px; /* 내부 여백 축소 */
+  background: var(--card-bg); border-radius: 12px; padding: 10px;
   display: flex; flex-direction: column; justify-content: space-between; align-items: center;
   box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 5px solid var(--dynamic-border); transition: border-top 0.8s ease, background-color 0.8s ease;
 }
@@ -94,48 +93,48 @@ h2:active { transform: scale(0.95) translateZ(0); }
   color: var(--text-main); flex: 1; display: flex; flex-direction: column;
   justify-content: center; align-items: center; text-align: center; padding-top: 4px; 
 }
-.status-main { font-size: 16px; font-weight: 900; line-height: 1; display: block; } /* 폰트 사이즈 소폭 조정 */
+.status-main { font-size: 16px; font-weight: 900; line-height: 1; display: block; }
 .status-sub { font-size: 11px; color: #888; font-weight: 600; line-height: 1; margin-top: 4px; display: block; }
 
 input, button { border: none; border-radius: 6px; outline: none; }
 input { width: 100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 8px; margin-top: 4px; font-size: 13px; text-align: center; }
 
-button { font-weight: 800; color: white; cursor: pointer; position: relative; overflow: hidden; z-index: 1; }
-
-.wave-ripple {
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  animation: waveSweep 0.5s ease-out;
-  pointer-events: none;
+/* 공통 버튼 설정 및 터치(눌림) 애니메이션 */
+button { 
+  font-weight: 800; color: white; cursor: pointer; position: relative; overflow: hidden; z-index: 1; 
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), filter 0.1s ease, background-color 0.3s ease; 
 }
-@keyframes waveSweep {
-  0% { left: -100%; opacity: 1; }
-  100% { left: 100%; opacity: 0; }
+button:active {
+  transform: scale(0.93); /* 누르면 7% 축소 */
+  filter: brightness(0.85); /* 살짝 어두워짐 */
 }
 
-.loading, .loading-add, .loading-del, .is-sparkling-btn, .car-mark.is-sparkling {
+/* 통신 중일 때만 나타나는 무지개 효과 (터치 시 오작동 제거) */
+.loading, .loading-add, .loading-del {
   background-color: transparent !important;
   background-image: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%) !important;
   background-size: 300% 300% !important;
   color: transparent !important; 
   border-color: transparent !important;
   animation: dreamySparkle 1.5s ease-in-out infinite alternate !important;
-}
-.car-mark.is-sparkling .btn-text {
-  color: transparent !important;
+  pointer-events: none; /* 로딩 중 중복 터치 방지 */
 }
 @keyframes dreamySparkle { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
 .btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
   width: 100%; height: 30px; margin-top: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px;
-  background-color: var(--dynamic-btn-main); transition: background-color 0.8s ease, border-color 0.8s ease, color 0.8s ease;
+  background-color: var(--dynamic-btn-main); 
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), filter 0.1s ease, background-color 0.8s ease, border-color 0.8s ease, color 0.8s ease;
 }
 .btn-carwash, .btn-hair { border: 1.5px solid transparent; }
 .btn-fuel, .btn-robot { color: #fff; border: 1.5px solid var(--dynamic-btn-main); position: relative; overflow: hidden; background-repeat: no-repeat; }
+
+/* 날짜 선택 버튼 래퍼 (투명 input이 터치될 때 아래 깔린 버튼도 눌리는 시각 효과 적용) */
+.date-wrapper { position: relative; width: 100%; margin-top: 4px; height: 30px; }
+.date-wrapper:active .btn-hair {
+  transform: scale(0.93);
+  filter: brightness(0.85);
+}
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 4px; align-items: center; }
 
@@ -147,7 +146,7 @@ button { font-weight: 800; color: white; cursor: pointer; position: relative; ov
   padding: 4px 0px; 
   border-bottom: 1px solid var(--line-color); 
   border-radius: 8px; transition: background-color 0.3s ease; 
-  -webkit-tap-highlight-color: transparent; user-select: none;
+  user-select: none;
 }
 .todo-item.highlighted span.text, .todo-item.highlighted .drag-handle { color: #FF9500 !important; font-weight: 800 !important; }
 
@@ -164,7 +163,7 @@ button { font-weight: 800; color: white; cursor: pointer; position: relative; ov
   text-overflow: clip !important;
 }
 
-.todo-input-group button, .todo-item button { width: 44px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0; position: relative; overflow: hidden; background-repeat: no-repeat; transition: background-color 0.8s ease, border-color 0.8s ease; }
+.todo-input-group button, .todo-item button { width: 44px; height: 26px; display: flex; align-items: center; justify-content: center; margin: 0; font-size: 11px; font-weight: 800; border-radius: 6px; flex-shrink: 0; position: relative; overflow: hidden; background-repeat: no-repeat; }
 .todo-input-group button { background-color: var(--dynamic-btn-main); border: 1.5px solid var(--dynamic-btn-main); }
 .todo-item button { background-color: var(--dynamic-btn-sub); border: 1.5px solid var(--dynamic-btn-sub); }
 
@@ -173,15 +172,21 @@ button { font-weight: 800; color: white; cursor: pointer; position: relative; ov
 .car-rotation-wrapper { grid-column: span 2; display: flex; flex-direction: column; }
 .car-rotation-title { font-size: 11px; font-weight: 800; color: var(--dynamic-text-color); margin-bottom: 4px; letter-spacing: 0.5px; opacity: 0.9; text-align: center; }
 .car-btn-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; }
+
+/* 자동차 타일 설정 및 터치(눌림) 애니메이션 */
 .car-mark { 
   background: var(--card-bg); border-radius: 12px; padding: 12px 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border-top: 5px solid var(--dynamic-border) !important;
-  font-weight: 900; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; z-index: 1; transition: background-color 0.5s ease-in-out, color 0.5s ease-in-out; 
+  font-weight: 900; font-size: 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; position: relative; overflow: hidden; z-index: 1; 
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), filter 0.1s ease, background-color 0.5s ease-in-out, color 0.5s ease-in-out; 
+}
+.car-mark:active {
+  transform: scale(0.95);
+  filter: brightness(0.85);
 }
 .hyundai-on { background-color: var(--hyundai-blue) !important; color: white !important; }
 .mini-on { background-color: var(--mini-red) !important; color: white !important; }
 .car-off { background-color: var(--card-bg) !important; color: #bbb !important; opacity: 1 !important; } 
 
-/* 태블릿 이상 화면에서 그리드 4열로 유연하게 확장 */
 @media (min-width: 768px) {
   .app-container { max-width: 768px; padding: env(safe-area-inset-top) 24px env(safe-area-inset-bottom); }
   #dashboard { grid-template-columns: repeat(4, 1fr); }
@@ -212,29 +217,7 @@ function applyTimeBasedThemeFixed() {
   root.style.setProperty('--dynamic-btn-sub', s.sub); 
 }
 applyTimeBasedThemeFixed();
-
-document.addEventListener('pointerdown', function(e) {
-  let target = e.target.closest('button');
-  if (e.target.id === 'hairDateVal') {
-    target = document.getElementById('btn-hair');
-  }
-
-  if (target) {
-    target.classList.add('is-sparkling-btn');
-    
-    const wave = document.createElement('span');
-    wave.className = 'wave-ripple';
-    target.appendChild(wave);
-    
-    setTimeout(() => {
-      target.classList.remove('is-sparkling-btn');
-    }, 1500);
-
-    setTimeout(() => {
-      wave.remove();
-    }, 500);
-  }
-});
+// 기존에 있던 스치듯 터치 시 무지개 효과 및 물결 애니메이션(pointerdown 이벤트) 삭제 완료
 </script>
 </head>
 
@@ -253,6 +236,7 @@ document.addEventListener('pointerdown', function(e) {
       </div>
       <div id="todo-list" class="todo-list"></div>
     </div>
+    
     <div class="car-rotation-wrapper">
       <div class="car-rotation-title">🚦 TODAY'S DRIVE</div>
       <div class="car-btn-container">
@@ -260,19 +244,33 @@ document.addEventListener('pointerdown', function(e) {
         <div id="mark-mini" class="car-mark car-off" onclick="handleCarSelect(this, 'mini')"><span class="btn-text">JCW</span></div>
       </div>
     </div>
-    <div class="card stat-card"><div class="card-title">🤖 ROBOT</div><div class="status-value" id="robot-status"></div><button class="btn-robot" onclick="recordAction('addRobot', this)">청소 기록</button></div>
+
+    <div class="card stat-card">
+      <div class="card-title">🤖 ROBOT</div>
+      <div class="status-value" id="robot-status"></div>
+      <button class="btn-robot" onclick="recordAction('addRobot', this)">청소 기록</button>
+    </div>
     
     <div class="card stat-card">
       <div class="card-title">✂️ HAIR CUT</div>
       <div class="status-value" id="hair-status"></div>
-      <div style="position: relative; width: 100%; margin-top: 4px; height: 30px;">
+      <!-- date-wrapper 클래스를 추가해 터치 시 버튼이 같이 눌리는 효과 적용 -->
+      <div class="date-wrapper">
         <button class="btn-hair" id="btn-hair" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; pointer-events: none; margin-top: 0;">날짜선택</button>
         <input type="date" id="hairDateVal" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer;" onchange="recordHairCut()">
       </div>
     </div>
 
-    <div class="card stat-card"><div class="card-title">🫧 CAR WASH</div><div class="status-value" id="carwash-status"></div><button class="btn-carwash" onclick="recordCarWash(this)">차감</button></div>
-    <div class="card stat-card"><div class="card-title">🚗 FUEL</div><div class="status-value" id="fuel-status"></div><button class="btn-fuel" onclick="recordAction('addFuel', this)">주유 기록</button></div>
+    <div class="card stat-card">
+      <div class="card-title">🫧 CAR WASH</div>
+      <div class="status-value" id="carwash-status"></div>
+      <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
+    </div>
+    <div class="card stat-card">
+      <div class="card-title">🚗 FUEL</div>
+      <div class="status-value" id="fuel-status"></div>
+      <button class="btn-fuel" onclick="recordAction('addFuel', this)">주유 기록</button>
+    </div>
   </div>
 </div>
 
@@ -417,17 +415,14 @@ function loadTodos(){
 function resetCarButtons() { document.getElementById('mark-hyundai').className = 'car-mark car-off'; document.getElementById('mark-mini').className = 'car-mark car-off'; }
 
 function handleCarSelect(el, type) { 
-  el.classList.add('is-sparkling');
-  setTimeout(() => {
-    el.classList.remove('is-sparkling');
-    const allowed = (new Date().getDate() % 2 === 0) ? 'hyundai' : 'mini';
-    if (type === allowed) {
-      el.className = `car-mark ${type}-on`;
-      document.getElementById(type === 'hyundai' ? 'mark-mini' : 'mark-hyundai').className = 'car-mark car-off';
-    } else { 
-      el.className = 'car-mark car-off'; 
-    }
-  }, 2000);
+  // 기존의 2초 딜레이 및 무지개 효과 제거, 즉각적으로 반응하도록 수정
+  const allowed = (new Date().getDate() % 2 === 0) ? 'hyundai' : 'mini';
+  if (type === allowed) {
+    el.className = `car-mark ${type}-on`;
+    document.getElementById(type === 'hyundai' ? 'mark-mini' : 'mark-hyundai').className = 'car-mark car-off';
+  } else { 
+    el.className = 'car-mark car-off'; 
+  }
 }
 
 function recordAction(action, btn){ 
