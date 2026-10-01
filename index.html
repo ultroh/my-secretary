@@ -40,7 +40,6 @@ body, html {
   font-family: 'Pretendard', -apple-system, sans-serif;
   transition: background-color 0.8s ease;
   -webkit-tap-highlight-color: transparent; 
-  /* 스크롤 당기기(바운스)가 가능하도록 기본 스크롤 동작 허용 */
 }
 
 .app-container {
@@ -48,7 +47,6 @@ body, html {
   max-width: 600px; 
   margin: 0 auto; 
   min-height: 100dvh; 
-  /* 화면 아래가 잘리지 않도록 하단 안전영역(safe-area)에 추가 여백 24px 확보 */
   padding: calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 24px); 
   display: flex;
   flex-direction: column;
@@ -61,10 +59,9 @@ h2 {
   letter-spacing: 1px; text-transform: uppercase; cursor: pointer; 
   transition: transform 0.1s ease-in-out; 
   user-select: none;
-  transform: translateZ(0);
-  backface-visibility: hidden;
+  /* 흐릿함의 원인이었던 translateZ(0) 및 backface-visibility 제거 */
 }
-h2:active { transform: scale(0.95) translateZ(0); }
+h2:active { transform: scale(0.95); }
 
 .rainbow-theme {
   background: linear-gradient(to right, #FF3B30 0%, #FF3B30 14.28%, #FF9500 14.28%, #FF9500 28.57%, #FFCC00 28.57%, #FFCC00 42.85%, #4CD964 42.85%, #5AC8FA 57.14%, #5AC8FA 71.42%, #007AFF 71.42%, #007AFF 85.71%, #5856D6 85.71%, #5856D6 100%, #ffffff 100%, #ffffff 200%);
@@ -84,11 +81,14 @@ h2:active { transform: scale(0.95) translateZ(0); }
 }
 
 .reminder-card { grid-column: span 2; border-top: 5px solid var(--dynamic-border); background-color: var(--dynamic-memo-bg); padding: 10px 12px; min-height: 180px; }
+
 .stat-card { 
-  /* aspect-ratio를 제거하여 한 화면 높이에 맞춰 자연스럽게 늘어나도록 설정 */
+  /* 4개 카드의 높이를 1:1 비율로 똑같이 맞춤 */
+  aspect-ratio: 1 / 1; 
   height: auto; 
   overflow: hidden; 
 }
+
 .card-title { font-size: 11px; font-weight: 800; color: var(--dynamic-btn-main); margin-bottom: 2px; transition: color 0.8s ease; }
 
 .status-value { 
@@ -137,8 +137,9 @@ button:active {
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 8px; align-items: center; }
 
-.todo-list { margin-top: 8px; flex: 1; overflow-y: auto; min-height: 60px; max-height: 120px; width: 100%; transition: max-height 0.4s ease-in-out; }
-.todo-list.expanded-view { max-height: 200px; }
+/* 터치 시 메모들이 잘리지 않고 전체가 다 보이도록 max-height를 충분히 키우고 내부 스크롤 제거 */
+.todo-list { margin-top: 8px; flex: 1; overflow-y: hidden; max-height: 120px; width: 100%; transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
+.todo-list.expanded-view { max-height: 2000px; }
 
 .todo-item { 
   display: flex; justify-content: space-between; align-items: center; 
@@ -172,7 +173,7 @@ button:active {
   .app-container { max-width: 768px; padding: env(safe-area-inset-top) 24px env(safe-area-inset-bottom); }
   #dashboard { grid-template-columns: repeat(4, 1fr); }
   .reminder-card { grid-column: span 4; }
-  .stat-card { height: 160px; }
+  .stat-card { height: auto; aspect-ratio: 1 / 1; }
 }
 </style>
 
