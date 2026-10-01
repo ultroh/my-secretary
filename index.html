@@ -59,7 +59,6 @@ h2 {
   letter-spacing: 1px; text-transform: uppercase; cursor: pointer; 
   transition: transform 0.1s ease-in-out; 
   user-select: none;
-  /* 흐릿함의 원인이었던 translateZ(0) 및 backface-visibility 제거 */
 }
 h2:active { transform: scale(0.95); }
 
@@ -83,7 +82,6 @@ h2:active { transform: scale(0.95); }
 .reminder-card { grid-column: span 2; border-top: 5px solid var(--dynamic-border); background-color: var(--dynamic-memo-bg); padding: 10px 12px; min-height: 180px; }
 
 .stat-card { 
-  /* 4개 카드의 높이를 1:1 비율로 똑같이 맞춤 */
   aspect-ratio: 1 / 1; 
   height: auto; 
   overflow: hidden; 
@@ -137,9 +135,18 @@ button:active {
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 8px; align-items: center; }
 
-/* 터치 시 메모들이 잘리지 않고 전체가 다 보이도록 max-height를 충분히 키우고 내부 스크롤 제거 */
-.todo-list { margin-top: 8px; flex: 1; overflow-y: hidden; max-height: 120px; width: 100%; transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
-.todo-list.expanded-view { max-height: 2000px; }
+/* 터치 시 메모 전체가 보이며 하단 메뉴가 자연스럽게 밀리도록 애니메이션 곡선 최적화 */
+.todo-list { 
+  margin-top: 8px; 
+  flex: 1; 
+  overflow-y: hidden; 
+  max-height: 120px; 
+  width: 100%; 
+  transition: max-height 0.6s cubic-bezier(0.25, 1, 0.5, 1); 
+}
+.todo-list.expanded-view { 
+  max-height: 1200px; /* 메모가 아무리 많아도 모두 보이도록 넉넉한 값 설정 */
+}
 
 .todo-item { 
   display: flex; justify-content: space-between; align-items: center; 
