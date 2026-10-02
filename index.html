@@ -99,9 +99,10 @@ h2:active { transform: scale(0.95); }
 input, button { border: none; border-radius: 6px; outline: none; }
 input { width: 100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 8px; margin-top: 4px; font-size: 13px; text-align: center; }
 
+/* 수정 1: 버튼 배경/테두리 색상 전환(transition) 제거하여 로딩 해제 시 즉각 복구되도록 통일 */
 button { 
   font-weight: 800; color: white; cursor: pointer; position: relative; overflow: hidden; z-index: 1; 
-  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), filter 0.1s ease, background-color 0.3s ease; 
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), filter 0.1s ease; 
 }
 button:active {
   transform: scale(0.93); 
@@ -120,10 +121,11 @@ button:active {
 }
 @keyframes dreamySparkle { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
+/* 수정 2: 하단 버튼들의 불필요한 색상 transition(0.8s)을 제거하여 테두리 잔상 효과 완전 차단 */
 .btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
   width: 100%; height: 34px; margin-top: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px;
   background-color: var(--dynamic-btn-main); 
-  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), filter 0.1s ease, background-color 0.8s ease, border-color 0.8s ease, color 0.8s ease;
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), filter 0.1s ease;
 }
 .btn-carwash, .btn-hair { border: 1.5px solid transparent; }
 .btn-fuel, .btn-robot { color: #fff; border: 1.5px solid var(--dynamic-btn-main); position: relative; overflow: hidden; background-repeat: no-repeat; }
@@ -136,20 +138,18 @@ button:active {
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 8px; align-items: center; }
 
-/* 터치 시 메모 스크롤 허용 및 모바일 최적화 (토글과 사이즈 조절 결합) */
 .todo-list { 
   margin-top: 8px; 
-  flex: none; /* 내용물에 맞춰 강제로 영역이 늘어나는 현상 방지 */
+  flex: none; 
   overflow-y: auto; 
   -webkit-overflow-scrolling: touch; 
   overscroll-behavior-y: contain; 
-  height: 120px; /* 평상시(접힌 상태)의 고정 높이 */
-  --expanded-height: 350px; /* 펼친 상태의 기본 높이 변수 */
+  height: 120px; 
+  --expanded-height: 350px; 
   width: 100%; 
   transition: height 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
 }
 
-/* 드래그 중일 때는 애니메이션 제거 (손가락 속도에 맞춰 즉각 반응) */
 .todo-list.no-transition {
   transition: none !important;
 }
@@ -165,7 +165,6 @@ button:active {
   border-radius: 4px;
 }
 
-/* expanded-view 클래스가 붙으면 사용자가 조절한 변수 값만큼만 펼쳐짐 */
 .todo-list.expanded-view { 
   height: var(--expanded-height) !important; 
 }
@@ -202,7 +201,6 @@ button:active {
   touch-action: none; 
 }
 
-/* 박스 사이즈 조절 핸들바 */
 .resize-handle {
   width: 40px;
   height: 5px;
@@ -210,7 +208,7 @@ button:active {
   border-radius: 3px;
   margin: 10px auto 0;
   cursor: row-resize;
-  touch-action: none; /* 핸들 자체에서 스크롤 이벤트를 차단 */
+  touch-action: none; 
 }
 
 @media (min-width: 768px) {
@@ -313,7 +311,6 @@ function loadInitialData() {
 
         const list = document.getElementById('todo-list'); 
         
-        // 서버에서 저장된 높이값이 있으면 '펼침 상태의 기본 변수'로 설정
         if (d.reminderHeight) {
           list.style.setProperty('--expanded-height', d.reminderHeight + 'px');
         }
@@ -354,7 +351,6 @@ function loadAll() {
   initResizeHandler(); 
 }
 
-// 실시간 드래그 사이즈 조절 기능 (자연스러운 늘림/줄임 최적화)
 function initResizeHandler() {
   const handle = document.getElementById('resize-handle');
   const list = document.getElementById('todo-list');
@@ -364,49 +360,37 @@ function initResizeHandler() {
   const startDrag = (e) => {
     isResizing = true;
     
-    // 마우스나 터치 시작 위치값 가져오기
     startY = e.type.includes('mouse') ? e.pageY : e.touches[0].pageY;
-    
-    // 현재 보이는 '실제' 픽셀 높이를 측정해서 시작점으로 잡음 (튕김 현상 방지)
     startHeight = list.offsetHeight;
     
-    // 접혀있던 상태면 바로 expanded-view 모드로 전환
     if (!list.classList.contains('expanded-view')) {
       list.classList.add('expanded-view');
     }
     
-    // 측정한 현재 높이를 변수에 바로 주입 (접힌 상태인 120px에서 서서히 늘어나도록 설정)
     list.style.setProperty('--expanded-height', startHeight + 'px');
-    
-    // 드래그하는 동안엔 부드러운 애니메이션을 꺼서 손가락을 즉각 따라가도록 함
     list.classList.add('no-transition'); 
   };
 
   const doDrag = (e) => {
     if (!isResizing) return;
     
-    // 중요: 모바일 화면 자체가 아래로 당겨지거나 스크롤되는 현상을 차단
     if (e.cancelable) e.preventDefault();
     
     const currentY = e.type.includes('mouse') ? e.pageY : e.touches[0].pageY;
     let newHeight = startHeight + (currentY - startY);
     
-    // 최소 높이는 터치 토글 시 충분한 공간을 위해 150px로 제한 (접힌 상태 120px보다 조금 크게)
     if(newHeight < 150) newHeight = 150; 
-    if(newHeight > 800) newHeight = 800; // 너무 커지는 것 방지
+    if(newHeight > 800) newHeight = 800; 
     
-    // 드래그한 만큼 높이를 실시간 갱신
     list.style.setProperty('--expanded-height', newHeight + 'px');
   };
 
   const stopDrag = () => {
     if (isResizing) {
       isResizing = false;
-      list.classList.remove('no-transition'); // 드래그 끝나면 다시 부드러운 애니메이션 복구
+      list.classList.remove('no-transition'); 
       
       const finalHeight = parseInt(list.style.getPropertyValue('--expanded-height'), 10);
-      
-      // 높이 변경 내역 서버에 저장
       fetch(`${GAS_URL}?action=setReminderHeight&height=${finalHeight}`);
     }
   };
@@ -415,7 +399,6 @@ function initResizeHandler() {
   handle.addEventListener('touchstart', startDrag, { passive: true });
   
   window.addEventListener('mousemove', doDrag);
-  // 모바일에서 e.preventDefault()가 먹히도록 passive: false 속성 필수 부여
   window.addEventListener('touchmove', doDrag, { passive: false }); 
   
   window.addEventListener('mouseup', stopDrag);
@@ -451,7 +434,6 @@ function toggleMedication() {
   fetch(`${GAS_URL}?action=toggleMedication&state=${nextState}`).then(() => loadData());
 }
 
-// 📌 REMINDERS 버튼 클릭 시 접기/펴기 (토글)
 function toggleReminders() {
   const list = document.getElementById('todo-list');
   list.classList.toggle('expanded-view');
