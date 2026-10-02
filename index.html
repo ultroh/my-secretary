@@ -99,7 +99,6 @@ h2:active { transform: scale(0.95); }
 input, button { border: none; border-radius: 6px; outline: none; }
 input { width: 100%; background: #f0f0f0; border: 1px solid var(--line-color); color: var(--text-main); padding: 8px; margin-top: 4px; font-size: 13px; text-align: center; }
 
-/* 수정 1: 버튼 배경/테두리 색상 전환(transition) 제거하여 로딩 해제 시 즉각 복구되도록 통일 */
 button { 
   font-weight: 800; color: white; cursor: pointer; position: relative; overflow: hidden; z-index: 1; 
   transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1), filter 0.1s ease; 
@@ -121,7 +120,6 @@ button:active {
 }
 @keyframes dreamySparkle { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
-/* 수정 2: 하단 버튼들의 불필요한 색상 transition(0.8s)을 제거하여 테두리 잔상 효과 완전 차단 */
 .btn-carwash, .btn-hair, .btn-fuel, .btn-robot {
   width: 100%; height: 34px; margin-top: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px;
   background-color: var(--dynamic-btn-main); 
@@ -138,14 +136,14 @@ button:active {
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 8px; align-items: center; }
 
+/* 터치 시 메모 스크롤 허용 및 모바일 최적화 */
 .todo-list { 
   margin-top: 8px; 
   flex: none; 
   overflow-y: auto; 
   -webkit-overflow-scrolling: touch; 
   overscroll-behavior-y: contain; 
-  height: 120px; 
-  --expanded-height: 350px; 
+  height: 120px; /* 로딩 전 기본 방어선 */
   width: 100%; 
   transition: height 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
 }
@@ -163,10 +161,6 @@ button:active {
 .todo-list::-webkit-scrollbar-thumb {
   background-color: #cccccc;
   border-radius: 4px;
-}
-
-.todo-list.expanded-view { 
-  height: var(--expanded-height) !important; 
 }
 
 .todo-item { 
@@ -311,9 +305,13 @@ function loadInitialData() {
 
         const list = document.getElementById('todo-list'); 
         
+        // 1. 서버에서 불러온 사이즈를 '기본(접힌) 사이즈'로 바로 적용 (영구 고정)
+        let savedHeight = 120;
         if (d.reminderHeight) {
-          list.style.setProperty('--expanded-height', d.reminderHeight + 'px');
+          savedHeight = parseInt(d.reminderHeight, 10);
         }
+        list.dataset.savedHeight = savedHeight + 'px'; // 커스텀 사이즈 기억
+        list.style.height = savedHeight + 'px';        // 시작 시 해당 사이즈 할당
 
         list.innerHTML = '';
         const todos = res.todos.list;
@@ -351,6 +349,24 @@ function loadAll() {
   initResizeHandler(); 
 }
 
+// 2. 타이틀 터치 시 '활짝 펼치기 ↔ 기본 사이즈' 전환 함수
+function toggleReminders() {
+  const list = document.getElementById('todo-list');
+  
+  if (list.classList.contains('fully-expanded')) {
+    // 닫기: 사용자가 저장해둔 커스텀 기본 높이로 복귀
+    list.classList.remove('fully-expanded');
+    list.style.height = list.dataset.savedHeight || '120px';
+  } else {
+    // 활짝 펼치기: 내부 콘텐츠 전체 높이(scrollHeight)를 계산하여 끝까지 보이도록 늘림
+    list.classList.add('fully-expanded');
+    // 컨텐츠가 적을 경우 원래 사이즈보다 줄어드는 것 방지
+    const targetHeight = Math.max(list.scrollHeight, parseInt(list.dataset.savedHeight || '120', 10));
+    list.style.height = targetHeight + 'px';
+  }
+}
+
+// 3. 드래그 사이즈 조절 (내가 원하는 사이즈 영구 저장)
 function initResizeHandler() {
   const handle = document.getElementById('resize-handle');
   const list = document.getElementById('todo-list');
@@ -359,15 +375,14 @@ function initResizeHandler() {
 
   const startDrag = (e) => {
     isResizing = true;
-    
     startY = e.type.includes('mouse') ? e.pageY : e.touches[0].pageY;
     startHeight = list.offsetHeight;
     
-    if (!list.classList.contains('expanded-view')) {
-      list.classList.add('expanded-view');
-    }
+    // 드래그를 시작하면 '활짝 펼침' 모드는 해제 (내가 지금 맞추는 사이즈가 기준이 됨)
+    list.classList.remove('fully-expanded'); 
     
-    list.style.setProperty('--expanded-height', startHeight + 'px');
+    // 튕김 현상 방지: 시작 시점의 높이를 강제 주입하고 애니메이션 임시 제거
+    list.style.height = startHeight + 'px';
     list.classList.add('no-transition'); 
   };
 
@@ -379,10 +394,11 @@ function initResizeHandler() {
     const currentY = e.type.includes('mouse') ? e.pageY : e.touches[0].pageY;
     let newHeight = startHeight + (currentY - startY);
     
-    if(newHeight < 150) newHeight = 150; 
-    if(newHeight > 800) newHeight = 800; 
+    // 최소 80px, 최대 제한은 화면에 맞게 방어
+    if(newHeight < 80) newHeight = 80; 
+    if(newHeight > window.innerHeight * 0.8) newHeight = window.innerHeight * 0.8; 
     
-    list.style.setProperty('--expanded-height', newHeight + 'px');
+    list.style.height = newHeight + 'px';
   };
 
   const stopDrag = () => {
@@ -390,7 +406,12 @@ function initResizeHandler() {
       isResizing = false;
       list.classList.remove('no-transition'); 
       
-      const finalHeight = parseInt(list.style.getPropertyValue('--expanded-height'), 10);
+      const finalHeight = list.offsetHeight;
+      
+      // 조정한 사이즈를 '기본(접힌) 사이즈'로 업데이트하고 기억시킴
+      list.dataset.savedHeight = finalHeight + 'px'; 
+      
+      // 앱을 재시작해도 이 사이즈가 고정되도록 서버에 저장
       fetch(`${GAS_URL}?action=setReminderHeight&height=${finalHeight}`);
     }
   };
@@ -432,11 +453,6 @@ function toggleMedication() {
   const nextState = !titleEl.classList.contains('rainbow-theme');
   titleEl.classList.toggle('rainbow-theme');
   fetch(`${GAS_URL}?action=toggleMedication&state=${nextState}`).then(() => loadData());
-}
-
-function toggleReminders() {
-  const list = document.getElementById('todo-list');
-  list.classList.toggle('expanded-view');
 }
 
 function loadData() {
@@ -484,6 +500,13 @@ function loadTodos(){
       list.appendChild(div);
     });
     new Sortable(list, { handle: '.drag-handle', animation: 150, onEnd: saveOrder });
+    
+    // 추가/삭제 후 활짝 펼침 모드일 경우 자동으로 높이 재계산
+    setTimeout(() => {
+      if (list.classList.contains('fully-expanded')) {
+        list.style.height = Math.max(list.scrollHeight, parseInt(list.dataset.savedHeight || '120', 10)) + 'px';
+      }
+    }, 50);
   });
 }
 
