@@ -108,6 +108,7 @@ button:active {
   filter: brightness(0.85); 
 }
 
+/* 수정 2: 로딩 상태일 때 불필요한 색상 전환 지연을 없애서 모든 버튼의 애니메이션을 삭제 버튼과 동일하게 통일 */
 .loading, .loading-add, .loading-del {
   background-color: transparent !important;
   background-image: linear-gradient(124deg, #ff9a9e 0%, #fecfef 25%, #f6e58d 50%, #a1c4fd 75%, #e0c3fc 100%) !important;
@@ -116,6 +117,7 @@ button:active {
   border-color: transparent !important;
   animation: dreamySparkle 1.5s ease-in-out infinite alternate !important;
   pointer-events: none; 
+  transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1) !important; 
 }
 @keyframes dreamySparkle { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 
@@ -140,14 +142,14 @@ button:active {
   margin-top: 8px; 
   flex: 1; 
   overflow-y: auto; 
-  -webkit-overflow-scrolling: touch; /* 모바일 관성 스크롤 허용 */
-  overscroll-behavior-y: contain; /* 부모 영역 스크롤 간섭 방지 */
+  -webkit-overflow-scrolling: touch; 
+  overscroll-behavior-y: contain; 
   max-height: 120px; 
   width: 100%; 
   transition: max-height 0.6s cubic-bezier(0.25, 1, 0.5, 1); 
 }
 
-/* 얇은 스크롤바 표시 (스크롤이 가능함을 인지할 수 있도록) */
+/* 얇은 스크롤바 표시 */
 .todo-list::-webkit-scrollbar {
   width: 3px;
 }
@@ -160,7 +162,7 @@ button:active {
 }
 
 .todo-list.expanded-view { 
-  max-height: 1200px; /* 제목 터치 시 넓게 펴지는 기능 유지 */
+  max-height: 1200px; 
 }
 
 .todo-item { 
@@ -169,7 +171,7 @@ button:active {
   border-bottom: 1px solid var(--line-color); 
   border-radius: 8px; transition: background-color 0.3s ease; 
   user-select: none;
-  touch-action: pan-y; /* 아이템 위에서 세로 스크롤 허용 */
+  touch-action: pan-y; 
 }
 .todo-item.highlighted span.text, .todo-item.highlighted .drag-handle { color: #FF9500 !important; font-weight: 800 !important; }
 
@@ -192,7 +194,7 @@ button:active {
 
 .drag-handle { 
   color: #ccc; cursor: grab; padding-right: 8px; font-size: 14px; user-select: none; transition: color 0.2s ease; padding: 3px 12px 3px 0; 
-  touch-action: none; /* 드래그 핸들(☰) 부분만 터치 스크롤 차단하여 드래그 작동 보장 */
+  touch-action: none; 
 }
 
 @media (min-width: 768px) {
