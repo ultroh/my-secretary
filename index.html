@@ -135,14 +135,17 @@ button:active {
 
 .todo-input-group { display: flex; width: 100%; gap: 6px; margin-top: 8px; align-items: center; }
 
-/* 터치 시 메모 전체가 보이며 하단 메뉴가 자연스럽게 밀리도록 애니메이션 곡선 최적화 */
+/* 수정 1: 터치 시 메모 전체가 보이며 하단 메뉴가 자연스럽게 밀리도록 애니메이션 곡선 최적화 및 스크롤 추가 */
 .todo-list { 
   margin-top: 8px; 
   flex: 1; 
-  overflow-y: hidden; 
+  overflow-y: auto; /* 스크롤이 가능하도록 변경 */
   max-height: 120px; 
   width: 100%; 
   transition: max-height 0.6s cubic-bezier(0.25, 1, 0.5, 1); 
+}
+.todo-list::-webkit-scrollbar {
+  display: none; /* 모바일 환경에서 디자인 유지를 위해 스크롤바 숨김 */
 }
 .todo-list.expanded-view { 
   max-height: 1200px; /* 메모가 아무리 많아도 모두 보이도록 넉넉한 값 설정 */
@@ -192,7 +195,7 @@ function applyTimeBasedThemeFixed() {
   if (hour >= 6 && hour < 14) s = { bg: '#002147', border: '#C8102E', sub: '#6B7A8F' };
   else if (hour >= 14 && hour < 22) s = { bg: '#F0F1F2', border: '#A63333', sub: '#6B7A8F' };
   else s = { bg: '#458C98', border: '#A7292D', sub: '#80B5BE' };
-  
+
   root.style.setProperty('--dynamic-app-bg', s.bg);
   if (s.bg === '#F0F1F2') {
     root.style.setProperty('--dynamic-text-color', '#2C3E50');
@@ -224,13 +227,13 @@ applyTimeBasedThemeFixed();
       </div>
       <div id="todo-list" class="todo-list"></div>
     </div>
-    
+
     <div class="card stat-card">
       <div class="card-title">🤖 ROBOT</div>
       <div class="status-value" id="robot-status"></div>
       <button class="btn-robot" onclick="recordAction('addRobot', this)">청소 기록</button>
     </div>
-    
+
     <div class="card stat-card">
       <div class="card-title">✂️ HAIR CUT</div>
       <div class="status-value" id="hair-status"></div>
@@ -245,7 +248,7 @@ applyTimeBasedThemeFixed();
       <div class="status-value" id="carwash-status"></div>
       <button class="btn-carwash" onclick="recordCarWash(this)">차감</button>
     </div>
-    
+
     <div class="card stat-card">
       <div class="card-title">🚗 FUEL</div>
       <div class="status-value" id="fuel-status"></div>
@@ -277,12 +280,12 @@ function loadInitialData() {
         list.innerHTML = '';
         const todos = res.todos.list;
         const highlighted = res.todos.highlighted;
-        
+
         [...todos].reverse().forEach((text, i) => {
           const div = document.createElement('div');
           div.className = 'todo-item' + (highlighted.includes(text) ? ' highlighted' : '');
           div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${text}</span><button onclick="deleteTodo(${todos.length - 1 - i}, this)">삭제</button>`;
-          
+
           const handle = div.querySelector('.drag-handle');
           handle.onclick = (e) => {
             e.stopPropagation();
@@ -314,18 +317,18 @@ function renderWeekDots() {
   const dayOfWeek = now.getDay();
   const daysUntilSunday = dayOfWeek === 0 ? 0 : 7 - dayOfWeek;
   const sunday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + daysUntilSunday);
-  
+
   const nthWeek = Math.ceil(sunday.getDate() / 7);
-  
+
   const dotsContainer = document.getElementById('week-dots');
   if (!dotsContainer) return;
-  
+
   let dotsHtml = '';
   for (let i = 1; i <= 5; i++) {
     const color = (i % 2 !== 0) ? '#0077B6' : '#FF4500';
     const opacity = (i === nthWeek) ? '1' : '0.2';
     const scale = (i === nthWeek) ? 'scale(1.2)' : 'scale(1)';
-    
+
     dotsHtml += `<div style="width: 6px; height: 6px; border-radius: 50%; background-color: ${color}; opacity: ${opacity}; transform: ${scale}; transition: all 0.3s ease;"></div>`;
   }
   dotsContainer.innerHTML = dotsHtml;
@@ -365,12 +368,12 @@ function loadTodos(){
     const list = document.getElementById('todo-list'); list.innerHTML = '';
     const todos = res.todos.list;
     const highlighted = res.todos.highlighted;
-    
+
     [...todos].reverse().forEach((text, i) => {
       const div = document.createElement('div');
       div.className = 'todo-item' + (highlighted.includes(text) ? ' highlighted' : '');
       div.innerHTML = `<span class="drag-handle">☰</span><span class="text">${text}</span><button onclick="deleteTodo(${todos.length - 1 - i}, this)">삭제</button>`;
-      
+
       const handle = div.querySelector('.drag-handle');
       handle.onclick = (e) => {
         e.stopPropagation();
