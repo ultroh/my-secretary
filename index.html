@@ -139,7 +139,7 @@ button:active {
 /* 터치 시 메모 스크롤 허용 및 모바일 최적화 (토글과 사이즈 조절 결합) */
 .todo-list { 
   margin-top: 8px; 
-  flex: 1; 
+  flex: none; /* 내용물에 맞춰 강제로 영역이 늘어나는 현상 방지 */
   overflow-y: auto; 
   -webkit-overflow-scrolling: touch; 
   overscroll-behavior-y: contain; 
@@ -148,6 +148,7 @@ button:active {
   width: 100%; 
   transition: height 0.4s cubic-bezier(0.25, 1, 0.5, 1); 
 }
+
 /* 드래그 중일 때는 애니메이션 제거 (버벅임 방지) */
 .todo-list.no-transition {
   transition: none !important;
