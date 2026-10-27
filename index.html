@@ -82,36 +82,16 @@ h2:active { transform: scale(0.95); }
 .reminder-card { grid-column: span 2; border-top: 5px solid var(--dynamic-border); background-color: var(--dynamic-memo-bg); padding: 10px 12px; min-height: 180px; }
 
 .stat-card { 
-  aspect-ratio: 1.25 / 1; 
+  aspect-ratio: 1 / 1; 
   height: auto; 
   overflow: hidden; 
-  display: grid;
-  grid-template-rows: auto 1fr auto;
-  align-items: stretch;
-  justify-items: stretch;
-  gap: 0;
-}
-
-.stat-card > .card-title {
-  text-align: center;
-}
-
-.stat-card > .status-value {
-  justify-self: stretch;
-  text-align: center;
-}
-
-.stat-card > button,
-.stat-card > .date-wrapper {
-  width: 100%;
-  justify-self: stretch;
 }
 
 .card-title { font-size: 11px; font-weight: 800; color: var(--dynamic-btn-main); margin-bottom: 2px; transition: color 0.8s ease; }
 
 .status-value { 
-  color: var(--text-main); flex: none; display: flex; flex-direction: column;
-  justify-content: center; align-items: center; align-self: center; text-align: center; padding-top: 0; width: 100%;
+  color: var(--text-main); flex: 1; display: flex; flex-direction: column;
+  justify-content: center; align-items: center; text-align: center; padding-top: 4px; 
 }
 .status-main { font-size: 16px; font-weight: 900; line-height: 1; display: block; }
 .status-sub { font-size: 11px; color: #888; font-weight: 600; line-height: 1; margin-top: 6px; display: block; }
@@ -229,7 +209,7 @@ button:active {
   .app-container { max-width: 768px; padding: env(safe-area-inset-top) 24px env(safe-area-inset-bottom); }
   #dashboard { grid-template-columns: repeat(4, 1fr); }
   .reminder-card { grid-column: span 4; }
-  .stat-card { height: auto; aspect-ratio: 1.25 / 1; }
+  .stat-card { height: auto; aspect-ratio: 1 / 1; }
 }
 </style>
 
